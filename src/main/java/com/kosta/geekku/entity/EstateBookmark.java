@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 public class EstateBookmark {
-	// �ϸ�ũ - �Ź�
+	// 북마크 - 매물
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer bookmarkEstateNum;
 	
