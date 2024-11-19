@@ -47,5 +47,11 @@ public class EstateServiceImpl implements EstateService {
 		
 		return estate.getEstateNum();
 	}
+
+	@Override
+	public EstateDto estateDetail(Integer estateNum) throws Exception {
+		Estate estate = estateRepository.findById(estateNum).orElseThrow(() -> new Exception("매물번호 오류"));
+		return estate.toDto();
+	}
 	
 }
