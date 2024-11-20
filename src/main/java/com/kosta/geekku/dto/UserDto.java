@@ -1,7 +1,6 @@
 package com.kosta.geekku.dto;
 
 import com.kosta.geekku.entity.User;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class UserDto {
-	
+  
 	private String username;// 회원 로그인 아이디
 	private String name; // 이름
 	private String password;
@@ -39,5 +38,4 @@ public class UserDto {
 						.build();
 		return user;
 	}
-	
 }

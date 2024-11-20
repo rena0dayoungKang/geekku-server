@@ -6,7 +6,10 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.PrePersist;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -26,15 +29,18 @@ public class Company {
 	@Id
 	@GeneratedValue(generator = "UUID")
 	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-	@Column(columnDefinition = "BINARY(16)", unique = true, nullable = false)
+	@Column(columnDefinition = "BINARY(16)", unique = true, nullable = false)	
 	private UUID companyId;
+
 	private String username; // 기업회원 로그인 아이디
 	private String type; // estate:부동산, interior:인테리어 사업자 구분
 	private String password;
 	private String phone;
 	private String email1;
 	private String email2;// @naver.com
-	private String profileImage;
+	@Column(columnDefinition = "MEDIUMBLOB")
+	@Lob
+	private byte[] profileImage;
 	private String companyNumber;// 사업자 등록번호
 	private String address;
 	private String ceoName;// 대표자명

@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.kosta.geekku.dto.OnestopDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,14 +28,15 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Onestop {
 	// 한번에 꾸하기
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer onestopNum;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
 	private User user;
-	//private UUID userId; //join column User - userId
-	
+	// private UUID userId; //join column User - userId
+
 	private String type;
 	private String address1;
 	private String address2;
@@ -51,4 +54,12 @@ public class Onestop {
 	private Integer viewCount;
 	@CreationTimestamp
 	private Timestamp createdAt;
+
+	public OnestopDto toDto() {
+		OnestopDto onestopDto = OnestopDto.builder().onestopNum(onestopNum).user(user).type(interiorType)
+				.address1(address1).address2(address2).rentType(rentType).size(size).money(money).workType(workType)
+				.interiorType(interiorType).movePersons(movePersons).allowPhone(allowPhone).title(title)
+				.content(content).viewCount(viewCount).createdAt(createdAt).build();
+		return onestopDto;
+	}
 }
