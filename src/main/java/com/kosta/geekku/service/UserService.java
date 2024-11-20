@@ -1,5 +1,7 @@
 package com.kosta.geekku.service;
 
-public interface UserService {
+import com.kosta.geekku.dto.UserDto;
 
+public interface UserService {
+	void joinPerson(UserDto userDto) throws Exception;
 }

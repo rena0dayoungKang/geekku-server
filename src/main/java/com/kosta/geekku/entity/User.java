@@ -42,19 +42,24 @@ public class User {
 	@CreationTimestamp
 	private Timestamp createdAt;
 	private boolean status; // 회원탈퇴여부 -> 0: 탈퇴X 1: 탈퇴O
-	private String type; // user
+	private String type;	//user
 
 	// OAuth(소셜로그인)를 위해 구성하는 필드
 	private String roles;
 	private String provider;
 	private String providerId;
-	@Column(columnDefinition = "MEDIUMBLOB")
+	@Column(columnDefinition = "MEDIUMBLOB") 
 	@Lob
 	private byte[] socialProfileImage; // 소셜로그인 프로필이미지
 
 	public UserDto toDto() {
-		UserDto userDto = UserDto.builder().username(username).name(name).phone(phone).email(email1 + "@" + email2)
-				.nickname(nickname).build();
+		UserDto userDto = UserDto.builder()
+								.username(username)
+								.name(name)
+								.phone(phone)
+								.email(email1 + "@" + email2)
+								.nickname(nickname)
+								.build();
 		return userDto;
 	}
 

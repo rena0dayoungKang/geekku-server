@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 public class Interior {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer companyNum;
+	private Integer InteriorNum;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "companyId")
