@@ -24,13 +24,13 @@ public class QInterior extends EntityPathBase<Interior> {
 
     public final QCompany company;
 
-    public final NumberPath<Integer> companyNum = createNumber("companyNum", Integer.class);
-
     public final StringPath content = createString("content");
 
     public final NumberPath<Integer> coverImage = createNumber("coverImage", Integer.class);
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
+
+    public final NumberPath<Integer> InteriorNum = createNumber("InteriorNum", Integer.class);
 
     public final StringPath intro = createString("intro");
 

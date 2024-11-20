@@ -29,9 +29,11 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath nickname = createString("nickname");
 
+    public final StringPath password = createString("password");
+
     public final StringPath phone = createString("phone");
 
-    public final StringPath profileImage = createString("profileImage");
+    public final ArrayPath<byte[], Byte> profileImage = createArray("profileImage", byte[].class);
 
     public final StringPath provider = createString("provider");
 

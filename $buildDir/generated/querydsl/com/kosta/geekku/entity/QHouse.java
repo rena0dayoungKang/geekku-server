@@ -34,6 +34,8 @@ public class QHouse extends EntityPathBase<House> {
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 
+    public final ListPath<HouseAnswer, QHouseAnswer> houseAnswerList = this.<HouseAnswer, QHouseAnswer>createList("houseAnswerList", HouseAnswer.class, QHouseAnswer.class, PathInits.DIRECT2);
+
     public final NumberPath<Integer> houseNum = createNumber("houseNum", Integer.class);
 
     public final NumberPath<Integer> jeonsePrice = createNumber("jeonsePrice", Integer.class);

@@ -43,7 +43,7 @@ public class QCompany extends EntityPathBase<Company> {
 
     public final StringPath phone = createString("phone");
 
-    public final StringPath profileImage = createString("profileImage");
+    public final ArrayPath<byte[], Byte> profileImage = createArray("profileImage", byte[].class);
 
     public final BooleanPath status = createBoolean("status");
 
