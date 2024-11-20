@@ -3,10 +3,13 @@ package com.kosta.geekku.entity;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +24,9 @@ import lombok.NoArgsConstructor;
 public class Company {
 	// 기업회원
 	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+	@Column(columnDefinition = "BINARY(16)", unique = true, nullable = false)
 	private UUID companyId;
 	private String username; // 기업회원 로그인 아이디
 	private String type; // estate:부동산, interior:인테리어 사업자 구분
@@ -30,10 +36,11 @@ public class Company {
 	private String email2;// @naver.com
 	private String profileImage;
 	private String companyNumber;// 사업자 등록번호
+	private String address;
 	private String ceoName;// 대표자명
 	private String companyName;
 	private String companyAddress;
-	private String estateNumber;
+	private String estateNumber; //중개등록번호
 	private String companyCertificationImage;// 사업자등록증 이미지
 	@CreationTimestamp
 	private Timestamp createdAt;
