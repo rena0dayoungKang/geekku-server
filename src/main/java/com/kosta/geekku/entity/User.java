@@ -30,7 +30,7 @@ public class User {
 	private String email1;
 	private String email2; // @naver.com
 	private String nickname;
-	private String profileImage;
+	private byte[] profileImage;
 	@CreationTimestamp
 	private Timestamp createdAt;
 	private boolean status; // 회원탈퇴여부 -> 0: 탈퇴X 1: 탈퇴O
