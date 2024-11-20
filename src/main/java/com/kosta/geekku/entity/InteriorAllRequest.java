@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.kosta.geekku.dto.InteriorAllDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,9 +46,18 @@ public class InteriorAllRequest {
 	private boolean workType; // 시공종류 -> 0:부분시공 1:전체시공
 	private String interiorType;
 	private boolean allowPhone; // 연락처 공개 0:비공개 1:공개
+	private String title;
 	@Column(length = 1000)
 	private String addContent;
 	@CreationTimestamp
 	private Timestamp createAt;
+
+	public InteriorAllDto toDto() {
+		InteriorAllDto interiorAllDto = InteriorAllDto.builder().requestAllNum(requestAllNum).user(user).name(name)
+				.phone(phone).type(interiorType).size(size).address1(address1).address2(address2).money(money)
+				.workType(workType).interiorType(interiorType).allowPhone(allowPhone).title(title)
+				.addContent(addContent).createAt(createAt).build();
+		return interiorAllDto;
+	}
 
 }
