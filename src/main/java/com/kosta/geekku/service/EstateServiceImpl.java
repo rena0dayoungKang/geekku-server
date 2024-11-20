@@ -94,6 +94,14 @@ public class EstateServiceImpl implements EstateService {
 		return estateDtoList;
 	}
 	
+
+	@Override
+	public List<EstateDto> estateListForMain() throws Exception {
+		List<EstateDto> estateDtoList = estateDslRepository.findEstateListForMain().stream()
+											.map(e -> e.toDto()).collect(Collectors.toList());
+		return estateDtoList;
+	}
+	
 	@Override
 	public void estateDelete(Integer estateNum) throws Exception {
 		estateRepository.deleteById(estateNum);

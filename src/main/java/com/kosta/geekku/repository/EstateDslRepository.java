@@ -93,8 +93,6 @@ public class EstateDslRepository {
 		return cnt;
 	}
 	
-	
-	
 	public List<Estate> findEstateListByPaging(PageRequest pageRequest) throws Exception {
 		QEstate estate = QEstate.estate;
 		
@@ -177,5 +175,14 @@ public class EstateDslRepository {
 		}
 		
 		return estateList;
+	}
+	
+	public List<Estate> findEstateListForMain() throws Exception {
+		QEstate estate = QEstate.estate;
+		
+		return jpaQueryFactory.selectFrom(estate)
+					.orderBy(estate.createdAt.desc())
+					.limit(3)
+					.fetch();
 	}
 }

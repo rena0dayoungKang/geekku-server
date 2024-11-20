@@ -74,9 +74,6 @@ public class EstateController {
 			@RequestParam(value="type", required=false) String type,
 			@RequestParam(value="keyword", required=false) String keyword) {
 		try {
-			System.out.println(type);
-			System.out.println("========");
-			System.out.println(keyword);
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
 			List<EstateDto> estateList = estateService.estateList(pageInfo, type, keyword);
@@ -88,6 +85,17 @@ public class EstateController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/estateListForMain")
+	public ResponseEntity<List<EstateDto>> estateListForMain() {
+		try {
+			List<EstateDto> estateList = estateService.estateListForMain();
+			return new ResponseEntity<List<EstateDto>>(estateList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<EstateDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	
