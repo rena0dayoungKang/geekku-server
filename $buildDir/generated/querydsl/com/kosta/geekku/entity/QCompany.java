@@ -19,6 +19,8 @@ public class QCompany extends EntityPathBase<Company> {
 
     public static final QCompany company = new QCompany("company");
 
+    public final StringPath address = createString("address");
+
     public final StringPath ceoName = createString("ceoName");
 
     public final StringPath companyAddress = createString("companyAddress");
@@ -43,7 +45,7 @@ public class QCompany extends EntityPathBase<Company> {
 
     public final StringPath phone = createString("phone");
 
-    public final StringPath profileImage = createString("profileImage");
+    public final ArrayPath<byte[], Byte> profileImage = createArray("profileImage", byte[].class);
 
     public final BooleanPath status = createBoolean("status");
 
