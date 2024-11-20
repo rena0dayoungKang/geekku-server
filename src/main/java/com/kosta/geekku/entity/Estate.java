@@ -85,6 +85,7 @@ public class Estate {
 					.size1(size1)
 					.size2(size2)
 					.roomCount(roomCount)
+					.rentType(rentType)
 					.availableDate(availableDate)
 					.availableState(availableState)
 					.totalFloor(totalFloor)

@@ -99,8 +99,8 @@ public class EstateController {
 		}
 	}
 	
-	@GetMapping("/estateDelete/{estateNum}")
-	public ResponseEntity<String> estateDelete(@PathVariable Integer estateNum) {
+	@PostMapping("/estateDelete")
+	public ResponseEntity<String> estateDelete(@RequestParam Integer estateNum) {
 		try {
 			estateService.estateDelete(estateNum);
 			return new ResponseEntity<String>("true", HttpStatus.OK);

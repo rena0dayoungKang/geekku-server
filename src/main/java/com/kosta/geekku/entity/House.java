@@ -71,9 +71,11 @@ public class House {
 				.type(type)
 				.address1(address1)
 				.address2(address2)
+				.rentType(rentType)
 				.size(size)
 				.requestDate(requestDate)
 				.allowPhone(allowPhone)
+				.userPhone(allowPhone ? user.getPhone() : null)
 				.title(title)
 				.content(content)
 				.viewCount(viewCount)
@@ -89,9 +91,6 @@ public class House {
 			houseDto.setBuyPrice(buyPrice);
 		}
 		
-		if (allowPhone) {
-			houseDto.setUserPhone(user.getPhone());
-		}
 		
 		if (user.getProfileImage() != null) {
 			try {
