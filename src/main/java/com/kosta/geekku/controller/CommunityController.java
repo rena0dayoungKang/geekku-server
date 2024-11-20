@@ -41,7 +41,7 @@ public class CommunityController {
             return ResponseEntity.ok(String.valueOf(communityNum));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body("커뮤니티 글 작성 실패"); 
+            return ResponseEntity.badRequest().body("커뮤니티 글 작성 실패");  
         }
     }
 
