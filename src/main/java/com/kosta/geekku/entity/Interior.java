@@ -1,6 +1,7 @@
 package com.kosta.geekku.entity;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.kosta.geekku.dto.InteriorDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +29,7 @@ import lombok.NoArgsConstructor;
 public class Interior {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer InteriorNum;
+	private Integer interiorNum;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "companyId")
@@ -44,5 +47,23 @@ public class Interior {
 	private String content; // 소개글 1000자제한
 	@CreationTimestamp
 	private Timestamp createdAt;
+	
+	public InteriorDto toDto() {
+		InteriorDto interiorDto = InteriorDto.builder()
+				.interiorNum(interiorNum)
+				.possiblePart(possiblePart)
+				.period(period)
+				.recentCount(recentCount)
+				.repairDate(repairDate)
+				.possibleLocation(possibleLocation)
+				.coverImage(coverImage)
+				.intro(intro)
+				.content(content)
+				.createdAt(createdAt)
+				.companyName(company.getCompanyName())
+				.companyId(company.getCompanyId())
+				.build();
+		return interiorDto;
+	}
 
 }
