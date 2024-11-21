@@ -12,5 +12,5 @@ public interface OnestopService {
 
 	Integer onestopModify(OnestopDto onestopDto) throws Exception;
 
-	List<OnestopDto> onestopList(PageInfo page, String type, String word) throws Exception;
+	List<OnestopDto> onestopList(PageInfo pageInfo, String type, String word) throws Exception;
 }
