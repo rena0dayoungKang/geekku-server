@@ -30,7 +30,7 @@ public class QInterior extends EntityPathBase<Interior> {
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 
-    public final NumberPath<Integer> InteriorNum = createNumber("InteriorNum", Integer.class);
+    public final NumberPath<Integer> interiorNum = createNumber("interiorNum", Integer.class);
 
     public final StringPath intro = createString("intro");
 
