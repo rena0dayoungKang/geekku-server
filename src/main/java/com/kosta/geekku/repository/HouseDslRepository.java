@@ -92,6 +92,15 @@ public class HouseDslRepository {
 		return houseList;
 	}
 	
+	public void updateHouseViewCount(Integer houseNum, Integer viewCount) throws Exception {
+		QHouse house = QHouse.house;
+		
+		jpaQueryFactory.update(house)
+				.set(house.viewCount, viewCount)
+				.where(house.houseNum.eq(houseNum))
+				.execute();
+	}
+	
 	// 집꾸 답변
 	public Long houseAnswerCount() throws Exception {
 		QHouseAnswer houseAnswer = QHouseAnswer.houseAnswer;

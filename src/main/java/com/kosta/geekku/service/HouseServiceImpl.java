@@ -41,6 +41,7 @@ public class HouseServiceImpl implements HouseService {
 	@Override
 	public HouseDto houseDetail(Integer houseNum) throws Exception {
 		House house = houseRepository.findById(houseNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
+		houseDslRepository.updateHouseViewCount(houseNum, house.getViewCount() + 1);
 		return house.toDto();
 	}
 
