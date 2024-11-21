@@ -5,7 +5,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.kosta.geekku.dto.HouseAnswerDto;
 import com.kosta.geekku.dto.HouseDto;
 import com.kosta.geekku.entity.House;
 import com.kosta.geekku.entity.HouseAnswer;
@@ -71,27 +73,43 @@ public class HouseServiceImpl implements HouseService {
 
 	@Override
 	public void houseDelete(Integer houseNum) throws Exception {
+		houseRepository.findById(houseNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
 		houseRepository.deleteById(houseNum);
 	}
 
 	@Override
-	public Integer houseAnswerWrite(HouseAnswer houseAnswer, Integer houseNum) throws Exception {
+	public Integer houseAnswerWrite(HouseAnswerDto houseAnswerDto, Integer houseNum) throws Exception {
 		House house = houseRepository.findById(houseNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
-		
+		HouseAnswer houseAnswer = houseAnswerDto.toEntity();
 		houseAnswerRepository.save(houseAnswer);
 		return houseAnswer.getAnswerHouseNum();
 	}
-
+	
+	@Transactional
 	@Override
-	public List<HouseAnswer> houseAnswerList(PageInfo pageInfo) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public List<HouseAnswerDto> houseAnswerList(PageInfo pageInfo, Integer houseNum) throws Exception {
+		House house = houseRepository.findById(houseNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
+		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
 
-	@Override
-	public void houseAnswerDelete(Integer houseAnswerNum) throws Exception {
-		// TODO Auto-generated method stub
+		List<HouseAnswerDto> houseAnswerDtoList = houseDslRepository.houseAnswerListByPaging(pageRequest).stream()
+								.map(a -> a.toDto()).collect(Collectors.toList());
+		Long cnt = houseDslRepository.houseAnswerCount();
 		
+		Integer allPage = (int)(Math.ceil(cnt.doubleValue() / pageRequest.getPageSize()));
+		Integer startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
+		Integer endPage = Math.min(startPage + 10 - 1, allPage);
+		
+		pageInfo.setAllPage(allPage);
+		pageInfo.setStartPage(startPage);
+		pageInfo.setEndPage(endPage);
+		
+		return houseAnswerDtoList;
 	}
-
+	
+	@Transactional
+	@Override
+	public void houseAnswerDelete(Integer houseAnswerNum, Integer houseNum) throws Exception {
+	    houseAnswerRepository.findById(houseAnswerNum).orElseThrow(() -> new Exception("답변이 존재하지 않습니다."));
+		houseAnswerRepository.deleteById(houseAnswerNum);
+	}
 }
