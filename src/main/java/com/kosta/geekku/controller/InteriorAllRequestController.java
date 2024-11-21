@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.InteriorAllDto;
+import com.kosta.geekku.dto.OnestopDto;
 import com.kosta.geekku.service.InteriorAllRequestService;
 import com.kosta.geekku.util.PageInfo;
 
@@ -38,6 +41,19 @@ public class InteriorAllRequestController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
+
+	/*
+	 * @PostMapping("/interiorAllModify") public ResponseEntity<Integer>
+	 * onestopModify(InteriorAllDto interiorAllDto,
+	 * 
+	 * @RequestPart(value = "delFile", required = false) Integer[] delFileNum,
+	 * 
+	 * @RequestPart(value = "file", required = false) MultipartFile[] fileList) {
+	 * try { interiorAllService.interiorAllModify(interiorAllDto); return new
+	 * ResponseEntity<Integer>(interiorAllDto.getRequestAllNum(), HttpStatus.OK); }
+	 * catch (Exception e) { e.printStackTrace(); return new
+	 * ResponseEntity<Integer>(HttpStatus.BAD_REQUEST); } }
+	 */
 
 	@GetMapping("/interiorAllDetail/{num}")
 	public ResponseEntity<Map<String, Object>> interiorAllDetail(@PathVariable Integer num) {
@@ -66,7 +82,7 @@ public class InteriorAllRequestController {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
 			List<InteriorAllDto> interiorAllList = interiorAllService.interiorAllList(pageInfo, type, word);
-			//System.out.println(interiorAllList);
+			// System.out.println(interiorAllList);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("interiorAllList", interiorAllList);
 			listInfo.put("pageInfo", pageInfo);
@@ -74,6 +90,17 @@ public class InteriorAllRequestController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@PostMapping("/interiorAllDelete/{num}")
+	public ResponseEntity<String> onestopDelete(@PathVariable Integer num) {
+		try {
+			interiorAllService.interiorAllDelete(num);
+			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
 }

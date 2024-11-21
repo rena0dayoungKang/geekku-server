@@ -10,7 +10,9 @@ public interface OnestopService {
 
 	OnestopDto onestopDetail(Integer num) throws Exception;
 
-	Integer onestopModify(OnestopDto onestopDto) throws Exception;
+	// Integer onestopModify(OnestopDto onestopDto) throws Exception;
 
 	List<OnestopDto> onestopList(PageInfo pageInfo, String type, String word) throws Exception;
+
+	void onestopDelete(Integer num) throws Exception;
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.kosta.geekku.dto.InteriorDto;
+import com.kosta.geekku.entity.Interior;
 import com.kosta.geekku.entity.InteriorSample;
 import com.kosta.geekku.repository.InteriorDslRepository;
 import com.kosta.geekku.repository.InteriorRepository;
@@ -16,18 +17,18 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class InteriorSeviceImpl implements InteriorService {
-	
+
 	private final InteriorRepository interiorRepository;
 	private final InteriorDslRepository interiorDslRepository;
-	
+
 	@Value("${upload.path}")
 	private String uploadPath;
-	
+
 	@Override
 	public List<InteriorDto> interiorListForMain() throws Exception {
 		List<InteriorDto> interiorDtoList = null;
-		interiorDtoList = interiorDslRepository.findInteriorListForMain()
-				.stream().map(i->i.toDto()).collect(Collectors.toList());
+		interiorDtoList = interiorDslRepository.findInteriorListForMain().stream().map(i -> i.toDto())
+				.collect(Collectors.toList());
 		return interiorDtoList;
 	}
 
@@ -36,5 +37,13 @@ public class InteriorSeviceImpl implements InteriorService {
 		List<InteriorSample> sampleList = null;
 		sampleList = interiorDslRepository.findSampleListForMain();
 		return sampleList;
+	}
+
+	@Override
+	public InteriorDto interiorCompanyDetail(Integer num) throws Exception {
+		Interior interior = interiorRepository.findById(num).orElseThrow(() -> new Exception("글번호 오류"));
+		System.out.println("service" + num);
+		// onestopDslRepository.updateOnestopViewCount(num, onestop.getViewCount() + 1);
+		return interior.toDto();
 	}
 }
