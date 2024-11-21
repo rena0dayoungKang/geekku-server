@@ -14,6 +14,6 @@ public interface EstateService {
 	List<EstateDto> estateList(PageInfo page, String type, String keyword) throws Exception;
 	List<EstateDto> estateListForMain() throws Exception;
 	void estateDelete(Integer estateNum) throws Exception;
-	Integer checkBookmark(UUID string, Integer estateNum) throws Exception;
-	boolean toggleBookmark(UUID userId, Integer estateNum) throws Exception;
+	Integer checkBookmark(String userId, Integer estateNum) throws Exception;
+	boolean toggleBookmark(String userId, Integer estateNum) throws Exception;
 }
