@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -18,36 +17,24 @@ public class QEstateBookmark extends EntityPathBase<EstateBookmark> {
 
     private static final long serialVersionUID = -1284887380L;
 
-    private static final PathInits INITS = PathInits.DIRECT2;
-
     public static final QEstateBookmark estateBookmark = new QEstateBookmark("estateBookmark");
 
     public final NumberPath<Integer> bookmarkEstateNum = createNumber("bookmarkEstateNum", Integer.class);
 
-    public final QEstate estate;
+    public final NumberPath<Integer> estateNum = createNumber("estateNum", Integer.class);
 
-    public final QUser user;
+    public final ComparablePath<java.util.UUID> userId = createComparable("userId", java.util.UUID.class);
 
     public QEstateBookmark(String variable) {
-        this(EstateBookmark.class, forVariable(variable), INITS);
+        super(EstateBookmark.class, forVariable(variable));
     }
 
     public QEstateBookmark(Path<? extends EstateBookmark> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+        super(path.getType(), path.getMetadata());
     }
 
     public QEstateBookmark(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QEstateBookmark(PathMetadata metadata, PathInits inits) {
-        this(EstateBookmark.class, metadata, inits);
-    }
-
-    public QEstateBookmark(Class<? extends EstateBookmark> type, PathMetadata metadata, PathInits inits) {
-        super(type, metadata, inits);
-        this.estate = inits.isInitialized("estate") ? new QEstate(forProperty("estate"), inits.get("estate")) : null;
-        this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
+        super(EstateBookmark.class, metadata);
     }
 
 }

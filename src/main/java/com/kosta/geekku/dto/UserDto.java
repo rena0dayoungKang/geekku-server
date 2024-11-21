@@ -1,6 +1,9 @@
 package com.kosta.geekku.dto;
 
+import java.sql.Timestamp;
+
 import com.kosta.geekku.entity.User;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,8 +23,9 @@ public class UserDto {
 	private String email2;
 	private String email;
 	private String nickname;
+	private Timestamp createdAt;
 	
-	public User toEntity() {
+	public User toEntity() {		
 		User user = User.builder()
 						.username(username)
 						.password(password)
@@ -30,9 +34,8 @@ public class UserDto {
 						.email1(email1)
 						.email2(email2)
 						.nickname(nickname)
-						.profileImage(null)
 						.createdAt(null)
-						.status(true)
+						.status(false)
 						.type("user")
 						.roles("ROLE_USER")
 						.build();

@@ -38,6 +38,8 @@ public class User {
 	private String email1;
 	private String email2; // @naver.com
 	private String nickname;
+	@Column(columnDefinition = "MEDIUMBLOB")
+	@Lob
 	private byte[] profileImage;
 	@CreationTimestamp
 	private Timestamp createdAt;
@@ -52,13 +54,16 @@ public class User {
 	@Lob
 	private byte[] socialProfileImage; // 소셜로그인 프로필이미지
 
-	public UserDto toDto() {
+	public UserDto toDto() {		
 		UserDto userDto = UserDto.builder()
 								.username(username)
 								.name(name)
 								.phone(phone)
-								.email(email1 + "@" + email2)
+								.email1(email1)
+								.email2(email2)
+								.email(email1 + "@" + email2) //회원정보 사이드바를 위해 이메일 합침
 								.nickname(nickname)
+								.createdAt(createdAt)
 								.build();
 		return userDto;
 	}
