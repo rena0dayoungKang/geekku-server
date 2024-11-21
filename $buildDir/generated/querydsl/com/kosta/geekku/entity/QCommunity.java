@@ -30,7 +30,7 @@ public class QCommunity extends EntityPathBase<Community> {
 
     public final StringPath content = createString("content");
 
-    public final NumberPath<Integer> coverImage = createNumber("coverImage", Integer.class);
+    public final StringPath coverImage = createString("coverImage");
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 

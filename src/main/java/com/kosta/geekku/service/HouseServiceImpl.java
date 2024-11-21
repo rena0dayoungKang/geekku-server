@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.kosta.geekku.dto.HouseDto;
 import com.kosta.geekku.entity.House;
+import com.kosta.geekku.entity.HouseAnswer;
 import com.kosta.geekku.entity.User;
+import com.kosta.geekku.repository.HouseAnswerRepository;
 import com.kosta.geekku.repository.HouseDslRepository;
 import com.kosta.geekku.repository.HouseRepository;
 import com.kosta.geekku.repository.UserRepository;
@@ -23,6 +25,7 @@ public class HouseServiceImpl implements HouseService {
 	private final HouseRepository houseRepository;
 	private final HouseDslRepository houseDslRepository;
 	private final UserRepository userRepository;
+	private final HouseAnswerRepository houseAnswerRepository;
 	
 	@Override
 	public Integer houseWrite(HouseDto houseDto) throws Exception {
@@ -69,6 +72,26 @@ public class HouseServiceImpl implements HouseService {
 	@Override
 	public void houseDelete(Integer houseNum) throws Exception {
 		houseRepository.deleteById(houseNum);
+	}
+
+	@Override
+	public Integer houseAnswerWrite(HouseAnswer houseAnswer, Integer houseNum) throws Exception {
+		House house = houseRepository.findById(houseNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
+		
+		houseAnswerRepository.save(houseAnswer);
+		return houseAnswer.getAnswerHouseNum();
+	}
+
+	@Override
+	public List<HouseAnswer> houseAnswerList(PageInfo pageInfo) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void houseAnswerDelete(Integer houseAnswerNum) throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
