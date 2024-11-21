@@ -2,7 +2,6 @@ package com.kosta.geekku.dto;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.UUID;
 
 import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.Estate;
@@ -84,7 +83,7 @@ public class EstateDto {
 		if (parking != null) {
 			estate.setParking(parking);
 		}
-		
+
 		return estate;
 	}
 }
