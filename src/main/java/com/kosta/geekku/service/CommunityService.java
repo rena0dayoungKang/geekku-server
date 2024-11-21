@@ -1,40 +1,23 @@
 package com.kosta.geekku.service;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.CommunityDto;
+import com.kosta.geekku.dto.CommunityFilterDto;
 
 public interface CommunityService {
-
-    /**
-     * 커뮤니티 글 생성
-     * @param communityDto 커뮤니티 DTO
-     * @param fileList 업로드할 파일 리스트
-     * @return 생성된 커뮤니티 글 번호
-     * @throws Exception
-     */
-    Integer createCommunity(CommunityDto communityDto, List<MultipartFile> fileList) throws Exception;
-
-    /**
-     * 커뮤니티 글 상세 조회
-     * @param communityNum 커뮤니티 글 번호
-     * @return 커뮤니티 DTO
-     * @throws Exception
-     */
-    CommunityDto getCommunityDetail(Integer communityNum) throws Exception;
-
-    /**
-     * 커뮤니티 글 리스트 조회
-     * @return 커뮤니티 DTO 리스트
-     */
-    List<CommunityDto> getCommunityList();
-
-    /**
-     * 커뮤니티 글 삭제
-     * @param communityNum 커뮤니티 글 번호
-     * @throws Exception
-     */
-    void deleteCommunity(Integer communityNum) throws Exception;
+    // 커뮤니티 리스트 조회 + 페이징
+    Page<CommunityDto> getCommunityList(Pageable pageable);
+    // 커뮤니티 글 작성
+    Integer createCommunity(CommunityDto communityDto);
+    // 커뮤니티 글 상세 조회
+    CommunityDto getCommunityDetail(Integer communityNum);
+    // 필터링 + 페이징 기능된 리스트 조회
+    Page<CommunityDto> getFilteredCommunityList(CommunityFilterDto filterDto, Pageable pageable);
+    // 커뮤니티 글 작성(임시)
+    void createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage) throws Exception;
+    // 커뮤니티 글 수정
+    void updateCommunity(Integer id, CommunityDto communityDto, MultipartFile coverImage) throws Exception;
 }
