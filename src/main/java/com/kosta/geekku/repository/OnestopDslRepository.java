@@ -34,17 +34,17 @@ public class OnestopDslRepository {
 		Long cnt = 0L;
 		if (type.equals("title")) {
 			cnt = jpaQueryFactory.select(onestop.count()).from(onestop).where(onestop.title.contains(word)).fetchOne();
-		} else if (type.equals("content")) {
-			cnt = jpaQueryFactory.select(onestop.count()).from(onestop).where(onestop.content.contains(word))
+		} else if (type.equals("rentType")) {
+			cnt = jpaQueryFactory.select(onestop.count()).from(onestop).where(onestop.rentType.contains(word))
 					.fetchOne();
-		} else if (type.equals("writer")) {
-			cnt = jpaQueryFactory.select(onestop.count()).from(onestop).where(onestop.user.nickname.contains(word))
+		} else if (type.equals("address1")) {
+			cnt = jpaQueryFactory.select(onestop.count()).from(onestop).where(onestop.address1.contains(word))
 					.fetchOne();
 		}
 		return cnt;
 	}
 
-	// 제목 내용 작성자로 검색 -> 작성자 대신 지역으로 변경 예정
+	// 제목, 지역, 거래타입
 	public List<Onestop> searchOnestopListByPaging(PageRequest pageRequest, String type, String word) throws Exception {
 		QOnestop onestop = QOnestop.onestop;
 		List<Onestop> onestopList = null;
@@ -52,12 +52,12 @@ public class OnestopDslRepository {
 			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.title.contains(word))
 					.orderBy(onestop.onestopNum.desc()).offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
 					.fetch();
-		} else if (type.equals("content")) {
+		} else if (type.equals("")) {
 			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.content.contains(word))
 					.orderBy(onestop.onestopNum.desc()).offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
 					.fetch();
-		} else if (type.equals("writer")) {
-			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.user.nickname.contains(word))
+		} else if (type.equals("address1")) {
+			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.address1.contains(word))
 					.orderBy(onestop.onestopNum.desc()).offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
 					.fetch();
 		}

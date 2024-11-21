@@ -49,6 +49,7 @@ public class Community {
 	private Date periodEndDate;
 	private Integer money;
 	private String style;
+	@Column(name = "cover_image")
 	private String coverImage;
 	private String title;
 	@Column(columnDefinition = "LONGTEXT")

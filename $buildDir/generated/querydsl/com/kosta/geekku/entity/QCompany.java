@@ -19,6 +19,8 @@ public class QCompany extends EntityPathBase<Company> {
 
     public static final QCompany company = new QCompany("company");
 
+    public final StringPath address = createString("address");
+
     public final StringPath ceoName = createString("ceoName");
 
     public final StringPath companyAddress = createString("companyAddress");
