@@ -2,6 +2,7 @@ package com.kosta.geekku.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +16,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kosta.geekku.dto.CommunityDto;
 import com.kosta.geekku.dto.CommunityFilterDto;
 import com.kosta.geekku.entity.Community;
+import com.kosta.geekku.entity.CommunityBookmark;
+import com.kosta.geekku.entity.User;
+import com.kosta.geekku.repository.CommunityBookmarkRepository;
 import com.kosta.geekku.repository.CommunityRepository;
+import com.kosta.geekku.repository.UserRepository;
 import com.kosta.geekku.util.CommunitySpecification;
 
 import lombok.RequiredArgsConstructor;
@@ -25,6 +30,8 @@ import lombok.RequiredArgsConstructor;
 public class CommunityServiceImpl implements CommunityService {
 
 	private final CommunityRepository communityRepository;
+	private final CommunityBookmarkRepository communityBookmarkRepository;
+	private final UserRepository userRepository;
 
 	@Value("${upload.path}")
 	private String uploadPath;
@@ -83,36 +90,56 @@ public class CommunityServiceImpl implements CommunityService {
 		}
 	}
 
+	
+
 	@Override
-    public void updateCommunity(Integer id, CommunityDto communityDto, MultipartFile coverImage) throws Exception {
-        // 기존 데이터 조회
-        Community community = communityRepository.findById(id)
-                .orElseThrow(() -> new Exception("해당 커뮤니티 글을 찾을 수 없습니다."));
+	public void updateCommunity(Integer id, CommunityDto communityDto, MultipartFile coverImage) throws Exception {
+		// 기존 데이터 조회
+		Community community = communityRepository.findById(id)
+				.orElseThrow(() -> new Exception("해당 커뮤니티 글을 찾을 수 없습니다."));
 
-        // 데이터 업데이트
-        community.setTitle(communityDto.getTitle());
-        community.setContent(communityDto.getContent());
-        community.setType(communityDto.getType());
+		// 데이터 업데이트
+		community.setTitle(communityDto.getTitle());
+		community.setContent(communityDto.getContent());
+		community.setType(communityDto.getType());
 
-        // 파일 처리 (새로운 파일이 있을 경우만)
-        if (coverImage != null && !coverImage.isEmpty()) {
-            // 기존 파일 삭제
-            if (community.getCoverImage() != null) {
-                File existingFile = new File(uploadPath, community.getCoverImage());
-                if (existingFile.exists()) {
-                    existingFile.delete();
-                }
-            }
-            // 새로운 파일 저장
-            String fileName = UUID.randomUUID() + "_" + coverImage.getOriginalFilename();
-            String filePath = uploadPath + "/" + fileName;
-            coverImage.transferTo(new File(filePath));
-            // 파일 이름 업데이트
-            community.setCoverImage(fileName);
-        }
+		// 파일 처리 (새로운 파일이 있을 경우만)
+		if (coverImage != null && !coverImage.isEmpty()) {
+			// 기존 파일 삭제
+			if (community.getCoverImage() != null) {
+				File existingFile = new File(uploadPath, community.getCoverImage());
+				if (existingFile.exists()) {
+					existingFile.delete();
+				}
+			}
+			// 새로운 파일 저장
+			String fileName = UUID.randomUUID() + "_" + coverImage.getOriginalFilename();
+			String filePath = uploadPath + "/" + fileName;
+			coverImage.transferTo(new File(filePath));
+			// 파일 이름 업데이트
+			community.setCoverImage(fileName);
+		}
 
-        // 변경 내용 저장
-        communityRepository.save(community);
-    }
+		// 변경 내용 저장
+		communityRepository.save(community);
+	}
+
+	@Override
+	@Transactional
+	public boolean toggleCommunityBookmark(String userId, Integer communityNum) throws Exception {
+		CommunityBookmark existingBookmark = communityBookmarkRepository
+				.findByUserUserIdAndCommunityCommunityNum(UUID.fromString(userId), communityNum);
+		if (existingBookmark == null) {
+			User user = userRepository.findByUserId(UUID.fromString(userId))
+					.orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
+			Community community = communityRepository.findByCommunityNum(communityNum)
+					.orElseThrow(() -> new IllegalArgumentException("해당 커뮤니티를 찾을 수 없습니다."));
+			communityBookmarkRepository.save(CommunityBookmark.builder().user(user).community(community).build());
+			return true; // 북마크 활성화
+		} else {
+			communityBookmarkRepository.delete(existingBookmark);
+			return false; // 북마크 비활성화
+		}
+	}
 
 }
