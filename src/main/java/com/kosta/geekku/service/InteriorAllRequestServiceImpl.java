@@ -26,7 +26,6 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 
 	private final InteriorAllRequestRepository interiorAllRepository;
 	private final InteriorAllRequestDslRepository interiorAllRequestDslRepository;
-	private final InteriorAllRequestRepository interiorAllRequestRepository;
 	private final InteriorAllAnswerRepository interiorAllAnswerRepository;
 
 	@Override
@@ -86,7 +85,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 
 	@Override
 	public Integer interiorAnswerWrite(InteriorAnswerDto interiorAnswerDto, Integer requestAllNum) throws Exception {
-		InteriorAllRequest interiorAllRequest = interiorAllRequestRepository.findById(requestAllNum)
+		InteriorAllRequest interiorAllRequest = interiorAllRepository.findById(requestAllNum)
 				.orElseThrow(() -> new Exception("방꾸 글번호 오류"));
 		InteriorAllAnswer interiorAllAnswer = interiorAnswerDto.toEntity();
 		interiorAllAnswerRepository.save(interiorAllAnswer);
@@ -95,7 +94,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 
 	@Override
 	public List<InteriorAnswerDto> interiorAnswerList(PageInfo pageInfo, Integer requestAllNum) throws Exception {
-		InteriorAllRequest interiorAll = interiorAllRequestRepository.findById(requestAllNum)
+		InteriorAllRequest interiorAll = interiorAllRepository.findById(requestAllNum)
 				.orElseThrow(() -> new Exception("집꾸 글번호 오류"));
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
 

@@ -7,9 +7,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
+import com.kosta.geekku.entity.InteriorAllRequest;
 import com.kosta.geekku.entity.Onestop;
+import com.kosta.geekku.entity.OnestopAnswer;
+import com.kosta.geekku.repository.OnestopAnswerRepository;
 import com.kosta.geekku.repository.OnestopDslRepository;
 import com.kosta.geekku.repository.OnestopRepository;
 import com.kosta.geekku.util.PageInfo;
@@ -22,6 +26,7 @@ public class OnestopServiceImpl implements OnestopService {
 
 	private final OnestopRepository onestopRepository;
 	private final OnestopDslRepository onestopDslRepository;
+	private final OnestopAnswerRepository onestopAnswerRepository;
 
 	@Override
 	public List<OnestopDto> onestopList(PageInfo pageInfo, String type, String word) throws Exception {
@@ -86,19 +91,38 @@ public class OnestopServiceImpl implements OnestopService {
 
 	@Override
 	public Integer onestopAnswerWrite(OnestopAnswerDto onestopAnswerDto, Integer onestopNum) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Onestop onestop = onestopRepository.findById(onestopNum).orElseThrow(() -> new Exception("한번에꾸하기 글 번호 오류"));
+		OnestopAnswer onestopAnswer = onestopAnswerDto.toEntity();
+		onestopAnswerRepository.save(onestopAnswer);
+		return onestopAnswer.getAnswerOnestopNum();
+
 	}
 
 	@Override
-	public List<OnestopAnswerDto> houseAnswerList(PageInfo pageInfo, Integer onestopNum) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public List<OnestopAnswerDto> onestopAnswerList(PageInfo pageInfo, Integer onestopNum) throws Exception {
+		Onestop onestop = onestopRepository.findById(onestopNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
+		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
+
+		List<OnestopAnswerDto> onestopAnswerDtoList = onestopDslRepository.onestopAnswerListByPaging(pageRequest)
+				.stream().map(a -> a.toDto()).collect(Collectors.toList());
+		Long cnt = onestopDslRepository.findOnestopCount();
+
+		Integer allPage = (int) (Math.ceil(cnt.doubleValue() / pageRequest.getPageSize()));
+		Integer startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
+		Integer endPage = Math.min(startPage + 10 - 1, allPage);
+
+		pageInfo.setAllPage(allPage);
+		pageInfo.setStartPage(startPage);
+		pageInfo.setEndPage(endPage);
+
+		return onestopAnswerDtoList;
 	}
 
+	@Transactional
 	@Override
 	public void onestopAnswerDelete(Integer onestopAnswerNum, Integer onestopNum) throws Exception {
-		// TODO Auto-generated method stub
+		onestopAnswerRepository.findById(onestopAnswerNum).orElseThrow(() -> new Exception("답변이 존재하지 않습니다."));
+		onestopAnswerRepository.deleteById(onestopAnswerNum);
 
 	}
 

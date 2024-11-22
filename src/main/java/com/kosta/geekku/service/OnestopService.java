@@ -19,7 +19,7 @@ public interface OnestopService {
 
 	Integer onestopAnswerWrite(OnestopAnswerDto onestopAnswerDto, Integer onestopNum) throws Exception;
 
-	List<OnestopAnswerDto> houseAnswerList(PageInfo pageInfo, Integer onestopNum) throws Exception;
+	List<OnestopAnswerDto> onestopAnswerList(PageInfo pageInfo, Integer onestopNum) throws Exception;
 
 	void onestopAnswerDelete(Integer onestopAnswerNum, Integer onestopNum) throws Exception;
 }

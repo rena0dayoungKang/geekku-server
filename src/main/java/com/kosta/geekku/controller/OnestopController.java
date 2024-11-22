@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kosta.geekku.dto.InteriorAnswerDto;
+import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
 import com.kosta.geekku.service.OnestopService;
 import com.kosta.geekku.util.PageInfo;
@@ -98,6 +100,52 @@ public class OnestopController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	// 한꾸 답변
+	@PostMapping("/onestopAnswerWrite")
+	public ResponseEntity<String> onestopAnswerDtoWrite(OnestopAnswerDto onestopAnswerDto,
+			@RequestParam Integer onestopNum) {
+		try {
+			Integer onestopAnswerNum = onestopService.onestopAnswerWrite(onestopAnswerDto, onestopNum);
+			return new ResponseEntity<String>(String.valueOf(onestopAnswerNum), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("방꾸답변 등록 오류", HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@GetMapping("/onestopAnswerList")
+	public ResponseEntity<Map<String, Object>> onestopAnswerList(
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+			@RequestParam("onestopNum") Integer onestopNum) {
+		try {
+			PageInfo pageInfo = new PageInfo();
+			pageInfo.setCurPage(page);
+			List<OnestopAnswerDto> onestopAnswerList = onestopService.onestopAnswerList(pageInfo, onestopNum);
+			Map<String, Object> listInfo = new HashMap<>();
+			listInfo.put("interiorAnswerList", onestopAnswerList);
+			listInfo.put("pageInfo", pageInfo);
+			System.out.println(onestopAnswerList);
+
+			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@PostMapping("/onestopAnswerDelete")
+	public ResponseEntity<String> interiorAnswerDelete(@RequestParam("onestopAnswerNum") Integer onestopAnswerNum,
+			@RequestParam("onestopNum") Integer onestopNum) {
+		try {
+			onestopService.onestopAnswerDelete(onestopAnswerNum, onestopNum);
+			System.out.println(onestopAnswerNum);
+			return new ResponseEntity<String>("true", HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("집꾸답변 삭제 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
 }
