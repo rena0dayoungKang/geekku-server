@@ -2,8 +2,9 @@ package com.kosta.geekku.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -17,8 +18,10 @@ import com.kosta.geekku.dto.CommunityDto;
 import com.kosta.geekku.dto.CommunityFilterDto;
 import com.kosta.geekku.entity.Community;
 import com.kosta.geekku.entity.CommunityBookmark;
+import com.kosta.geekku.entity.CommunityComment;
 import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.CommunityBookmarkRepository;
+import com.kosta.geekku.repository.CommunityCommentRepository;
 import com.kosta.geekku.repository.CommunityRepository;
 import com.kosta.geekku.repository.UserRepository;
 import com.kosta.geekku.util.CommunitySpecification;
@@ -32,6 +35,7 @@ public class CommunityServiceImpl implements CommunityService {
 	private final CommunityRepository communityRepository;
 	private final CommunityBookmarkRepository communityBookmarkRepository;
 	private final UserRepository userRepository;
+	private final CommunityCommentRepository communityCommentRepository;
 
 	@Value("${upload.path}")
 	private String uploadPath;
@@ -90,8 +94,6 @@ public class CommunityServiceImpl implements CommunityService {
 		}
 	}
 
-	
-
 	@Override
 	public void updateCommunity(Integer id, CommunityDto communityDto, MultipartFile coverImage) throws Exception {
 		// 기존 데이터 조회
@@ -140,6 +142,44 @@ public class CommunityServiceImpl implements CommunityService {
 			communityBookmarkRepository.delete(existingBookmark);
 			return false; // 북마크 비활성화
 		}
+	}
+
+	@Transactional
+	@Override
+	public void createComment(Integer communityId, String userId, String content) throws Exception {
+		// 커뮤니티 게시글 확인
+		Community community = communityRepository.findById(communityId)
+				.orElseThrow(() -> new Exception("해당 커뮤니티 글을 찾을 수 없습니다."));
+		// 사용자 확인
+		User user = userRepository.findById(UUID.fromString(userId))
+				.orElseThrow(() -> new Exception("해당 사용자를 찾을 수 없습니다."));
+		// 댓글 엔티티 생성 및 저장
+		CommunityComment comment = CommunityComment.builder().community(community).user(user).content(content).build();
+
+		communityCommentRepository.save(comment);
+	}
+
+	@Transactional
+	@Override
+	public void deleteComment(Integer commentId) throws Exception {
+		// 댓글 존재 여부 확인
+		CommunityComment comment = communityCommentRepository.findById(commentId)
+				.orElseThrow(() -> new Exception("해당 댓글을 찾을 수 없습니다."));
+		// 댓글 삭제
+		communityCommentRepository.delete(comment);
+	}
+
+	@Override
+	public User getUserProfile(String userId) throws Exception {
+		return userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new Exception("해당 유저를 찾을 수 없습니다."));
+	}
+
+	@Override
+	public List<Community> getUserCommunities(String userId) throws Exception {
+		List<Community> communities = communityRepository.findAllByUser_UserId(UUID.fromString(userId));
+		return communities.stream().map(community -> Community.builder().title(community.getTitle()) 
+				.viewCount(community.getViewCount()) 
+				.build()).collect(Collectors.toList());
 	}
 
 }
