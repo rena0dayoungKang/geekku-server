@@ -1,15 +1,18 @@
 package com.kosta.geekku.repository;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.kosta.geekku.entity.Estate;
 import com.kosta.geekku.entity.QEstate;
 import com.kosta.geekku.entity.QEstateBookmark;
+import com.querydsl.core.types.dsl.ComparablePath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Repository
@@ -18,14 +21,22 @@ public class EstateDslRepository {
 	@Autowired
 	private JPAQueryFactory jpaQueryFactory;
 	
-	public Integer findBookmark(UUID userId, Integer estateNum) throws Exception {
-		QEstateBookmark estateBookmark = QEstateBookmark.estateBookmark;
-		
-		return jpaQueryFactory.select(estateBookmark.bookmarkEstateNum)
-					.from(estateBookmark)
-					.where(estateBookmark.userId.eq(userId).and(estateBookmark.estateNum.eq(estateNum)))
-					.fetchOne();
+	public static byte[] uuidToBytes(UUID uuid) {
+	    ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[16]);
+	    byteBuffer.putLong(uuid.getMostSignificantBits());
+	    byteBuffer.putLong(uuid.getLeastSignificantBits());
+	    return byteBuffer.array();
 	}
+	
+//	@Transactional
+//	public Integer findBookmark(UUID userId, Integer estateNum) throws Exception {
+//		QEstateBookmark estateBookmark = QEstateBookmark.estateBookmark;
+//		
+//		return jpaQueryFactory.select(estateBookmark.bookmarkEstateNum)
+//					.from(estateBookmark)
+//					.where(estateBookmark.userId.eq(userId).and(estateBookmark.estateNum.eq(estateNum)))
+//					.fetchOne();
+//	}
 	
 	public Long findEstateCount() throws Exception {
 		QEstate estate = QEstate.estate;

@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class UserDto {
-  
 	private String userId;
 	private String username;// 회원 로그인 아이디
 	private String name; // 이름
@@ -41,9 +40,11 @@ public class UserDto {
 						.type("user")
 						.roles("ROLE_USER")
 						.build();
+
 		if(userId!=null) {
 			user.setUserId(UUID.fromString(userId));
 		}
+
 		return user;
 	}
 }

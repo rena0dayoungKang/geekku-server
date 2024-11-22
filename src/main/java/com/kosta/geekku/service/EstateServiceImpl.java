@@ -2,6 +2,7 @@ package com.kosta.geekku.service;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -14,10 +15,12 @@ import com.kosta.geekku.dto.EstateDto;
 import com.kosta.geekku.entity.Estate;
 import com.kosta.geekku.entity.EstateBookmark;
 import com.kosta.geekku.entity.EstateImage;
+import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.EstateBookmarkRepository;
 import com.kosta.geekku.repository.EstateDslRepository;
 import com.kosta.geekku.repository.EstateImageRepository;
 import com.kosta.geekku.repository.EstateRepository;
+import com.kosta.geekku.repository.UserRepository;
 import com.kosta.geekku.util.PageInfo;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,7 @@ public class EstateServiceImpl implements EstateService {
 	private final EstateImageRepository estateImageRepository;
 	private final EstateBookmarkRepository estateBookmarkRepository;
 	private final EstateDslRepository estateDslRepository;
+	private final UserRepository userRepository;
 	
 	@Value("${upload.path}")
 	private String uploadPath;
@@ -108,19 +112,20 @@ public class EstateServiceImpl implements EstateService {
 	}
 
 	@Override
-	public Integer checkBookmark(UUID userId, Integer estateNum) throws Exception {
-		return estateDslRepository.findBookmark(userId, estateNum);
+	public Integer checkBookmark(String userId, Integer estateNum) throws Exception {
+		EstateBookmark estateBookmark = estateBookmarkRepository.findByEstateNumAndUserId(estateNum, UUID.fromString(userId));
+		return estateBookmark.getBookmarkEstateNum();
 	}
 
 	@Override
-	public boolean toggleBookmark(UUID userId, Integer estateNum) throws Exception {
-		Integer bookmarkNum = estateDslRepository.findBookmark(userId, estateNum);
+	public boolean toggleBookmark(String userId, Integer estateNum) throws Exception {
+		EstateBookmark estateBookmark = estateBookmarkRepository.findByEstateNumAndUserId(estateNum, UUID.fromString(userId));
 		
-		if (bookmarkNum == null) {
-			estateBookmarkRepository.save(EstateBookmark.builder().userId(userId).estateNum(estateNum).build());
+		if (estateBookmark == null) {
+			estateBookmarkRepository.save(EstateBookmark.builder().userId(UUID.fromString(userId)).estateNum(estateNum).build());
 			return true;
 		} else {
-			estateBookmarkRepository.deleteById(bookmarkNum);
+			estateBookmarkRepository.deleteById(estateBookmark.getBookmarkEstateNum());
 			return false;
 		}
 	}

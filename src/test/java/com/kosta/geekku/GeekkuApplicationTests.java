@@ -1,14 +1,12 @@
 package com.kosta.geekku;
 
 import java.util.List;
-
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
 
 import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.repository.CompanyRepository;
@@ -19,7 +17,7 @@ import com.kosta.geekku.repository.UserRepository;
 
 @SpringBootTest
 class GeekkuApplicationTests {
-
+	
 	@Autowired
 	private CompanyRepository companyRepository;
 	@Autowired
@@ -49,5 +47,4 @@ class GeekkuApplicationTests {
 //		if(ouser.isPresent()) {
 //			System.out.println(ouser.get());
 //		}
-  
 }
