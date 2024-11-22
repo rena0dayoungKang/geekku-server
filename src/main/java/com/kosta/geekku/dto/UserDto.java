@@ -1,6 +1,7 @@
 package com.kosta.geekku.dto;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 import com.kosta.geekku.entity.User;
 
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class UserDto {
-  
+	private String userId;
 	private String username;// 회원 로그인 아이디
 	private String name; // 이름
 	private String password;
@@ -39,6 +40,11 @@ public class UserDto {
 						.type("user")
 						.roles("ROLE_USER")
 						.build();
+
+		if(userId!=null) {
+			user.setUserId(UUID.fromString(userId));
+		}
+
 		return user;
 	}
 }
