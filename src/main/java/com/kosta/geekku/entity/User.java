@@ -59,6 +59,7 @@ public class User {
 
 	public UserDto toDto() {		
 		UserDto userDto = UserDto.builder()
+								.userId(userId.toString())
 								.username(username)
 								.name(name)
 								.phone(phone)

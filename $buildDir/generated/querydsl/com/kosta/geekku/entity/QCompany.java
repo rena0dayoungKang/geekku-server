@@ -19,13 +19,11 @@ public class QCompany extends EntityPathBase<Company> {
 
     public static final QCompany company = new QCompany("company");
 
-    public final StringPath address = createString("address");
-
     public final StringPath ceoName = createString("ceoName");
 
     public final StringPath companyAddress = createString("companyAddress");
 
-    public final StringPath companyCertificationImage = createString("companyCertificationImage");
+    public final ArrayPath<byte[], Byte> companyCertificationImage = createArray("companyCertificationImage", byte[].class);
 
     public final ComparablePath<java.util.UUID> companyId = createComparable("companyId", java.util.UUID.class);
 

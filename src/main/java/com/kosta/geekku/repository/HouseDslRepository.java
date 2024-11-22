@@ -7,7 +7,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import com.kosta.geekku.entity.House;
+import com.kosta.geekku.entity.HouseAnswer;
 import com.kosta.geekku.entity.QHouse;
+import com.kosta.geekku.entity.QHouseAnswer;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Repository
@@ -88,5 +90,35 @@ public class HouseDslRepository {
 		}
 		
 		return houseList;
+	}
+	
+	public void updateHouseViewCount(Integer houseNum, Integer viewCount) throws Exception {
+		QHouse house = QHouse.house;
+		
+		jpaQueryFactory.update(house)
+				.set(house.viewCount, viewCount)
+				.where(house.houseNum.eq(houseNum))
+				.execute();
+	}
+	
+	// 집꾸 답변
+	public Long houseAnswerCount() throws Exception {
+		QHouseAnswer houseAnswer = QHouseAnswer.houseAnswer;
+		
+		return jpaQueryFactory.select(houseAnswer.count())
+					.from(houseAnswer)
+					.fetchOne();
+	}
+	
+	public List<HouseAnswer> houseAnswerListByPaging(PageRequest pageRequest) throws Exception {
+		QHouseAnswer houseAnswer = QHouseAnswer.houseAnswer;
+		
+		List<HouseAnswer> houseAnswerList = jpaQueryFactory.selectFrom(houseAnswer)
+									.orderBy(houseAnswer.createdAt.asc())
+									.offset(pageRequest.getOffset())
+									.limit(pageRequest.getPageSize())
+									.fetch();
+		
+		return houseAnswerList;
 	}
 }

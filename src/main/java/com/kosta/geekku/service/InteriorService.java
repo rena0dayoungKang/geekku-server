@@ -8,4 +8,8 @@ import com.kosta.geekku.entity.InteriorSample;
 public interface InteriorService {
 	List<InteriorDto> interiorListForMain() throws Exception;
 	List<InteriorSample> sampleListForMain() throws Exception;
+	List<InteriorDto> interiorList(String possibleLocation) throws Exception;
+	Integer checkBookmark(String userId, Integer interiorNum) throws Exception;
+	boolean toggleBookmark(String userId, Integer interiorNum) throws Exception;
+	Integer interiorRegister(InteriorDto interiorDto) throws Exception;
 }
