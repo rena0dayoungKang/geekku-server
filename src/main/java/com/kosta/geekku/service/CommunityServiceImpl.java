@@ -181,5 +181,4 @@ public class CommunityServiceImpl implements CommunityService {
 				.viewCount(community.getViewCount()) 
 				.build()).collect(Collectors.toList());
 	}
-
 }

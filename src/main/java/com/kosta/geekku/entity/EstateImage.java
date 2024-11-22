@@ -41,7 +41,7 @@ public class EstateImage {
 	@CreationTimestamp
 	private Date uploadDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "estateNum")
 	@OnDelete(action=OnDeleteAction.CASCADE)
 	private Estate estate;

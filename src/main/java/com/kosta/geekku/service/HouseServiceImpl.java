@@ -1,17 +1,24 @@
 package com.kosta.geekku.service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kosta.geekku.dto.HouseAnswerDto;
 import com.kosta.geekku.dto.HouseDto;
+import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.House;
 import com.kosta.geekku.entity.HouseAnswer;
 import com.kosta.geekku.entity.User;
+import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.HouseAnswerRepository;
 import com.kosta.geekku.repository.HouseDslRepository;
 import com.kosta.geekku.repository.HouseRepository;
@@ -28,6 +35,7 @@ public class HouseServiceImpl implements HouseService {
 	private final HouseDslRepository houseDslRepository;
 	private final UserRepository userRepository;
 	private final HouseAnswerRepository houseAnswerRepository;
+	private final CompanyRepository companyRepository;
 	
 	@Override
 	public Integer houseWrite(HouseDto houseDto) throws Exception {
@@ -112,5 +120,14 @@ public class HouseServiceImpl implements HouseService {
 	public void houseAnswerDelete(Integer houseAnswerNum, Integer houseNum) throws Exception {
 	    houseAnswerRepository.findById(houseAnswerNum).orElseThrow(() -> new Exception("답변이 존재하지 않습니다."));
 		houseAnswerRepository.deleteById(houseAnswerNum);
+	}
+
+	public Slice<HouseAnswerDto> houseAnswerListForMypage(int page, String companyId) {
+		Optional<Company> company = companyRepository.findById(UUID.fromString(companyId));
+
+		Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+	    Slice<HouseAnswerDto> pageInfo = houseAnswerRepository.findAllByCompany(company, pageable).map(HouseAnswer::toDto);
+	    
+	    return pageInfo;
 	}
 }

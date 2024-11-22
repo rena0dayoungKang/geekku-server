@@ -39,7 +39,7 @@ public class Estate {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer estateNum;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "companyId")
 	private Company company;
 	// private UUID companyId; // join column Company -companyId
@@ -69,7 +69,7 @@ public class Estate {
 	@CreationTimestamp
 	private Timestamp createdAt;
 	
-	@OneToMany(mappedBy="estate", fetch=FetchType.LAZY, 
+	@OneToMany(mappedBy="estate", fetch=FetchType.EAGER, 
 			cascade = CascadeType.ALL)
 	private List<EstateImage> imageList = new ArrayList<>();
 	
@@ -77,6 +77,7 @@ public class Estate {
 	public EstateDto toDto() {
 		EstateDto estateDto = EstateDto.builder()
 					.estateNum(estateNum)
+					.companyId(company.getCompanyId())
 					.companyName(company.getCompanyName())
 					.companyPhone(company.getPhone())
 					.type(type)

@@ -2,6 +2,7 @@ package com.kosta.geekku.dto;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.Estate;
@@ -41,6 +42,7 @@ public class EstateDto {
 	private Timestamp createdAt;
 	private String estateImageNums;
 	
+	private UUID companyId;
 	private String companyName;
 	private String companyPhone;
 	private String companyProfileImage;
@@ -64,7 +66,7 @@ public class EstateDto {
 				.title(title)
 				.content(content)
 				.createdAt(createdAt)
-				.company(Company.builder().companyName(companyName).phone(companyPhone).build())
+				.company(Company.builder().companyId(companyId).companyName(companyName).phone(companyPhone).build())
 				.build();
 		
 		if (rentType.equals("jeonse")) {

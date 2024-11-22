@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.kosta.geekku.dto.InteriorRequsetDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,22 +33,28 @@ public class InteriorRequest {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
 	private User user;
-	// private UUID userId; //join column User - userId
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "companyId")
-	private Company company;
-	// private UUID companyId; //join column Company -companyId
+	@JoinColumn(name = "interiorNum")
+	private Interior interior;
 
 	private Integer period; // 희망시공일정 1.(2주~1달) 2. 3. 4. 5. (상담이후결정)
-	private String type;
-	private Integer statue; // 인테리어 공간상황
+	private Integer type;
+	private Integer status; // 인테리어 공간상황
 	private Integer size;
-	private String name;
+	private String name;		//integer 형식으로 저장 후, 프론트에서 integer에 해당하는 값 문자열출력
 	private String phone;
 	private Integer allowTime;
 	private String content;
 	@CreationTimestamp
 	private Timestamp createdAt;
 
+	public InteriorRequsetDto toDto() {
+		InteriorRequsetDto requestDto = InteriorRequsetDto.builder().requestNum(requestNum)
+				.userId(user.getUserId()).interiorNum(interior.getInteriorNum()).period(period)
+				.type(type).status(status).size(size).name(name).allowTime(allowTime).content(content)
+				.createdAt(createdAt).build();
+		return requestDto;
+	}
+	
 }
