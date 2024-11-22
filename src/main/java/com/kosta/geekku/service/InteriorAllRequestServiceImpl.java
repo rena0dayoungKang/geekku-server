@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.kosta.geekku.dto.InteriorAllDto;
 import com.kosta.geekku.entity.InteriorAllRequest;
@@ -67,6 +68,13 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
 		return interiorAllDtoList;
+	}
+
+	@Override
+	@Transactional
+	public void interiorAllDelete(Integer num) throws Exception {
+		interiorAllRepository.deleteById(num);
+
 	}
 
 }

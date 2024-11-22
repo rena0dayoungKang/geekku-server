@@ -15,4 +15,5 @@ public interface InteriorAllRequestService {
 
 	List<InteriorAllDto> interiorAllList(PageInfo page, String type, String word) throws Exception;
 
+	void interiorAllDelete(Integer num) throws Exception;
 }
