@@ -73,7 +73,7 @@ public class EstateServiceImpl implements EstateService {
 		List<EstateDto> estateDtoList = null;
 		Long allCnt = 0L;
 		
-		if (type == null && keyword == null && keyword.trim().equals("")) { //전체목록
+		if (type == null && (keyword == null || keyword.trim().equals(""))) { //전체목록
 			estateDtoList = estateDslRepository.findEstateListByPaging(pageRequest).stream()
 								.map(e -> e.toDto()).collect(Collectors.toList());
 			allCnt = estateDslRepository.findEstateCount();

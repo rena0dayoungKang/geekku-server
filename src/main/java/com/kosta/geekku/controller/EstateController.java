@@ -1,19 +1,27 @@
 package com.kosta.geekku.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,16 +40,27 @@ public class EstateController {
 	@Value("${upload.path}")
 	private String uploadPath;
 
+//	/company/estateWrite로 경로 수정해주기
 	@PostMapping("/estateWrite")
 	public ResponseEntity<String> estateWrite(EstateDto estateDto, 
-			@RequestParam(name="images", required=false) MultipartFile[] images) {
+			@RequestPart (name="images", required=false) MultipartFile[] images) {
 		try {
-			System.out.println(images);
 			Integer estateNum = estateService.estateWrite(estateDto, images == null ? null : Arrays.asList(images));
 			return new ResponseEntity<String>(String.valueOf(estateNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("매물 등록 오류", HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/image/{num}")
+	public void image(@PathVariable String num, HttpServletResponse response) {
+		try {
+			InputStream ins = new FileInputStream(new File(uploadPath, num));
+			FileCopyUtils.copy(ins, response.getOutputStream());
+			ins.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -99,6 +118,7 @@ public class EstateController {
 		}
 	}
 	
+//	/company/estateDelete로 경로 수정해주기
 	@PostMapping("/estateDelete")
 	public ResponseEntity<String> estateDelete(@RequestParam Integer estateNum) {
 		try {
@@ -110,6 +130,7 @@ public class EstateController {
 		}
 	}
 	
+//	/user/estateBookmark/{estateNum}로 경로 수정해주기
 	@PostMapping("/estateBookmark/{estateNum}")
 	public ResponseEntity<String> estateBookmark(@PathVariable Integer estateNum, @RequestParam("userId") String userId) {
 		try {
@@ -123,6 +144,7 @@ public class EstateController {
 	}
 	
 	// 중개업자 마이페이지 - 매물 등록 내역
+//	/company/mypageEstateList로 경로 수정해주기
 	@GetMapping("/mypageEstateList")
 	public ResponseEntity<Map<String, Object>> mypageEstateList(
 			@RequestParam(value="page", required=false, defaultValue = "1") Integer page,
