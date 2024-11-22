@@ -10,13 +10,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.kosta.geekku.dto.InteriorDto;
+import com.kosta.geekku.dto.InteriorRequsetDto;
+import com.kosta.geekku.dto.ReviewDto;
+import com.kosta.geekku.dto.SampleDto;
 import com.kosta.geekku.entity.Interior;
 import com.kosta.geekku.entity.InteriorBookmark;
+import com.kosta.geekku.entity.InteriorRequest;
+import com.kosta.geekku.entity.InteriorReview;
 import com.kosta.geekku.entity.InteriorSample;
-import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.InteriorBookmarkRepository;
 import com.kosta.geekku.repository.InteriorDslRepository;
 import com.kosta.geekku.repository.InteriorRepository;
+import com.kosta.geekku.repository.InteriorRequestRepository;
+import com.kosta.geekku.repository.InteriorReviewRepository;
+import com.kosta.geekku.repository.InteriorSampleRepository;
 import com.kosta.geekku.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -29,6 +36,10 @@ public class InteriorSeviceImpl implements InteriorService {
 	private final InteriorDslRepository interiorDslRepository;
 	private final InteriorBookmarkRepository interiorBookmarkRepository;
 	private final UserRepository userRepository;
+	private final InteriorSampleRepository interiorSampleRepository;
+	private final InteriorReviewRepository interiorReviewRepository;
+	private final InteriorRequestRepository interiorRequestRepository;
+	
 	@Value("${upload.path}")
 	private String uploadPath;
 
@@ -95,4 +106,39 @@ public class InteriorSeviceImpl implements InteriorService {
 		interiorRepository.save(interior);
 		return interior.getInteriorNum();
 	}
+
+	@Override
+	public Integer sampleRegister(SampleDto sampleDto) throws Exception {
+		InteriorSample sample = sampleDto.toEntity();
+		interiorSampleRepository.save(sample);
+//		if(sampleDto.getInteriorNum() ==  )	//사례 인테리어번호와 작성자 인테리어번호가 같을경우만 작성
+		return sample.getSampleNum();
+	}
+
+	@Override
+	public Integer reviewRegister(ReviewDto reviewDto) throws Exception {
+		InteriorReview review = reviewDto.toEntity();
+		interiorReviewRepository.save(review);
+		return review.getReviewNum();
+	}
+
+	@Override
+	public SampleDto sampleDetail(Integer num) throws Exception {
+		InteriorSample sample = interiorSampleRepository.findById(num).orElseThrow(()->new Exception("글 번호 오류"));
+		return sample.toDto();
+	}
+
+	@Override
+	public Integer interiorRequest(InteriorRequsetDto requestDto) throws Exception {
+		InteriorRequest request = requestDto.toEntity();
+		interiorRequestRepository.save(request);
+		return request.getRequestNum();
+	}
+
+	@Override
+	public InteriorRequsetDto requestDetail(Integer num) throws Exception {
+		InteriorRequest request = interiorRequestRepository.findById(num).orElseThrow(()->new Exception("요청 글 번호 오류"));
+		return request.toDto();
+	}	
+	
 }
