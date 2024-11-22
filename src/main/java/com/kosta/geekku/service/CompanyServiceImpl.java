@@ -81,15 +81,13 @@ public class CompanyServiceImpl implements CompanyService {
 		if(companyDto.getEmail() != null) company.setEmail(companyDto.getEmail());
 		if(companyDto.getCompanyCertificationImage() != null) company.setCompanyCertificationImage(companyDto.getCompanyCertificationImage());
 		companyRepository.save(company);
+	}
+
 	@Override // hsj 여기서부터 해야함
 	public CompanyDto getCompanyProfile(String companyId) {
-	    Company company = companyRepository.findById(UUID.fromString(companyId))
-	            .orElseThrow();
-	    return CompanyDto.builder()
-	            .companyName(company.getCompanyName())
-	            .email(company.getEmail1()) // email로 수정
-	            .username(company.getUsername())
-	            .build();
+		Company company = companyRepository.findById(UUID.fromString(companyId)).orElseThrow();
+		return CompanyDto.builder().companyName(company.getCompanyName()).email(company.getEmail()) // email로 수정
+				.username(company.getUsername()).build();
 	}
 
 }
