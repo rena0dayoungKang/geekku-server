@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
+import com.kosta.geekku.entity.InteriorAllAnswer;
 import com.kosta.geekku.entity.InteriorAllRequest;
+import com.kosta.geekku.entity.QInteriorAllAnswer;
 import com.kosta.geekku.entity.QInteriorAllRequest;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -64,5 +66,22 @@ public class InteriorAllRequestDslRepository {
 					.limit(pageRequest.getPageSize()).fetch();
 		}
 		return interiorAllList;
+	}
+
+	// 집꾸 답변
+	public Long interiorAllAnswerCount() throws Exception {
+		QInteriorAllAnswer interiorAllAnswer = QInteriorAllAnswer.interiorAllAnswer;
+
+		return jpaQueryFactory.select(interiorAllAnswer.count()).from(interiorAllAnswer).fetchOne();
+	}
+
+	public List<InteriorAllAnswer> interiorAllAnswerListByPaging(PageRequest pageRequest) throws Exception {
+		QInteriorAllAnswer interiorAllAnswer = QInteriorAllAnswer.interiorAllAnswer;
+
+		List<InteriorAllAnswer> interiorAllAnswerList = jpaQueryFactory.selectFrom(interiorAllAnswer)
+				.orderBy(interiorAllAnswer.createdAt.asc()).offset(pageRequest.getOffset())
+				.limit(pageRequest.getPageSize()).fetch();
+
+		return interiorAllAnswerList;
 	}
 }

@@ -22,9 +22,9 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class HouseController {
-	
-	private final HouseService houseService; 
-	
+
+	private final HouseService houseService;
+
 	@PostMapping("/houseWrite")
 	public ResponseEntity<String> houseWrite(HouseDto houseDto) {
 		try {
@@ -35,7 +35,7 @@ public class HouseController {
 			return new ResponseEntity<String>("집꾸 등록 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/houseDetail/{houseNum}")
 	public ResponseEntity<HouseDto> houseDetail(@PathVariable Integer houseNum) {
 		try {
@@ -46,12 +46,12 @@ public class HouseController {
 			return new ResponseEntity<HouseDto>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/houseList")
 	public ResponseEntity<Map<String, Object>> houseList(
-			@RequestParam(value="page", required=false, defaultValue = "1") Integer page,
-			@RequestParam(value="type", required=false) String type,
-			@RequestParam(value="keyword", required=false) String keyword) {
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+			@RequestParam(value = "type", required = false) String type,
+			@RequestParam(value = "keyword", required = false) String keyword) {
 		try {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
@@ -59,14 +59,14 @@ public class HouseController {
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("houseList", houseList);
 			listInfo.put("pageInfo", pageInfo);
-			
+
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/houseDelete/{houseNum}")
 	public ResponseEntity<String> houseDelete(@PathVariable Integer houseNum) {
 		try {
@@ -77,8 +77,8 @@ public class HouseController {
 			return new ResponseEntity<String>("집꾸 삭제 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	//집꾸 답변
+
+	// 집꾸 답변
 	@PostMapping("/houseAnswerWrite")
 	public ResponseEntity<String> houseAnswerWrite(HouseAnswerDto houseAnswerDto, @RequestParam Integer houseNum) {
 		try {
@@ -89,10 +89,10 @@ public class HouseController {
 			return new ResponseEntity<String>("집꾸답변 등록 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/houseAnswerList")
 	public ResponseEntity<Map<String, Object>> houseAnswerList(
-			@RequestParam(value="page", required=false, defaultValue = "1") Integer page,
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 			@RequestParam("houseNum") Integer houseNum) {
 		try {
 			PageInfo pageInfo = new PageInfo();
@@ -101,16 +101,17 @@ public class HouseController {
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("houseAnswerList", houseAnswerList);
 			listInfo.put("pageInfo", pageInfo);
-			
-			return new ResponseEntity<Map<String,Object>>(listInfo, HttpStatus.OK);
+
+			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/houseAnswerDelete")
-	public ResponseEntity<String> houseAnswerDelete(@RequestParam("houseAnswerNum") Integer houseAnswerNum, @RequestParam("houseNum") Integer houseNum) {
+	public ResponseEntity<String> houseAnswerDelete(@RequestParam("houseAnswerNum") Integer houseAnswerNum,
+			@RequestParam("houseNum") Integer houseNum) {
 		try {
 			houseService.houseAnswerDelete(houseAnswerNum, houseNum);
 			return new ResponseEntity<String>("true", HttpStatus.OK);

@@ -9,15 +9,22 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.InteriorDto;
+import com.kosta.geekku.entity.House;
+import com.kosta.geekku.entity.HouseAnswer;
 import com.kosta.geekku.entity.Interior;
+import com.kosta.geekku.entity.InteriorAllAnswer;
+import com.kosta.geekku.entity.InteriorAllRequest;
 import com.kosta.geekku.entity.InteriorBookmark;
 import com.kosta.geekku.entity.InteriorSample;
-import com.kosta.geekku.entity.User;
+import com.kosta.geekku.repository.InteriorAllAnswerRepository;
+import com.kosta.geekku.repository.InteriorAllRequestRepository;
 import com.kosta.geekku.repository.InteriorBookmarkRepository;
 import com.kosta.geekku.repository.InteriorDslRepository;
 import com.kosta.geekku.repository.InteriorRepository;
 import com.kosta.geekku.repository.UserRepository;
+import com.kosta.geekku.util.PageInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,22 +55,16 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public InteriorDto interiorCompanyDetail(Integer num) throws Exception {
-		Interior interior = interiorRepository.findById(num).orElseThrow(() -> new Exception("글번호 오류"));
-		System.out.println("service" + num);
-		// onestopDslRepository.updateOnestopViewCount(num, onestop.getViewCount() + 1);
-		return interior.toDto();
-	}
 	public List<InteriorDto> interiorList(String possibleLocation) throws Exception {
 		List<InteriorDto> interiorDtoList = null;
 		Long allCnt = 0L;
-		if(possibleLocation==null) {
-			interiorDtoList = interiorDslRepository.interiorListAll()
-					.stream().map(i->i.toDto()).collect(Collectors.toList());
+		if (possibleLocation == null) {
+			interiorDtoList = interiorDslRepository.interiorListAll().stream().map(i -> i.toDto())
+					.collect(Collectors.toList());
 			allCnt = interiorDslRepository.interiorCountAll();
 		} else {
-			interiorDtoList = interiorDslRepository.interiorListByLoc(possibleLocation)
-					.stream().map(i->i.toDto()).collect(Collectors.toList());
+			interiorDtoList = interiorDslRepository.interiorListByLoc(possibleLocation).stream().map(i -> i.toDto())
+					.collect(Collectors.toList());
 			allCnt = interiorDslRepository.interiorCountByLoc(possibleLocation);
 		}
 		return interiorDtoList;
@@ -77,15 +78,17 @@ public class InteriorSeviceImpl implements InteriorService {
 	@Override
 	@Transactional
 	public boolean toggleBookmark(String userId, Integer interiorNum) throws Exception {
-		InteriorBookmark interiorBookmark = interiorBookmarkRepository.findByInteriorNumAndUserId(interiorNum, UUID.fromString(userId));
+		InteriorBookmark interiorBookmark = interiorBookmarkRepository.findByInteriorNumAndUserId(interiorNum,
+				UUID.fromString(userId));
 		System.out.println(interiorBookmark);
 
-		if(interiorBookmark==null) {
-			interiorBookmarkRepository.save(InteriorBookmark.builder().userId(UUID.fromString(userId)).interiorNum(interiorNum).build());
+		if (interiorBookmark == null) {
+			interiorBookmarkRepository
+					.save(InteriorBookmark.builder().userId(UUID.fromString(userId)).interiorNum(interiorNum).build());
 			return true;
 		} else {
 			interiorBookmarkRepository.deleteById(interiorBookmark.getBookmarkInteriorNum());
-			return false;	
+			return false;
 		}
 	}
 
@@ -95,4 +98,13 @@ public class InteriorSeviceImpl implements InteriorService {
 		interiorRepository.save(interior);
 		return interior.getInteriorNum();
 	}
+
+	@Override
+	public InteriorDto interiorCompanyDetail(Integer num) throws Exception {
+		Interior interior = interiorRepository.findById(num).orElseThrow(() -> new Exception("글번호 오류"));
+		System.out.println("service" + num);
+		// onestopDslRepository.updateOnestopViewCount(num, onestop.getViewCount() + 1);
+		return interior.toDto();
+	}
+
 }
