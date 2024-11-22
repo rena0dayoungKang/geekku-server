@@ -34,7 +34,9 @@ class GeekkuApplicationTests {
    @Test
    void contextLoads() {
       List<User> userList = userRepository.findAll();
+      List<Company> companyList = companyRepository.findAll();
       System.out.println(userList);
+      System.out.println(companyList);
    }
    
    @Test
