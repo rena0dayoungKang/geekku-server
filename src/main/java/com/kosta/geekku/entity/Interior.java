@@ -1,7 +1,6 @@
 package com.kosta.geekku.entity;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -25,10 +25,10 @@ public class OnestopDto {
 	private String rentType;
 	private Integer size;
 	private Integer money;
-	private String workType;
+	private boolean workType;// 시공종류 -> 0:부분시공 1:전체시공
 	private String interiorType;
 	private Integer movePersons;
-	private Integer allowPhone;
+	private boolean allowPhone; // 연락처 공개 0:비공개 1:공개
 	private String title;
 	private String content;
 	private Integer viewCount;

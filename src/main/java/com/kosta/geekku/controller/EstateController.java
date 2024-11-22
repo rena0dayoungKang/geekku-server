@@ -51,11 +51,10 @@ public class EstateController {
 			Map<String, Object> res = new HashMap<>();
 			EstateDto estateDto = estateService.estateDetail(estateNum);
 			res.put("estate", estateDto);
-			UUID userId = UUID.fromString(param.get("userId"));
 			
 			//북마크
-			if (userId != null) {
-				boolean bookmark = estateService.checkBookmark(userId, estateNum) != null;
+			if (param.get("userId") != null) {
+				boolean bookmark = estateService.checkBookmark(param.get("userId"), estateNum) != null;
 				res.put("bookmark", bookmark);
 			}
 			
@@ -110,15 +109,16 @@ public class EstateController {
 		}
 	}
 	
-	@PostMapping("/estateBookmark")
-	public ResponseEntity<String> estateBookmark(@RequestParam("estateNum") String estateNum) {
+	@PostMapping("/estateBookmark/{estateNum}")
+	public ResponseEntity<String> estateBookmark(@PathVariable Integer estateNum, @RequestParam("userId") String userId) {
 		try {
 //			UUID userId = UUID.fromString(((PrincipalDetails)authentication.getPrincipal()).getUser().getId());
-//			boolean heart = estateService.toggleBookmark(userId, estateNum);
-			return new ResponseEntity<String>("", HttpStatus.OK);
+			UUID uUserId = UUID.fromString(userId);
+			boolean heart = estateService.toggleBookmark(userId, estateNum);
+			return new ResponseEntity<String>(String.valueOf(heart), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("매물 북마크 실패", HttpStatus.BAD_REQUEST);
 		}
 	}
 	
