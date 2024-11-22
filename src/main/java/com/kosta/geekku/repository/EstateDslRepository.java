@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kosta.geekku.entity.Estate;
+import com.kosta.geekku.entity.QCompany;
 import com.kosta.geekku.entity.QEstate;
 import com.kosta.geekku.entity.QEstateBookmark;
 import com.querydsl.core.types.dsl.ComparablePath;
@@ -20,23 +21,6 @@ public class EstateDslRepository {
 	
 	@Autowired
 	private JPAQueryFactory jpaQueryFactory;
-	
-	public static byte[] uuidToBytes(UUID uuid) {
-	    ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[16]);
-	    byteBuffer.putLong(uuid.getMostSignificantBits());
-	    byteBuffer.putLong(uuid.getLeastSignificantBits());
-	    return byteBuffer.array();
-	}
-	
-//	@Transactional
-//	public Integer findBookmark(UUID userId, Integer estateNum) throws Exception {
-//		QEstateBookmark estateBookmark = QEstateBookmark.estateBookmark;
-//		
-//		return jpaQueryFactory.select(estateBookmark.bookmarkEstateNum)
-//					.from(estateBookmark)
-//					.where(estateBookmark.userId.eq(userId).and(estateBookmark.estateNum.eq(estateNum)))
-//					.fetchOne();
-//	}
 	
 	public Long findEstateCount() throws Exception {
 		QEstate estate = QEstate.estate;
@@ -196,4 +180,25 @@ public class EstateDslRepository {
 					.limit(3)
 					.fetch();
 	}
+	
+	public List<Estate> findMypageEstateListByPaging(PageRequest pageRequest, UUID companyId) throws Exception {
+		QEstate estate = QEstate.estate;
+		
+		return jpaQueryFactory.selectFrom(estate)
+						.where(estate.company.companyId.eq(companyId))
+						.orderBy(estate.createdAt.desc())
+						.offset(pageRequest.getOffset())
+						.limit(pageRequest.getPageSize())
+						.fetch();
+	}
+	
+	public Long findMypageEstateCount(UUID companyId) throws Exception {
+		QEstate estate = QEstate.estate;
+		
+		return jpaQueryFactory.select(estate.count())
+					.from(estate)
+					.where(estate.company.companyId.eq(companyId))
+					.fetchOne();
+	}
+	
 }

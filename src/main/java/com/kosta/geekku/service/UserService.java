@@ -1,5 +1,7 @@
 package com.kosta.geekku.service;
 
+import java.util.UUID;
+
 import com.kosta.geekku.dto.UserDto;
 
 public interface UserService {
@@ -7,4 +9,7 @@ public interface UserService {
 	boolean checkDoubleId(String username) throws Exception;
 	boolean checkDoubleNickname(String nickname) throws Exception;
 	UserDto login(String username, String password) throws Exception;
+	UserDto getUser(UUID userId) throws Exception;
+	UserDto getUser(String username) throws Exception;
+	void updateUserInfo(UUID userId, UserDto userDto) throws Exception;
 }

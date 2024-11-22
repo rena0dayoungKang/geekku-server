@@ -31,9 +31,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		
 		System.out.println("JwtAuthenticationFilter =============================================");
 		PrincipalDetails principalDetails = (PrincipalDetails)authResult.getPrincipal();
-		
-		String accesToken = jwtToken.makeAccessToken(principalDetails.getUsername());
-		String refreshToken = jwtToken.makeRefreshToken(principalDetails.getUsername());
+		String accesToken = null;
+		String refreshToken = null;
+		if(principalDetails.getUser()!=null || principalDetails.getOAuth2UserInfo()!=null) {
+			accesToken = jwtToken.makeAccessToken(principalDetails.getUsername(), "user");			
+			refreshToken = jwtToken.makeRefreshToken(principalDetails.getUsername(), "user");
+		} else if(principalDetails.getCompany()!=null) {
+			accesToken = jwtToken.makeAccessToken(principalDetails.getUsername(), "company");			
+			refreshToken = jwtToken.makeRefreshToken(principalDetails.getUsername(), "company");
+		}
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		Map<String, String> map = new HashMap<>();
