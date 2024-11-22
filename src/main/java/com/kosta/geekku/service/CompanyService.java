@@ -11,4 +11,5 @@ public interface CompanyService {
 	CompanyDto login(String username, String password) throws Exception;
 	CompanyDto getCompany(String username) throws Exception;
 	void updateCompanyInfo(UUID companyId, CompanyDto companyDto) throws Exception;
+	CompanyDto getCompanyProfile(String companyId) throws Exception;
 }

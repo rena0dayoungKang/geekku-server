@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.CompanyDto;
+import com.kosta.geekku.dto.EstateDto;
 import com.kosta.geekku.entity.Role;
 import com.kosta.geekku.service.CompanyService;
 import com.kosta.geekku.service.EstateNumberService;
@@ -67,6 +69,18 @@ public class CompanyController {
 			return new ResponseEntity<String>("조회할 수 없습니다", HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	//중개업자 프로필 조회
+	@GetMapping("/estateProfile/{companyId}") 
+    public ResponseEntity<?> getBrokerProfile(@PathVariable String companyId) {
+        try {
+            CompanyDto companyProfile = companyService.getCompanyProfile(companyId);
+            return ResponseEntity.ok(companyProfile);
+        } catch (Exception e) {
+            // 다른 예외가 발생한 경우, 서버 오류로 처리
+        	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저 정보를 찾을 수 없습니다.");
+        }
+    }
 
 	@GetMapping("/company/companyInfo")
 	public ResponseEntity<CompanyDto> getCompanyInfo(Authentication authentication) {
