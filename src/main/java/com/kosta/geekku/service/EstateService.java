@@ -16,4 +16,7 @@ public interface EstateService {
 	void estateDelete(Integer estateNum) throws Exception;
 	Integer checkBookmark(String userId, Integer estateNum) throws Exception;
 	boolean toggleBookmark(String userId, Integer estateNum) throws Exception;
+	
+	// 마이페이지 - 중개업자 매물 등록 내역
+	List<EstateDto> estateListForMypage(PageInfo pageInfo, String companyId) throws Exception;
 }

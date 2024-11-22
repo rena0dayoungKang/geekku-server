@@ -16,6 +16,7 @@ import com.kosta.geekku.entity.Estate;
 import com.kosta.geekku.entity.EstateBookmark;
 import com.kosta.geekku.entity.EstateImage;
 import com.kosta.geekku.entity.User;
+import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.EstateBookmarkRepository;
 import com.kosta.geekku.repository.EstateDslRepository;
 import com.kosta.geekku.repository.EstateImageRepository;
@@ -33,7 +34,6 @@ public class EstateServiceImpl implements EstateService {
 	private final EstateImageRepository estateImageRepository;
 	private final EstateBookmarkRepository estateBookmarkRepository;
 	private final EstateDslRepository estateDslRepository;
-	private final UserRepository userRepository;
 	
 	@Value("${upload.path}")
 	private String uploadPath;
@@ -128,5 +128,26 @@ public class EstateServiceImpl implements EstateService {
 			estateBookmarkRepository.deleteById(estateBookmark.getBookmarkEstateNum());
 			return false;
 		}
+	}
+
+	@Override
+	public List<EstateDto> estateListForMypage(PageInfo pageInfo, String companyId) throws Exception {
+		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
+		List<EstateDto> estateDtoList = null;
+		Long allCnt = 0L;
+		
+		estateDtoList = estateDslRepository.findMypageEstateListByPaging(pageRequest, UUID.fromString(companyId)).stream()
+				.map(e -> e.toDto()).collect(Collectors.toList());
+		allCnt = estateDslRepository.findMypageEstateCount(UUID.fromString(companyId));
+	
+		Integer allPage = (int)(Math.ceil(allCnt.doubleValue() / pageRequest.getPageSize()));
+		Integer startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
+		Integer endPage = Math.min(startPage + 10 - 1, allPage);
+		
+		pageInfo.setAllPage(allPage);
+		pageInfo.setStartPage(startPage);
+		pageInfo.setEndPage(endPage);
+		
+		return estateDtoList;
 	}
 }

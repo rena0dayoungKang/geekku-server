@@ -36,6 +36,7 @@ public class EstateController {
 	public ResponseEntity<String> estateWrite(EstateDto estateDto, 
 			@RequestParam(name="images", required=false) MultipartFile[] images) {
 		try {
+			System.out.println(images);
 			Integer estateNum = estateService.estateWrite(estateDto, images == null ? null : Arrays.asList(images));
 			return new ResponseEntity<String>(String.valueOf(estateNum), HttpStatus.OK);
 		} catch (Exception e) {
@@ -113,7 +114,6 @@ public class EstateController {
 	public ResponseEntity<String> estateBookmark(@PathVariable Integer estateNum, @RequestParam("userId") String userId) {
 		try {
 //			UUID userId = UUID.fromString(((PrincipalDetails)authentication.getPrincipal()).getUser().getId());
-			UUID uUserId = UUID.fromString(userId);
 			boolean heart = estateService.toggleBookmark(userId, estateNum);
 			return new ResponseEntity<String>(String.valueOf(heart), HttpStatus.OK);
 		} catch (Exception e) {
@@ -122,5 +122,23 @@ public class EstateController {
 		}
 	}
 	
-	
+	// 중개업자 마이페이지 - 매물 등록 내역
+	@GetMapping("/mypageEstateList")
+	public ResponseEntity<Map<String, Object>> mypageEstateList(
+			@RequestParam(value="page", required=false, defaultValue = "1") Integer page,
+			@RequestParam("companyId") String companyId) {
+		try {
+			PageInfo pageInfo = new PageInfo();
+			pageInfo.setCurPage(page);
+			List<EstateDto> estateList = estateService.estateListForMypage(pageInfo, companyId);
+			Map<String, Object> listInfo = new HashMap<>();
+			listInfo.put("estateList", estateList);
+			listInfo.put("pageInfo", pageInfo);
+			
+			return new ResponseEntity<Map<String,Object>>(listInfo, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
 }
