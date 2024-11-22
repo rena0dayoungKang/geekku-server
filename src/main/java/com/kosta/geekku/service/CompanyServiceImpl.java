@@ -57,4 +57,13 @@ public class CompanyServiceImpl implements CompanyService {
 		return str == null || str.trim().isEmpty();
 	}
 
+	@Override
+	public CompanyDto login(String username, String password) throws Exception {
+		Company company = companyRepository.findByUsername(username).orElseThrow(() -> new Exception("아이디 오류"));
+		if (!company.getPassword().equals(password)) {
+			throw new Exception("비밀번호 오류");
+		}
+		return company.toDto();
+	}
+
 }

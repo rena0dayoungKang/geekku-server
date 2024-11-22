@@ -43,4 +43,13 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findByNickname(nickname).isPresent();
 	}
 
+	@Override
+	public UserDto login(String username, String password) throws Exception {
+		User user = userRepository.findByUsername(username).orElseThrow(() -> new Exception("아이디 오류"));
+		if (!user.getPassword().equals(password)) {
+			throw new Exception("비밀번호 오류");
+		}
+		return user.toDto();
+	}
+
 }

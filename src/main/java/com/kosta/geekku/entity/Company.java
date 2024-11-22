@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
@@ -33,7 +35,7 @@ public class Company {
 	private UUID companyId;
 
 	private String username; // 기업회원 로그인 아이디
-	private String type; // estate:부동산, interior:인테리어 사업자 구분
+	private String type; // company
 	private String password;
 	private String phone;
 	private String email1;
@@ -52,6 +54,9 @@ public class Company {
 	@CreationTimestamp
 	private Timestamp createdAt;
 	private boolean status;// 회원탈퇴여부 -> 0: 탈퇴X 1: 탈퇴O
+	
+	@Enumerated(EnumType.STRING)
+	private Role role;	//estate:부동산, interior:인테리어 사업자 구분
 	
 	public CompanyDto toDto() {
 		CompanyDto companyDto = CompanyDto.builder()

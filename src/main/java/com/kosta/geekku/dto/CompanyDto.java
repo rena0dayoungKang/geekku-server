@@ -1,6 +1,7 @@
 package com.kosta.geekku.dto;
 
 import com.kosta.geekku.entity.Company;
+import com.kosta.geekku.entity.Role;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,8 @@ public class CompanyDto {
 	//부동산일경우
 	private String estateNumber; 
 	
+	private Role role;
+	
 	public Company toEntity() {
 		
 		Company company = Company.builder()
@@ -39,6 +42,8 @@ public class CompanyDto {
 								.phone(phone)
 								.email1(email1)
 								.email2(email2)
+								.status(false)
+								.role(role)
 								.companyNumber(companyNumber)
 								.ceoName(ceoName)
 								.companyName(companyName)
