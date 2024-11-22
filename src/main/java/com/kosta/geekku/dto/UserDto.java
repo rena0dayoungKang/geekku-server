@@ -1,6 +1,7 @@
 package com.kosta.geekku.dto;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 import com.kosta.geekku.entity.User;
 
@@ -39,11 +40,11 @@ public class UserDto {
 						.type("user")
 						.roles("ROLE_USER")
 						.build();
-		
-//		if (userId != null) {
-//			
-//		}
-		
+
+		if(userId!=null) {
+			user.setUserId(UUID.fromString(userId));
+		}
+
 		return user;
 	}
 }
