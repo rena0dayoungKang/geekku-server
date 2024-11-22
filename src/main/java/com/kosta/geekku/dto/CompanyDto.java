@@ -14,12 +14,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CompanyDto {
 	
+	private String companyId;
 	private String username;
 	private String type;
 	private String password;
 	private String phone;
-	private String email1;
-	private String email2;
 	private String email;
 	
 	private String companyNumber;
@@ -40,8 +39,7 @@ public class CompanyDto {
 								.type(type)
 								.password(password)
 								.phone(phone)
-								.email1(email1)
-								.email2(email2)
+								.email(email)
 								.status(false)
 								.role(role)
 								.companyNumber(companyNumber)

@@ -41,25 +41,29 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 		} else if(userRequest.getClientRegistration().getRegistrationId().equals("naver")) {
 			System.out.println("네이버 로그인");
 			oAuth2UserInfo = new NaverUserInfo(oAuth2User.getAttribute("response"));
+		} else if(userRequest.getClientRegistration().getRegistrationId().equals("google")) {
+			System.out.println("구글 로그인");
+			oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
 		} else {
-			System.out.println("카카오와 네이버만 지원합니다.");	
+			System.out.println("카카오, 네이버, 구글만 지원합니다.");	
 		}
 		
 		User user = userRepository.findByProviderAndProviderId(oAuth2UserInfo.getProvider(), oAuth2UserInfo.getProviderId());
 
 		if (user != null) {
-			//user.setEmail(oAuth2UserInfo.getEmail());
+			user.setEmail(oAuth2UserInfo.getEmail());
 			userRepository.save(user);
 		} else {
 			User nUser = User.builder()
 								.username(oAuth2UserInfo.getProviderId())
-								.email1(oAuth2UserInfo.getEmail())
+								.email(oAuth2UserInfo.getEmail())
 								.provider(oAuth2UserInfo.getProvider())
 								.providerId(oAuth2UserInfo.getProviderId())
 								.build();
 			userRepository.save(nUser);
 		}
-		return new PrincipalDetails(user, oAuth2User.getAttributes());
+//		return new PrincipalDetails(user, oAuth2User.getAttributes());
+		return new PrincipalDetails(oAuth2UserInfo);
 	}
 
 }

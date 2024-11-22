@@ -38,8 +38,7 @@ public class Company {
 	private String type; // company
 	private String password;
 	private String phone;
-	private String email1;
-	private String email2;// @naver.com
+	private String email;
 	@Column(columnDefinition = "MEDIUMBLOB")
 	@Lob
 	private byte[] profileImage;
@@ -56,19 +55,22 @@ public class Company {
 	private boolean status;// 회원탈퇴여부 -> 0: 탈퇴X 1: 탈퇴O
 	
 	@Enumerated(EnumType.STRING)
-	private Role role;	//estate:부동산, interior:인테리어 사업자 구분
+	private Role role;	//user, company 구분
 	
 	public CompanyDto toDto() {
 		CompanyDto companyDto = CompanyDto.builder()
+										.companyId(companyId.toString())
 										.username(username)
 										.type(type)
 										.phone(phone)
-										.email(email1 + "@" + email2)
+										.email(email)
+										.ceoName(ceoName)
 										.companyNumber(companyNumber)
 										.companyName(companyName)
 										.companyAddress(companyAddress)
 										.estateNumber(estateNumber)
 										.companyCertificationImage(companyCertificationImage)
+										.role(role)
 										.build();
 		return companyDto;
 										
