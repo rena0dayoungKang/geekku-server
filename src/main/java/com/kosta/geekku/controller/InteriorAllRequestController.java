@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.InteriorAllDto;
+import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
 import com.kosta.geekku.service.InteriorAllRequestService;
 import com.kosta.geekku.util.PageInfo;
@@ -101,6 +102,52 @@ public class InteriorAllRequestController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	// 집꾸 답변
+	@PostMapping("/interiorAnswerWrite")
+	public ResponseEntity<String> interiorAnswerWrite(InteriorAnswerDto interiorAnswerDto,
+			@RequestParam Integer requestAllNum) {
+		try {
+			Integer interiorAnswerNum = interiorAllService.interiorAnswerWrite(interiorAnswerDto, requestAllNum);
+			return new ResponseEntity<String>(String.valueOf(interiorAnswerNum), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("방꾸답변 등록 오류", HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@GetMapping("/interiorAnswerList")
+	public ResponseEntity<Map<String, Object>> interiorAnswerList(
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+			@RequestParam("requestAllNum") Integer requestAllNum) {
+		try {
+			PageInfo pageInfo = new PageInfo();
+			pageInfo.setCurPage(page);
+			List<InteriorAnswerDto> interiorAnswerList = interiorAllService.interiorAnswerList(pageInfo, requestAllNum);
+			Map<String, Object> listInfo = new HashMap<>();
+			listInfo.put("interiorAnswerList", interiorAnswerList);
+			listInfo.put("pageInfo", pageInfo);
+			System.out.println(interiorAnswerList);
+
+			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@PostMapping("/interiorAnswerDelete")
+	public ResponseEntity<String> interiorAnswerDelete(@RequestParam("answerAllNum") Integer answerAllNum,
+			@RequestParam("requestAllNum") Integer requestAllNum) {
+		try {
+			interiorAllService.interiorAnswerDelete(answerAllNum, requestAllNum);
+			System.out.println(answerAllNum);
+			return new ResponseEntity<String>("true", HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("집꾸답변 삭제 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
 }

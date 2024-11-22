@@ -2,11 +2,13 @@ package com.kosta.geekku.service;
 
 import java.util.List;
 
+import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequsetDto;
 import com.kosta.geekku.dto.ReviewDto;
 import com.kosta.geekku.dto.SampleDto;
 import com.kosta.geekku.entity.InteriorSample;
+import com.kosta.geekku.util.PageInfo;
 
 public interface InteriorService {
 	List<InteriorDto> interiorListForMain() throws Exception;
