@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -119,4 +120,17 @@ public class HouseController {
 			return new ResponseEntity<String>("집꾸답변 삭제 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@GetMapping("/mypageHouseAnswerList")
+	public ResponseEntity<Slice<HouseAnswerDto>> houseAnswerListForMypage(
+			 @RequestParam(required = false, defaultValue = "0", value = "page") int page, @RequestParam("companyId") String companyId) {
+		try {
+			Slice<HouseAnswerDto> houseAnswerList = houseService.houseAnswerListForMypage(page, companyId);
+			return new ResponseEntity<Slice<HouseAnswerDto>>(houseAnswerList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Slice<HouseAnswerDto>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 }

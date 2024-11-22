@@ -2,7 +2,6 @@ package com.kosta.geekku.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -141,5 +140,4 @@ public class CommunityServiceImpl implements CommunityService {
 			return false; // 북마크 비활성화
 		}
 	}
-
 }
