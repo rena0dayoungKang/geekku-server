@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
 import com.kosta.geekku.entity.Onestop;
 import com.kosta.geekku.repository.OnestopDslRepository;
@@ -80,6 +81,24 @@ public class OnestopServiceImpl implements OnestopService {
 	public void onestopDelete(Integer num) throws Exception {
 		// boardLikeRepository.deleteByBoardNum(num);
 		onestopRepository.deleteById(num);
+
+	}
+
+	@Override
+	public Integer onestopAnswerWrite(OnestopAnswerDto onestopAnswerDto, Integer onestopNum) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<OnestopAnswerDto> houseAnswerList(PageInfo pageInfo, Integer onestopNum) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onestopAnswerDelete(Integer onestopAnswerNum, Integer onestopNum) throws Exception {
+		// TODO Auto-generated method stub
 
 	}
 
