@@ -21,8 +21,6 @@ public class UserDto {
 	private String name; // 이름
 	private String password;
 	private String phone;
-	private String email1;
-	private String email2;
 	private String email;
 	private String nickname;
 	private Timestamp createdAt;
@@ -35,12 +33,11 @@ public class UserDto {
 						.password(password)
 						.name(name)
 						.phone(phone)
-						.email1(email1)
-						.email2(email2)
+						.email(email)
 						.nickname(nickname)
 						.createdAt(null)
 						.status(false)
-						.type("개인")
+						.type("user")
 						.role(role)
 						.build();
 

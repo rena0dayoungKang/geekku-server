@@ -2,14 +2,14 @@ package com.kosta.geekku.config.oauth;
 
 import java.util.Map;
 
-public class KakaoUserInfo implements OAuth2UserInfo {
+public class GoogleUserInfo implements OAuth2UserInfo {
 	
 	private Map<String, Object> attributes;
-
-	public KakaoUserInfo(Map<String, Object> attributes) {
+	
+	public GoogleUserInfo(Map<String, Object> attributes) {
 		this.attributes = attributes;
 	}
-	
+
 	@Override
 	public String getProviderId() {
 		return String.valueOf(attributes.get("id"));
@@ -17,23 +17,23 @@ public class KakaoUserInfo implements OAuth2UserInfo {
 
 	@Override
 	public String getProvider() {
-		return "Kakao";
+		return "Google";
 	}
 
 	@Override
 	public String getEmail() {
-		Map<String, Object> kakao_account = (Map<String, Object>)attributes.get("kakao_account");
-		return (String)kakao_account.get("email");
+		Map<String, Object> google_account = (Map<String, Object>)attributes.get("google_account");
+		return (String)google_account.get("profile");
 	}
 
 	@Override
 	public String getName() {
-		return (String)attributes.get("profile_nickname");
+		return (String)attributes.get("profile");
 	}
 
 	@Override
 	public String getUsername() {
-		return (String)attributes.get("profile_nickname");
+		return (String)attributes.get("profile");
 	}
 
 }

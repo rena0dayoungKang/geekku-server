@@ -21,7 +21,7 @@ import com.kosta.geekku.repository.UserRepository;
 @Configuration
 @EnableWebSecurity
 public class WebSecuritySconfig extends WebSecurityConfigurerAdapter {
-
+	
 	@Autowired
 	private CorsFilter corsFilter;
 
@@ -66,12 +66,14 @@ public class WebSecuritySconfig extends WebSecurityConfigurerAdapter {
 				.and()
 				.successHandler(oAuth2SuccessHandler);
 
-		http.addFilter(new JwtAuthrizationFilter(authenticationManager(), userRepository))
+		http.addFilter(new JwtAuthrizationFilter(authenticationManager(), userRepository,companyRepository))
 				.authorizeRequests()
 				.antMatchers("/mypage/**").authenticated()
-				.antMatchers("/estate/**").hasRole("REAL_ESTATE")
+				.antMatchers("/estate/**").hasRole("ESTATE")
 				.antMatchers("/interior/**").hasRole("INTERIOR")
 				.antMatchers("/user/**").hasRole("USER")
-				.anyRequest().permitAll();
+				.anyRequest().permitAll()
+				.and()
+				.logout().logoutSuccessUrl("/");
 	}
 }

@@ -2,6 +2,7 @@ package com.kosta.geekku.service;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,6 +65,22 @@ public class CompanyServiceImpl implements CompanyService {
 			throw new Exception("비밀번호 오류");
 		}
 		return company.toDto();
+	}
+
+	@Override
+	public CompanyDto getCompany(String username) throws Exception {
+		Company company = companyRepository.findByUsername(username).orElseThrow(() -> new Exception("사용자 아이디 오류"));
+		return company.toDto();
+	}
+
+	@Override
+	public void updateCompanyInfo(UUID companyId, CompanyDto companyDto) throws Exception {
+		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
+		if(companyDto.getCompanyAddress() != null) company.setCompanyAddress(companyDto.getCompanyAddress());
+		if(companyDto.getPhone() != null) company.setPhone(companyDto.getPhone());
+		if(companyDto.getEmail() != null) company.setEmail(companyDto.getEmail());
+		if(companyDto.getCompanyCertificationImage() != null) company.setCompanyCertificationImage(companyDto.getCompanyCertificationImage());
+		companyRepository.save(company);
 	}
 
 }

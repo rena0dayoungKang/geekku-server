@@ -37,8 +37,7 @@ public class User {
 	private String password;
 	private String name; // 이름
 	private String phone;
-	private String email1;
-	private String email2; // @naver.com
+	private String email;
 	private String nickname;
 	@Column(columnDefinition = "MEDIUMBLOB")
 	@Lob
@@ -63,9 +62,7 @@ public class User {
 								.username(username)
 								.name(name)
 								.phone(phone)
-								.email1(email1)
-								.email2(email2)
-								.email(email1 + "@" + email2)
+								.email(email)
 								.nickname(nickname)
 								.createdAt(createdAt)
 								.build();

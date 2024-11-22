@@ -29,8 +29,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			Authentication authentication) throws IOException, ServletException {
 
 		PrincipalDetails principalDetails =(PrincipalDetails)authentication.getPrincipal();
-		String accessToken = jwtToken.makeAccessToken(principalDetails.getUsername());
-		String refreshToken = jwtToken.makeRefreshToken(principalDetails.getUsername());
+		String accessToken = jwtToken.makeAccessToken(principalDetails.getUsername(), "user");
+		String refreshToken = jwtToken.makeRefreshToken(principalDetails.getUsername(), "user");
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		Map<String, String> map = new HashMap<>();

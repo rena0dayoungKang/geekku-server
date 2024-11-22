@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import com.kosta.geekku.config.oauth.OAuth2UserInfo;
 import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.User;
 
@@ -18,36 +19,45 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 	
 	private User user;
 	private Company company;
-	private Map<String, Object> attributes;
+	private OAuth2UserInfo oAuth2UserInfo;
 	
 	public PrincipalDetails(User user) {
 		this.user = user;
 	}
 	
-	public PrincipalDetails(User user, Map<String, Object> attributes) {
-		this.user = user;
-		this.attributes = attributes;
+	public PrincipalDetails(Company company) {
+		this.company = company;
+	}
+	
+	public PrincipalDetails(OAuth2UserInfo oAuth2UserInfo) {
+		this.oAuth2UserInfo = oAuth2UserInfo;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Collection<GrantedAuthority> collect = new ArrayList<>();
-		//collect.add(() -> user.getRole());
+		if(user!=null)	collect.add(() -> user.getRole().toString());
+		else if(company!=null) collect.add(() -> company.getRole().toString());
 		return collect;
 	}
 
 	@Override
 	public String getPassword() {
-		return user.getPassword();
+		if(user!=null) return user.getPassword();
+		else if(company!=null) return company.getPassword();
+		else return null;
 	}
 
 	@Override
 	public String getUsername() {
 		if (user != null) {
 			return user.getUsername();
-		} else {
-			return String.valueOf(attributes.get("username"));
+		} else if(oAuth2UserInfo != null) {
+			return oAuth2UserInfo.getUsername();
+		} else if(company!=null) {
+			return company.getUsername();
 		}
+		return null;
 	}
 
 	@Override
@@ -74,12 +84,9 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 	public String getName() {
 		return user.getName() + "";
 	}
-	
+
 	@Override
 	public Map<String, Object> getAttributes() {
-		return attributes;
+		return null;
 	}
-	
-	
-
 }
