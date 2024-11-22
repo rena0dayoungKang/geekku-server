@@ -28,23 +28,14 @@ public class InteriorDto {
 	private String intro;
 	private String content;
 	private Timestamp createdAt;
-	
+
 	public Interior toEntity() {
-		Interior interior = Interior.builder()
-					.interiorNum(interiorNum)
-					.company(Company.builder().companyId(getCompanyId())
-							.companyName(getCompanyName()).build())
-					.possiblePart(false)
-					.period(period)
-					.recentCount(recentCount)
-					.repairDate(repairDate)
-					.possibleLocation(possibleLocation)
-					.coverImage(coverImage)
-					.intro(intro)
-					.content(content)
-					.createdAt(createdAt)
-					.build();
-		if(createdAt!=null) {
+		Interior interior = Interior.builder().interiorNum(interiorNum)
+				.company(Company.builder().companyId(getCompanyId()).companyName(getCompanyName()).build())
+				.possiblePart(false).period(period).recentCount(recentCount).repairDate(repairDate)
+				.possibleLocation(possibleLocation).coverImage(coverImage).intro(intro).content(content)
+				.createdAt(createdAt).build();
+		if (createdAt != null) {
 			interior.setCreatedAt(createdAt);
 		}
 		return interior;

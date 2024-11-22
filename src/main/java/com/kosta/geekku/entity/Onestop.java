@@ -27,7 +27,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 public class Onestop {
-	// �븳踰덉뿉 袁명븯湲�
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer onestopNum;
@@ -43,10 +42,10 @@ public class Onestop {
 	private String rentType;
 	private Integer size;
 	private Integer money;
-	private String workType;
+	private boolean workType;
 	private String interiorType;
 	private Integer movePersons;
-	private Integer allowPhone;
+	private boolean allowPhone;
 	private String title;
 	@Column(length = 1000)
 	private String content;

@@ -24,20 +24,19 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class InteriorSeviceImpl implements InteriorService {
-	
+
 	private final InteriorRepository interiorRepository;
 	private final InteriorDslRepository interiorDslRepository;
 	private final InteriorBookmarkRepository interiorBookmarkRepository;
 	private final UserRepository userRepository;
-	
 	@Value("${upload.path}")
 	private String uploadPath;
-	
+
 	@Override
 	public List<InteriorDto> interiorListForMain() throws Exception {
 		List<InteriorDto> interiorDtoList = null;
-		interiorDtoList = interiorDslRepository.findInteriorListForMain()
-				.stream().map(i->i.toDto()).collect(Collectors.toList());
+		interiorDtoList = interiorDslRepository.findInteriorListForMain().stream().map(i -> i.toDto())
+				.collect(Collectors.toList());
 		return interiorDtoList;
 	}
 
@@ -49,6 +48,12 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
+	public InteriorDto interiorCompanyDetail(Integer num) throws Exception {
+		Interior interior = interiorRepository.findById(num).orElseThrow(() -> new Exception("글번호 오류"));
+		System.out.println("service" + num);
+		// onestopDslRepository.updateOnestopViewCount(num, onestop.getViewCount() + 1);
+		return interior.toDto();
+	}
 	public List<InteriorDto> interiorList(String possibleLocation) throws Exception {
 		List<InteriorDto> interiorDtoList = null;
 		Long allCnt = 0L;
@@ -90,6 +95,4 @@ public class InteriorSeviceImpl implements InteriorService {
 		interiorRepository.save(interior);
 		return interior.getInteriorNum();
 	}
-	
-	
 }

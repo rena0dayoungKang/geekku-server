@@ -64,10 +64,23 @@ public class OnestopServiceImpl implements OnestopService {
 		return onestop.toDto();
 	}
 
+	/*
+	 * @Override public Integer onestopModify(OnestopDto onestopDto) throws
+	 * Exception { Onestop onestop =
+	 * onestopRepository.findById(onestopDto.getOnestopNum()) .orElseThrow(() -> new
+	 * Exception("글번호 오류")); System.out.println(onestop.getOnestopNum());
+	 * onestop.setTitle(onestopDto.getTitle());
+	 * onestop.setContent(onestopDto.getContent()); onestopRepository.save(onestop);
+	 * 
+	 * return onestop.getOnestopNum(); }
+	 */
+
 	@Override
-	public Integer onestopModify(OnestopDto onestopDto) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	@Transactional
+	public void onestopDelete(Integer num) throws Exception {
+		// boardLikeRepository.deleteByBoardNum(num);
+		onestopRepository.deleteById(num);
+
 	}
 
 }

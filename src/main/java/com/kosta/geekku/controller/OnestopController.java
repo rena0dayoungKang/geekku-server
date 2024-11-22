@@ -40,12 +40,26 @@ public class OnestopController {
 		}
 	}
 
+	/*
+	 * @PostMapping("/onestopModify") public ResponseEntity<Integer>
+	 * onestopModify(OnestopDto onestopDto)
+	 * 
+	 * @RequestPart(value = "delFile", required = false) Integer[] delFileNum,
+	 * 
+	 * @RequestPart(value = "file", required = false) MultipartFile[] fileList) {
+	 * try { onestopService.onestopModify(onestopDto); return new
+	 * ResponseEntity<Integer>(onestopDto.getOnestopNum(), HttpStatus.OK); } catch
+	 * (Exception e) { e.printStackTrace(); return new
+	 * ResponseEntity<Integer>(HttpStatus.BAD_REQUEST); } }
+	 */
+
 	@GetMapping("/onestopDetail/{num}")
 	public ResponseEntity<Map<String, Object>> onestopDetail(@PathVariable Integer num) {
 		try {
 			Map<String, Object> res = new HashMap<>();
 			System.out.println("controller" + num);
 			OnestopDto onestopDto = onestopService.onestopDetail(num);
+			System.out.println(num);
 			// boolean heart = onestopService.checkHeart(boardDto.getWriter(), num) != null;
 			res.put("onestop", onestopDto);
 			// res.put("heart", heart);
@@ -73,6 +87,17 @@ public class OnestopController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@PostMapping("/onestopDelete/{num}")
+	public ResponseEntity<String> onestopDelete(@PathVariable Integer num) {
+		try {
+			onestopService.onestopDelete(num);
+			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
 }
