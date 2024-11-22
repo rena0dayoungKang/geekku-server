@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
@@ -47,7 +49,8 @@ public class User {
 	private String type;	//user
 
 	// OAuth(소셜로그인)를 위해 구성하는 필드
-	private String roles;
+	@Enumerated(EnumType.STRING)
+	private Role role;
 	private String provider;
 	private String providerId;
 	@Column(columnDefinition = "MEDIUMBLOB") 
@@ -62,7 +65,7 @@ public class User {
 								.phone(phone)
 								.email1(email1)
 								.email2(email2)
-								.email(email1 + "@" + email2) //회원정보 사이드바를 위해 이메일 합침
+								.email(email1 + "@" + email2)
 								.nickname(nickname)
 								.createdAt(createdAt)
 								.build();

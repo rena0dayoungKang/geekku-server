@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.CompanyDto;
+import com.kosta.geekku.entity.Role;
 import com.kosta.geekku.service.CompanyService;
 import com.kosta.geekku.service.EstateNumberService;
 
@@ -30,11 +31,19 @@ public class CompanyController {
 	public ResponseEntity<String> joinCompany(CompanyDto companyDto,
 											  @RequestParam(name = "file", required = false) MultipartFile file) {
 		try {			
-			System.out.println(companyDto);
 			String rawPassword = companyDto.getPassword();
 			companyDto.setPassword(bCryptPasswordEncoder.encode(rawPassword));
+			
+			if("real_estate".equals(companyDto.getType())) {
+				companyDto.setRole(Role.ROLE_ESTATE);
+			} else if ("interior".equals(companyDto.getType())) {
+				companyDto.setRole(Role.ROLE_INTERIOR);
+			} else {
+				return new ResponseEntity<String>("사업자 타입 오류", HttpStatus.BAD_REQUEST);
+			}
+			
 			companyService.joinCompany(companyDto, file);
-			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
+			return new ResponseEntity<String>("기업회원 가입 성공", HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("회원가입 실패", HttpStatus.BAD_REQUEST);

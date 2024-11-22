@@ -3,6 +3,7 @@ package com.kosta.geekku.dto;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import com.kosta.geekku.entity.Role;
 import com.kosta.geekku.entity.User;
 
 import lombok.AllArgsConstructor;
@@ -26,6 +27,8 @@ public class UserDto {
 	private String nickname;
 	private Timestamp createdAt;
 	
+	private Role role;
+	
 	public User toEntity() {		
 		User user = User.builder()
 						.username(username)
@@ -37,8 +40,8 @@ public class UserDto {
 						.nickname(nickname)
 						.createdAt(null)
 						.status(false)
-						.type("user")
-						.roles("ROLE_USER")
+						.type("개인")
+						.role(role)
 						.build();
 
 		if(userId!=null) {
