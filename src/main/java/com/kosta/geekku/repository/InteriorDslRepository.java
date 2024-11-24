@@ -62,7 +62,7 @@ public class InteriorDslRepository {
 		QInteriorBookmark interiorBookmark = QInteriorBookmark.interiorBookmark;
 		return jpaQueryFactory.select(interiorBookmark.bookmarkInteriorNum)
 				.from(interiorBookmark)
-				.where(interiorBookmark.user.userId.eq(userId).and(interiorBookmark.bookmarkInteriorNum.eq(interiorNum)))
+				.where(interiorBookmark.userId.eq(userId).and(interiorBookmark.bookmarkInteriorNum.eq(interiorNum)))
 				.fetchOne();
 	}
 }
