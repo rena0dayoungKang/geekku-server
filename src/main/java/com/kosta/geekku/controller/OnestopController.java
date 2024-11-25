@@ -125,7 +125,7 @@ public class OnestopController {
 			pageInfo.setCurPage(page);
 			List<OnestopAnswerDto> onestopAnswerList = onestopService.onestopAnswerList(pageInfo, onestopNum);
 			Map<String, Object> listInfo = new HashMap<>();
-			listInfo.put("interiorAnswerList", onestopAnswerList);
+			listInfo.put("onestopAnswerList", onestopAnswerList);
 			listInfo.put("pageInfo", pageInfo);
 			System.out.println(onestopAnswerList);
 
@@ -135,6 +135,7 @@ public class OnestopController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
+
 
 	@PostMapping("/onestopAnswerDelete")
 	public ResponseEntity<String> interiorAnswerDelete(@RequestParam("onestopAnswerNum") Integer onestopAnswerNum,

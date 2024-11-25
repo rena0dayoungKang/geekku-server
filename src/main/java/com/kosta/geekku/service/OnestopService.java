@@ -2,6 +2,8 @@ package com.kosta.geekku.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Slice;
+
 import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
 import com.kosta.geekku.util.PageInfo;
@@ -22,4 +24,6 @@ public interface OnestopService {
 	List<OnestopAnswerDto> onestopAnswerList(PageInfo pageInfo, Integer onestopNum) throws Exception;
 
 	void onestopAnswerDelete(Integer onestopAnswerNum, Integer onestopNum) throws Exception;
+
+	Slice<OnestopAnswerDto> onestopAnswerListForMypage(int page, String companyId) throws Exception;
 }

@@ -4,10 +4,14 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -29,11 +33,13 @@ public class InteriorSample {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer sampleNum;
 
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name = "interiorNum")
-//	private Interior interior;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "companyId")
+	private Company company;
 
-	private Integer interiorNum;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "interiorNum")
+	private Interior interior;
 
 	private String type; // 주거형태
 	private String style;
@@ -48,9 +54,9 @@ public class InteriorSample {
 	private Timestamp createdAt;
 
 	public SampleDto toDto() {
-		SampleDto sampleDto = SampleDto.builder().sampleNum(sampleNum).interiorNum(interiorNum).type(type)
-				.style(style).size(size).location(location).coverImage(coverImage).intro(intro)
-				.content(content).createdAt(createdAt).build();
+		SampleDto sampleDto = SampleDto.builder().sampleNum(sampleNum).interiorNum(interior.getInteriorNum()).type(type)
+				.style(style).size(size).location(location).coverImage(coverImage).intro(intro).content(content)
+				.createdAt(createdAt).build();
 		return sampleDto;
 	}
 }

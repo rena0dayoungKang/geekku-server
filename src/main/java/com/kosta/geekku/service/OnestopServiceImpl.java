@@ -1,18 +1,28 @@
 package com.kosta.geekku.service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kosta.geekku.dto.HouseAnswerDto;
 import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
+import com.kosta.geekku.entity.Company;
+import com.kosta.geekku.entity.House;
+import com.kosta.geekku.entity.HouseAnswer;
 import com.kosta.geekku.entity.InteriorAllRequest;
 import com.kosta.geekku.entity.Onestop;
 import com.kosta.geekku.entity.OnestopAnswer;
+import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.OnestopAnswerRepository;
 import com.kosta.geekku.repository.OnestopDslRepository;
 import com.kosta.geekku.repository.OnestopRepository;
@@ -27,6 +37,7 @@ public class OnestopServiceImpl implements OnestopService {
 	private final OnestopRepository onestopRepository;
 	private final OnestopDslRepository onestopDslRepository;
 	private final OnestopAnswerRepository onestopAnswerRepository;
+	private final CompanyRepository companyRepository;
 
 	@Override
 	public List<OnestopDto> onestopList(PageInfo pageInfo, String type, String word) throws Exception {
@@ -124,6 +135,18 @@ public class OnestopServiceImpl implements OnestopService {
 		onestopAnswerRepository.findById(onestopAnswerNum).orElseThrow(() -> new Exception("답변이 존재하지 않습니다."));
 		onestopAnswerRepository.deleteById(onestopAnswerNum);
 
+	}
+
+	@Override
+	public Slice<OnestopAnswerDto> onestopAnswerListForMypage(int page, String companyId) throws Exception {
+
+		Optional<Company> company = companyRepository.findById(UUID.fromString(companyId));
+
+		Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Slice<OnestopAnswerDto> pageInfo = onestopAnswerRepository.findAllByCompany(company, pageable)
+				.map(OnestopAnswer::toDto);
+
+		return pageInfo;
 	}
 
 }

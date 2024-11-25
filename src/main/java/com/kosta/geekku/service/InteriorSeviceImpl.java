@@ -7,27 +7,25 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequsetDto;
 import com.kosta.geekku.dto.ReviewDto;
 import com.kosta.geekku.dto.SampleDto;
 import com.kosta.geekku.entity.Interior;
-import com.kosta.geekku.entity.InteriorAllAnswer;
-import com.kosta.geekku.entity.InteriorAllRequest;
 import com.kosta.geekku.entity.InteriorBookmark;
 import com.kosta.geekku.entity.InteriorRequest;
 import com.kosta.geekku.entity.InteriorReview;
 import com.kosta.geekku.entity.InteriorSample;
-import com.kosta.geekku.repository.InteriorAllAnswerRepository;
-import com.kosta.geekku.repository.InteriorAllRequestRepository;
 import com.kosta.geekku.repository.InteriorBookmarkRepository;
 import com.kosta.geekku.repository.InteriorDslRepository;
 import com.kosta.geekku.repository.InteriorRepository;
+import com.kosta.geekku.repository.InteriorRequestDslRepository;
 import com.kosta.geekku.repository.InteriorRequestRepository;
 import com.kosta.geekku.repository.InteriorReviewRepository;
+import com.kosta.geekku.repository.InteriorSampleDslRepository;
 import com.kosta.geekku.repository.InteriorSampleRepository;
 import com.kosta.geekku.repository.UserRepository;
 import com.kosta.geekku.util.PageInfo;
@@ -43,9 +41,11 @@ public class InteriorSeviceImpl implements InteriorService {
 	private final InteriorBookmarkRepository interiorBookmarkRepository;
 	private final UserRepository userRepository;
 	private final InteriorSampleRepository interiorSampleRepository;
+	private final InteriorSampleDslRepository interiorSampleDslRepository;
 	private final InteriorReviewRepository interiorReviewRepository;
 	private final InteriorRequestRepository interiorRequestRepository;
-	
+	private final InteriorRequestDslRepository interiorRequestDslRepository;
+
 	@Value("${upload.path}")
 	private String uploadPath;
 
@@ -133,7 +133,7 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	@Override
 	public SampleDto sampleDetail(Integer num) throws Exception {
-		InteriorSample sample = interiorSampleRepository.findById(num).orElseThrow(()->new Exception("글 번호 오류"));
+		InteriorSample sample = interiorSampleRepository.findById(num).orElseThrow(() -> new Exception("글 번호 오류"));
 		return sample.toDto();
 	}
 
@@ -146,8 +146,42 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	@Override
 	public InteriorRequsetDto requestDetail(Integer num) throws Exception {
-		InteriorRequest request = interiorRequestRepository.findById(num).orElseThrow(()->new Exception("요청 글 번호 오류"));
+		InteriorRequest request = interiorRequestRepository.findById(num)
+				.orElseThrow(() -> new Exception("요청 글 번호 오류"));
 		return request.toDto();
-	}	
+	}
+
+	@Override
+	public List<ReviewDto> interiorReviewList(PageInfo pageInfo, Integer interiorNum) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<InteriorRequsetDto> interiorRequestList(PageInfo pageInfo, Integer interiorNum) throws Exception {
+		InteriorRequest interiorRequest = interiorRequestRepository.findById(interiorNum)
+				.orElseThrow(() -> new Exception("방꾸 글번호 오류"));
+		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
+
+		List<InteriorRequsetDto> interiorRequestDtoList = interiorRequestDslRepository
+				.interiorRequestListByPaging(pageRequest).stream().map(a -> a.toDto()).collect(Collectors.toList());
+		Long cnt = interiorRequestDslRepository.interiorRequestCount();
+
+		Integer allPage = (int) (Math.ceil(cnt.doubleValue() / pageRequest.getPageSize()));
+		Integer startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
+		Integer endPage = Math.min(startPage + 10 - 1, allPage);
+
+		pageInfo.setAllPage(allPage);
+		pageInfo.setStartPage(startPage);
+		pageInfo.setEndPage(endPage);
+
+		return interiorRequestDtoList;
+	}
+
+	@Override
+	public List<SampleDto> interiorSampleList(Integer interiorNum) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

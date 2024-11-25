@@ -1,18 +1,25 @@
 package com.kosta.geekku.service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kosta.geekku.dto.HouseAnswerDto;
 import com.kosta.geekku.dto.InteriorAllDto;
 import com.kosta.geekku.dto.InteriorAnswerDto;
-import com.kosta.geekku.entity.House;
+import com.kosta.geekku.dto.OnestopAnswerDto;
+import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.InteriorAllAnswer;
 import com.kosta.geekku.entity.InteriorAllRequest;
+import com.kosta.geekku.entity.OnestopAnswer;
+import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.InteriorAllAnswerRepository;
 import com.kosta.geekku.repository.InteriorAllRequestDslRepository;
 import com.kosta.geekku.repository.InteriorAllRequestRepository;
@@ -27,6 +34,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	private final InteriorAllRequestRepository interiorAllRepository;
 	private final InteriorAllRequestDslRepository interiorAllRequestDslRepository;
 	private final InteriorAllAnswerRepository interiorAllAnswerRepository;
+	private final CompanyRepository companyRepository;
 
 	@Override
 	public Integer interiorAllWrite(InteriorAllDto interiorAllDto) throws Exception {
@@ -95,10 +103,10 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	@Override
 	public List<InteriorAnswerDto> interiorAnswerList(PageInfo pageInfo, Integer requestAllNum) throws Exception {
 		InteriorAllRequest interiorAll = interiorAllRepository.findById(requestAllNum)
-				.orElseThrow(() -> new Exception("집꾸 글번호 오류"));
+				.orElseThrow(() -> new Exception("방꾸 글번호 오류"));
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
 
-		List<InteriorAnswerDto> houseAnswerDtoList = interiorAllRequestDslRepository
+		List<InteriorAnswerDto> interiorAnswerDtoList = interiorAllRequestDslRepository
 				.interiorAllAnswerListByPaging(pageRequest).stream().map(a -> a.toDto()).collect(Collectors.toList());
 		Long cnt = interiorAllRequestDslRepository.interiorAllAnswerCount();
 
@@ -110,7 +118,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
 
-		return houseAnswerDtoList;
+		return interiorAnswerDtoList;
 	}
 
 	@Transactional
@@ -120,6 +128,18 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 		System.out.println(answerAllNum);
 		interiorAllAnswerRepository.deleteById(answerAllNum);
 
+	}
+
+	@Override
+	public Slice<InteriorAnswerDto> interiorAnswerListForMypage(Integer page, String companyId) throws Exception {
+
+		Optional<Company> company = companyRepository.findById(UUID.fromString(companyId));
+
+		Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Slice<InteriorAnswerDto> pageInfo = interiorAllAnswerRepository.findAllByCompany(company, pageable)
+				.map(InteriorAllAnswer::toDto);
+
+		return pageInfo;
 	}
 
 }

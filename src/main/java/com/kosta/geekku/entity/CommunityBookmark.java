@@ -33,9 +33,9 @@ public class CommunityBookmark {
 	@JoinColumn(name = "communityNum")
 	private Community community;
 	// private Integer communityNum;
-	
-    public CommunityBookmark(Integer bookmarkCommunityNum, User userId) {
-        this.bookmarkCommunityNum = bookmarkCommunityNum;
-        this.user = userId;
-    }
+
+	public CommunityBookmark(Integer bookmarkCommunityNum, User userId) {
+		this.bookmarkCommunityNum = bookmarkCommunityNum;
+		this.user = userId;
+	}
 }
