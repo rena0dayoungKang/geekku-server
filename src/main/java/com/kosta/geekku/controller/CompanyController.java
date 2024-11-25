@@ -33,7 +33,7 @@ import com.kosta.geekku.service.EstateNumberService;
 public class CompanyController {
 
 	@Autowired
-	private CompanyService companyService;
+	private CompanyService companyService; 
 
 	@Autowired
 	private EstateNumberService estateNumberService;
