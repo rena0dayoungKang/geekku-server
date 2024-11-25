@@ -1,6 +1,8 @@
 package com.kosta.geekku.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -9,20 +11,15 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequsetDto;
 import com.kosta.geekku.dto.ReviewDto;
 import com.kosta.geekku.dto.SampleDto;
 import com.kosta.geekku.entity.Interior;
-import com.kosta.geekku.entity.InteriorAllAnswer;
-import com.kosta.geekku.entity.InteriorAllRequest;
 import com.kosta.geekku.entity.InteriorBookmark;
 import com.kosta.geekku.entity.InteriorRequest;
 import com.kosta.geekku.entity.InteriorReview;
 import com.kosta.geekku.entity.InteriorSample;
-import com.kosta.geekku.repository.InteriorAllAnswerRepository;
-import com.kosta.geekku.repository.InteriorAllRequestRepository;
 import com.kosta.geekku.repository.InteriorBookmarkRepository;
 import com.kosta.geekku.repository.InteriorDslRepository;
 import com.kosta.geekku.repository.InteriorRepository;
@@ -30,7 +27,6 @@ import com.kosta.geekku.repository.InteriorRequestRepository;
 import com.kosta.geekku.repository.InteriorReviewRepository;
 import com.kosta.geekku.repository.InteriorSampleRepository;
 import com.kosta.geekku.repository.UserRepository;
-import com.kosta.geekku.util.PageInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -148,6 +144,35 @@ public class InteriorSeviceImpl implements InteriorService {
 	public InteriorRequsetDto requestDetail(Integer num) throws Exception {
 		InteriorRequest request = interiorRequestRepository.findById(num).orElseThrow(()->new Exception("요청 글 번호 오류"));
 		return request.toDto();
-	}	
+	}
+
+	@Override
+	public List<InteriorSample> sampleList(String date, String type, String style, Integer size, String location)
+			throws Exception {
+		List<InteriorSample> sampleDtoList = null;
+		Long allCnt = 0L;
+		sampleDtoList = interiorDslRepository.sampleListByFilter(date, type, style, size, location);
+		allCnt = interiorDslRepository.sampleCountByFilter(date, type, style, size, location);
+		return sampleDtoList;
+	}
+
+	@Override
+	public Map<String, Object> interiorDetail(Integer interiorNum) throws Exception {
+		Map<String,Object> detailInfo = new HashMap<>();
+		Interior interiorDetail = interiorRepository.findById(interiorNum).orElseThrow(()->new Exception("인테리어 업체 번호 오류"));
+		List<InteriorSample> sampleDetail = interiorSampleRepository.findByInteriorNum(interiorNum);
+		List<InteriorReview> reviewDetail = interiorReviewRepository.findByInterior_interiorNum(interiorNum);
+		
+		InteriorDto interiorInfo = interiorDetail.toDto();
+		List<SampleDto> sampleInfo = sampleDetail.stream().map(s->s.toDto()).collect(Collectors.toList());
+		List<ReviewDto> reviewInfo = reviewDetail.stream().map(r->r.toDto()).collect(Collectors.toList());				
+		
+		detailInfo.put("interiorDetail", interiorInfo);
+		detailInfo.put("sampleDetail", sampleInfo);
+		detailInfo.put("reviewDetail", reviewInfo);
+		return detailInfo;
+	}
+
+
 
 }

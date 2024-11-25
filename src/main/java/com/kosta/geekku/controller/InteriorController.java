@@ -10,18 +10,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequsetDto;
 import com.kosta.geekku.dto.ReviewDto;
 import com.kosta.geekku.dto.SampleDto;
 import com.kosta.geekku.entity.InteriorSample;
 import com.kosta.geekku.service.InteriorService;
-import com.kosta.geekku.util.PageInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -140,4 +137,33 @@ public class InteriorController {
 			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	@GetMapping("/sampleList")
+	public ResponseEntity<Map<String,Object>> sampleList(
+			@RequestParam(required = false) String date,
+			@RequestParam(required = false) String type,
+			@RequestParam(required = false) String style,
+			@RequestParam(required = false) Integer size,
+			@RequestParam(required = false) String location) {
+		try {
+			List<InteriorSample> sampleList = interiorService.sampleList(date, type, style, size, location);
+			System.out.println(sampleList);
+			Map<String, Object> listInfo = new HashMap<>();
+			listInfo.put("sampleList", sampleList);
+			return new ResponseEntity<Map<String,Object>>(listInfo,HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	@GetMapping("/interiorDetail")
+	public ResponseEntity<Map<String,Object>> interiorDetail(Integer num) {
+		try {
+			Map<String,Object> detailInfo = interiorService.interiorDetail(num);
+			return new ResponseEntity<Map<String,Object>>(detailInfo, HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 }
