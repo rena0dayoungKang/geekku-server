@@ -45,6 +45,7 @@ public class EstateController {
 	public ResponseEntity<String> estateWrite(EstateDto estateDto, 
 			@RequestPart (name="images", required=false) MultipartFile[] images) {
 		try {
+			System.out.println(estateDto);
 			Integer estateNum = estateService.estateWrite(estateDto, images == null ? null : Arrays.asList(images));
 			return new ResponseEntity<String>(String.valueOf(estateNum), HttpStatus.OK);
 		} catch (Exception e) {
@@ -53,10 +54,18 @@ public class EstateController {
 		}
 	}
 	
-	@GetMapping("/image/{num}")
+	@GetMapping("/estateImage/{num}")
 	public void image(@PathVariable String num, HttpServletResponse response) {
 		try {
-			InputStream ins = new FileInputStream(new File(uploadPath, num));
+			System.out.println(num);
+		       // 파일이 존재하지 않는 경우 처리
+			File file = new File(uploadPath, num);
+            if (!file.exists()) {
+                System.out.println("파일 존재하지 않음");
+                return;
+            }
+            InputStream ins = new FileInputStream(file);
+//			InputStream ins = new FileInputStream(new File(uploadPath, num));
 			FileCopyUtils.copy(ins, response.getOutputStream());
 			ins.close();
 		} catch (Exception e) {

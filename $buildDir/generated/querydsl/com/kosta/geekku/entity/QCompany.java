@@ -33,9 +33,7 @@ public class QCompany extends EntityPathBase<Company> {
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 
-    public final StringPath email1 = createString("email1");
-
-    public final StringPath email2 = createString("email2");
+    public final StringPath email = createString("email");
 
     public final StringPath estateNumber = createString("estateNumber");
 
@@ -44,6 +42,8 @@ public class QCompany extends EntityPathBase<Company> {
     public final StringPath phone = createString("phone");
 
     public final ArrayPath<byte[], Byte> profileImage = createArray("profileImage", byte[].class);
+
+    public final EnumPath<Role> role = createEnum("role", Role.class);
 
     public final BooleanPath status = createBoolean("status");
 

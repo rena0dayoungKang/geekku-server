@@ -21,6 +21,7 @@ public class EstateDto {
 	private String type; 
 	private String address1;
 	private String address2;
+	private String jibunAddress;
 	private String size1;
 	private String size2;
 	private Integer roomCount;
@@ -53,6 +54,7 @@ public class EstateDto {
 				.type(type)
 				.address1(address1)
 				.address2(address2)
+				.jibunAddress(jibunAddress)
 				.size1(size1)
 				.size2(size2)
 				.roomCount(roomCount)

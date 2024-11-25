@@ -88,6 +88,18 @@ public class EstateDslRepository {
 		return cnt;
 	}
 	
+	public Long keywordEstateCount(String keyword) throws Exception {
+		QEstate estate = QEstate.estate;
+		Long cnt = 0L;
+
+		cnt = jpaQueryFactory.select(estate.count())
+					.from(estate)
+					.where(estate.jibunAddress.contains(keyword))
+					.fetchOne();
+
+		return cnt;
+	}
+	
 	public List<Estate> findEstateListByPaging(PageRequest pageRequest) throws Exception {
 		QEstate estate = QEstate.estate;
 		
@@ -102,30 +114,30 @@ public class EstateDslRepository {
 		QEstate estate = QEstate.estate;
 		List<Estate> estateList = null;
 
-		if (type.equals("farmHouse") && keyword != null) {
+		if (type.equals("farmHouse")) {
 			estateList = jpaQueryFactory.selectFrom(estate)
-					.where(estate.type.eq(type).and(estate.address1.contains(keyword).or(estate.address2.contains(keyword))))
+					.where(estate.type.eq(type).and(estate.jibunAddress.contains(keyword)))
 					.orderBy(estate.createdAt.desc())
 					.offset(pageRequest.getOffset())
 					.limit(pageRequest.getPageSize())
 					.fetch();
-		} else if (type.equals("countryHouse") && keyword != null) {
+		} else if (type.equals("countryHouse")) {
 			estateList = jpaQueryFactory.selectFrom(estate)
-					.where(estate.type.eq(type).and(estate.address1.contains(keyword).or(estate.address2.contains(keyword))))
+					.where(estate.type.eq(type).and(estate.jibunAddress.contains(keyword)))
 					.orderBy(estate.createdAt.desc())
 					.offset(pageRequest.getOffset())
 					.limit(pageRequest.getPageSize())
 					.fetch();
-		} else if (type.equals("apt") && keyword != null) {
+		} else if (type.equals("apt")) {
 			estateList = jpaQueryFactory.selectFrom(estate)
-					.where(estate.type.eq(type).and(estate.address1.contains(keyword).or(estate.address2.contains(keyword))))
+					.where(estate.type.eq(type).and(estate.jibunAddress.contains(keyword)))
 					.orderBy(estate.createdAt.desc())
 					.offset(pageRequest.getOffset())
 					.limit(pageRequest.getPageSize())
 					.fetch();
-		} else if (type.equals("land") && keyword != null) {
+		} else if (type.equals("land")) {
 			estateList = jpaQueryFactory.selectFrom(estate)
-					.where(estate.type.eq(type).and(estate.address1.contains(keyword).or(estate.address2.contains(keyword))))
+					.where(estate.type.eq(type).and(estate.jibunAddress.contains(keyword)))
 					.orderBy(estate.createdAt.desc())
 					.offset(pageRequest.getOffset())
 					.limit(pageRequest.getPageSize())
@@ -170,6 +182,17 @@ public class EstateDslRepository {
 		}
 		
 		return estateList;
+	}
+	
+	public List<Estate> keywordEstateListByPaging(PageRequest pageRequest, String keyword) throws Exception {
+		QEstate estate = QEstate.estate;
+		
+		return jpaQueryFactory.selectFrom(estate)
+					.where(estate.jibunAddress.contains(keyword))
+					.orderBy(estate.createdAt.desc())
+					.offset(pageRequest.getOffset())
+					.limit(pageRequest.getPageSize())
+					.fetch();
 	}
 	
 	public List<Estate> findEstateListForMain() throws Exception {

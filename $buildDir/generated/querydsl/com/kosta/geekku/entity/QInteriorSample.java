@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -18,17 +17,15 @@ public class QInteriorSample extends EntityPathBase<InteriorSample> {
 
     private static final long serialVersionUID = -11073660L;
 
-    private static final PathInits INITS = PathInits.DIRECT2;
-
     public static final QInteriorSample interiorSample = new QInteriorSample("interiorSample");
-
-    public final QCompany company;
 
     public final StringPath content = createString("content");
 
     public final NumberPath<Integer> coverImage = createNumber("coverImage", Integer.class);
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
+
+    public final NumberPath<Integer> interiorNum = createNumber("interiorNum", Integer.class);
 
     public final StringPath intro = createString("intro");
 
@@ -43,24 +40,15 @@ public class QInteriorSample extends EntityPathBase<InteriorSample> {
     public final StringPath type = createString("type");
 
     public QInteriorSample(String variable) {
-        this(InteriorSample.class, forVariable(variable), INITS);
+        super(InteriorSample.class, forVariable(variable));
     }
 
     public QInteriorSample(Path<? extends InteriorSample> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+        super(path.getType(), path.getMetadata());
     }
 
     public QInteriorSample(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QInteriorSample(PathMetadata metadata, PathInits inits) {
-        this(InteriorSample.class, metadata, inits);
-    }
-
-    public QInteriorSample(Class<? extends InteriorSample> type, PathMetadata metadata, PathInits inits) {
-        super(type, metadata, inits);
-        this.company = inits.isInitialized("company") ? new QCompany(forProperty("company")) : null;
+        super(InteriorSample.class, metadata);
     }
 
 }

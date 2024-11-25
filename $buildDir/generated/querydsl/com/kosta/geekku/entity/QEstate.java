@@ -50,6 +50,8 @@ public class QEstate extends EntityPathBase<Estate> {
 
     public final NumberPath<Integer> jeonsePrice = createNumber("jeonsePrice", Integer.class);
 
+    public final StringPath jibunAddress = createString("jibunAddress");
+
     public final NumberPath<Integer> managePrice = createNumber("managePrice", Integer.class);
 
     public final NumberPath<Integer> monthlyPrice = createNumber("monthlyPrice", Integer.class);
