@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,10 +37,10 @@ public class HouseController {
 		}
 	}
 
-	@GetMapping("/houseDetail/{houseNum}")
-	public ResponseEntity<HouseDto> houseDetail(@PathVariable Integer houseNum) {
+	@GetMapping("/houseDetail/{num}")
+	public ResponseEntity<HouseDto> houseDetail(@PathVariable Integer num) {
 		try {
-			HouseDto houseDto = houseService.houseDetail(houseNum);
+			HouseDto houseDto = houseService.houseDetail(num);
 			return new ResponseEntity<HouseDto>(houseDto, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -123,14 +123,31 @@ public class HouseController {
 	}
 	
 	@GetMapping("/mypageHouseAnswerList")
-	public ResponseEntity<Slice<HouseAnswerDto>> houseAnswerListForMypage(
-			 @RequestParam(required = false, defaultValue = "0", value = "page") int page, @RequestParam("companyId") String companyId) {
+	public ResponseEntity<Page<HouseAnswerDto>> houseAnswerListForMypage(
+			 @RequestParam(required = false, defaultValue = "1", value = "page") int page,  
+			 @RequestParam(required = false, defaultValue = "10", value = "size") int size, 
+			 @RequestParam("companyId") String companyId) {
 		try {
-			Slice<HouseAnswerDto> houseAnswerList = houseService.houseAnswerListForMypage(page, companyId);
-			return new ResponseEntity<Slice<HouseAnswerDto>>(houseAnswerList, HttpStatus.OK);
+			Page<HouseAnswerDto> houseAnswerList = houseService.houseAnswerListForMypage(page, size, companyId);
+			return new ResponseEntity<Page<HouseAnswerDto>>(houseAnswerList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Slice<HouseAnswerDto>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Page<HouseAnswerDto>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/mypageUserHouseList")
+	public ResponseEntity<Page<HouseDto>> houseListForUserMypage(
+			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size, 
+			@RequestParam("userId") String userId) {
+		try {
+			Page<HouseDto> houseList = houseService.houseListForUserMypage(page, size, userId);
+			return new ResponseEntity<Page<HouseDto>>(houseList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Page<HouseDto>>(HttpStatus.BAD_REQUEST);
+			
 		}
 	}
 	

@@ -3,6 +3,7 @@ package com.kosta.geekku.service;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.EstateDto;

@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -39,13 +40,13 @@ public class HouseServiceImpl implements HouseService {
 	
 	@Override
 	public Integer houseWrite(HouseDto houseDto) throws Exception {
-		User user = userRepository.findById(houseDto.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
-		House house = houseDto.toEntity(user);
-		
+		House house = houseDto.toEntity();
 		houseRepository.save(house);
+		
 		return house.getHouseNum();
 	}
 
+	@Transactional
 	@Override
 	public HouseDto houseDetail(Integer houseNum) throws Exception {
 		House house = houseRepository.findById(houseNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
@@ -122,12 +123,22 @@ public class HouseServiceImpl implements HouseService {
 		houseAnswerRepository.deleteById(houseAnswerNum);
 	}
 
-	public Slice<HouseAnswerDto> houseAnswerListForMypage(int page, String companyId) {
+	public Page<HouseAnswerDto> houseAnswerListForMypage(int page, int size, String companyId) {
 		Optional<Company> company = companyRepository.findById(UUID.fromString(companyId));
 
-		Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
-	    Slice<HouseAnswerDto> pageInfo = houseAnswerRepository.findAllByCompany(company, pageable).map(HouseAnswer::toDto);
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Page<HouseAnswerDto> pageInfo = houseAnswerRepository.findAllByCompany(company, pageable).map(HouseAnswer::toDto);
 	    
 	    return pageInfo;
+	}
+
+	@Override
+	public Page<HouseDto> houseListForUserMypage(int page, int size, String userId) throws Exception {
+		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+		
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Page<HouseDto> pageInfo = houseRepository.findAllByUser(user, pageable).map(House::toDto);
+		
+		return pageInfo;
 	}
 }

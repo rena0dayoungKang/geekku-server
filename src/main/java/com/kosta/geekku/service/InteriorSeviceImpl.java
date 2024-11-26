@@ -3,16 +3,21 @@ package com.kosta.geekku.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.kosta.geekku.dto.InteriorDto;
-import com.kosta.geekku.dto.InteriorRequsetDto;
+import com.kosta.geekku.dto.InteriorRequestDto;
 import com.kosta.geekku.dto.ReviewDto;
 import com.kosta.geekku.dto.SampleDto;
 import com.kosta.geekku.entity.Interior;
@@ -20,6 +25,7 @@ import com.kosta.geekku.entity.InteriorBookmark;
 import com.kosta.geekku.entity.InteriorRequest;
 import com.kosta.geekku.entity.InteriorReview;
 import com.kosta.geekku.entity.InteriorSample;
+import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.InteriorBookmarkRepository;
 import com.kosta.geekku.repository.InteriorDslRepository;
 import com.kosta.geekku.repository.InteriorRepository;
@@ -134,14 +140,14 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public Integer interiorRequest(InteriorRequsetDto requestDto) throws Exception {
+	public Integer interiorRequest(InteriorRequestDto requestDto) throws Exception {
 		InteriorRequest request = requestDto.toEntity();
 		interiorRequestRepository.save(request);
 		return request.getRequestNum();
 	}
 
 	@Override
-	public InteriorRequsetDto requestDetail(Integer num) throws Exception {
+	public InteriorRequestDto requestDetail(Integer num) throws Exception {
 		InteriorRequest request = interiorRequestRepository.findById(num).orElseThrow(()->new Exception("요청 글 번호 오류"));
 		return request.toDto();
 	}
@@ -173,6 +179,42 @@ public class InteriorSeviceImpl implements InteriorService {
 		return detailInfo;
 	}
 
+
+
+	public Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, String userId)
+			throws Exception {
+		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+		
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Page<InteriorRequestDto> pageInfo = interiorRequestRepository.findAllByUser(user, pageable).map(InteriorRequest::toDto);
+		
+		return pageInfo;
+	}
+
+	@Override
+	public Page<ReviewDto> reviewListForUserMypage(int page, int size, String userId) throws Exception {
+		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+		
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Page<ReviewDto> pageInfo = interiorReviewRepository.findAllByUser(user, pageable).map(InteriorReview::toDto);
+		
+		return pageInfo;
+	}
+
+	@Override
+	public void updateReview(ReviewDto reviewDto, Integer num) throws Exception {
+		InteriorReview review = interiorReviewRepository.findById(num).orElseThrow(() -> new Exception("리뷰 글번호 오류"));
+
+		review.setContent(reviewDto.getContent());
+		// 이미지 수정 필요함
+		interiorReviewRepository.save(review);
+	}
+
+	@Override
+	public void deleteReview(Integer num) throws Exception {
+		InteriorReview review = interiorReviewRepository.findById(num).orElseThrow(() -> new Exception("리뷰 글번호 오류"));
+		interiorReviewRepository.deleteById(num);
+	}	
 
 
 }
