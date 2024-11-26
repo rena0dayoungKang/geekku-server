@@ -22,7 +22,7 @@ public interface CommunityService {
     Page<CommunityDto> getFilteredCommunityList(CommunityFilterDto filterDto, Pageable pageable);
     
     // 커뮤니티 글 작성(임시)
-    void createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage) throws Exception;
+    void createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage, String userId) throws Exception;
    
     // 커뮤니티 글 수정
     void updateCommunity(Integer id, CommunityDto communityDto, MultipartFile coverImage) throws Exception;
@@ -41,4 +41,5 @@ public interface CommunityService {
 
     // 메인화면 - 집들이 조회수 순 3개
     List<CommunityDto> getCommunityListForMain() throws Exception;
+    
 }
