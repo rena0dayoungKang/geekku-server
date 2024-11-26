@@ -12,4 +12,7 @@ public interface UserService {
 	UserDto getUser(UUID userId) throws Exception;
 	UserDto getUser(String username) throws Exception;
 	void updateUserInfo(UUID userId, UserDto userDto) throws Exception;
+	void changePassword(UUID userId, String newPassword) throws Exception;
+	UserDto findIdByPhone(String phone) throws Exception;
+	UserDto findIdByEmail(String email) throws Exception;
 }

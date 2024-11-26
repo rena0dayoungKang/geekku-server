@@ -1,5 +1,8 @@
 package com.kosta.geekku.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -15,20 +18,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.geekku.config.auth.PrincipalDetails;
+import com.kosta.geekku.config.jwt.JwtProperties;
 import com.kosta.geekku.dto.UserDto;
 import com.kosta.geekku.entity.Role;
 import com.kosta.geekku.service.UserService;
 
 @RestController
 public class UserController {
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
-	
-	@PostMapping("/login")   //Login.js
+
+	@PostMapping("/login") // Login.js
 	public ResponseEntity<UserDto> login(@RequestBody Map<String, String> param) {
 		try {
 			UserDto userDto = userService.login(param.get("username"), param.get("password"));
@@ -38,8 +42,8 @@ public class UserController {
 			return new ResponseEntity<UserDto>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	@PostMapping("/joinPerson")  //JoinPerson.js
+
+	@PostMapping("/joinPerson") // JoinPerson.js
 	public ResponseEntity<String> joinPeron(@RequestBody UserDto userDto) {
 		try {
 			userDto.setRole(Role.ROLE_USER);
@@ -49,13 +53,13 @@ public class UserController {
 			return new ResponseEntity<String>("개인 회원가입 성공", HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<String>("회원가입 실패",HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("회원가입 실패", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/user/userInfo")
 	public ResponseEntity<UserDto> getUserInfo(Authentication authentication) {
-		String username = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUsername();
+		String username = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUsername();
 		try {
 			UserDto userDto = userService.getUser(username);
 			return new ResponseEntity<UserDto>(userDto, HttpStatus.OK);
@@ -64,11 +68,11 @@ public class UserController {
 			return new ResponseEntity<UserDto>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PutMapping("/user/updateUserInfo")
 	public ResponseEntity<String> updateUserInfo(Authentication authentication, @RequestBody UserDto userDto) {
 		try {
-			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId(); //토큰에서 UUID를 추출
+			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId(); // 토큰에서 UUID를 추출
 			userService.updateUserInfo(userId, userDto);
 			return new ResponseEntity<String>("회원정보 수정 완료", HttpStatus.OK);
 		} catch (Exception e) {
@@ -76,6 +80,71 @@ public class UserController {
 			return new ResponseEntity<String>("회원정보 수정 실패", HttpStatus.BAD_REQUEST);
 		}
 	}
+
+	@PutMapping("/user/changePwd")
+	public ResponseEntity<String> changePwd(Authentication authentication, @RequestBody Map<String, String> param) {
+		try {
+			String currentPassword = param.get("currentPassword");
+			String newPassword = param.get("newPassword");
+
+			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
+			
+			UserDto userDto = userService.getUser(userId);			
+			if (!bCryptPasswordEncoder.matches(currentPassword, userDto.getPassword())) {
+				return new ResponseEntity<>("현재 비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+			}
+
+			// 새 비밀번호
+			String encodedNewPassword = bCryptPasswordEncoder.encode(newPassword);
+			userService.changePassword(userId, encodedNewPassword);
+
+			return new ResponseEntity<>("비밀번호가 성공적으로 변경되었습니다.", HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("비밀번호 변경에 실패했습니다.", HttpStatus.BAD_REQUEST);
+		}
+	}
 	
+	@PostMapping("/findIdByPhone")
+	public ResponseEntity<Map<String, String>> findIdByPhone(@RequestBody Map<String, String> param) {
+		try {
+			String phone = param.get("phone");
+			UserDto userDto = userService.findIdByPhone(phone);
+			
+			String formatDate = formattedDate(userDto);
+			
+			Map<String, String> result = new HashMap<>();
+			result.put("username", userDto.getUsername());
+			result.put("createdAt", formatDate);
+			return new ResponseEntity<Map<String,String>>(result, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String,String>>(HttpStatus.BAD_REQUEST);
+		}
+	}
 	
+	@PostMapping("/findIdByEmail")
+	public ResponseEntity<Map<String, String>> findIdByEmail(@RequestBody Map<String, String> param) {
+		try {
+			String email = param.get("email");
+			UserDto userDto = userService.findIdByEmail(email);
+			
+			String formatDate = formattedDate(userDto);
+			
+			Map<String, String> result = new HashMap<>();
+			result.put("username", userDto.getUsername());
+			result.put("createdAt", formatDate);
+			return new ResponseEntity<Map<String,String>>(result, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String,String>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	private String formattedDate(UserDto userDto) {
+		LocalDate createdAtDate = userDto.getCreatedAt().toLocalDateTime().toLocalDate();
+		String formatDate = createdAtDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		return formatDate;
+	}
+
 }

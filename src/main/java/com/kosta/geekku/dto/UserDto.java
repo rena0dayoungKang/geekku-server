@@ -23,6 +23,8 @@ public class UserDto {
 	private String phone;
 	private String email;
 	private String nickname;
+	private byte[] profileImage;
+	private String type;
 	private Timestamp createdAt;
 	
 	private Role role;
@@ -35,6 +37,7 @@ public class UserDto {
 						.phone(phone)
 						.email(email)
 						.nickname(nickname)
+						.profileImage(profileImage)
 						.createdAt(null)
 						.status(false)
 						.type("user")

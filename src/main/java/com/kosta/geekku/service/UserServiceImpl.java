@@ -75,4 +75,23 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(user);
 	}
 
+	@Override
+	public void changePassword(UUID userId, String newPassword) throws Exception {
+		User user = userRepository.findById(userId).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
+		user.setPassword(newPassword);
+		userRepository.save(user);		
+	}
+
+	@Override
+	public UserDto findIdByPhone(String phone) throws Exception {
+		User user = userRepository.findByPhone(phone).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
+		return user.toDto();
+	}
+
+	@Override
+	public UserDto findIdByEmail(String email) throws Exception {
+		User user = userRepository.findByEmail(email).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
+		return user.toDto();
+	}
+
 }
