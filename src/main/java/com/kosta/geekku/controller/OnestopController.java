@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.geekku.dto.OnestopDto;
+import com.kosta.geekku.dto.ReviewDto;
 import com.kosta.geekku.service.OnestopService;
 import com.kosta.geekku.util.PageInfo;
 
@@ -98,6 +100,21 @@ public class OnestopController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	// 개인 마이페이지 - 한번에 꾸하기 신청내역 리스트
+	@GetMapping("/mypageUserOnestopList")
+	public ResponseEntity<Page<OnestopDto>> mypageUserOnestopList(
+			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size, 
+			@RequestParam("userId") String userId) {
+		try {
+			Page<OnestopDto> onestopList = onestopService.onestopListForUserMypage(page, size, userId);
+			return new ResponseEntity<Page<OnestopDto>>(onestopList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Page<OnestopDto>>(HttpStatus.OK);
 		}
 	}
 }

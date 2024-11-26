@@ -1,17 +1,26 @@
 package com.kosta.geekku.service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
+import com.kosta.geekku.dto.ReviewDto;
+import com.kosta.geekku.entity.InteriorReview;
 import com.kosta.geekku.entity.Onestop;
+import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.OnestopDslRepository;
 import com.kosta.geekku.repository.OnestopRepository;
+import com.kosta.geekku.repository.UserRepository;
 import com.kosta.geekku.util.PageInfo;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +31,7 @@ public class OnestopServiceImpl implements OnestopService {
 
 	private final OnestopRepository onestopRepository;
 	private final OnestopDslRepository onestopDslRepository;
+	private final UserRepository userRepository;
 
 	@Override
 	public List<OnestopDto> onestopList(PageInfo pageInfo, String type, String word) throws Exception {
@@ -100,6 +110,16 @@ public class OnestopServiceImpl implements OnestopService {
 	public void onestopAnswerDelete(Integer onestopAnswerNum, Integer onestopNum) throws Exception {
 		// TODO Auto-generated method stub
 
+	}
+	
+	@Override
+	public Page<OnestopDto> onestopListForUserMypage(int page, int size, String userId) throws Exception {
+		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+		
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Page<OnestopDto> pageInfo = onestopRepository.findAllByUser(user, pageable).map(Onestop::toDto);
+		
+		return pageInfo;
 	}
 
 }
