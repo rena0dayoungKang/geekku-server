@@ -2,7 +2,6 @@ package com.kosta.geekku.service;
 
 import java.io.File;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -15,13 +14,10 @@ import com.kosta.geekku.dto.EstateDto;
 import com.kosta.geekku.entity.Estate;
 import com.kosta.geekku.entity.EstateBookmark;
 import com.kosta.geekku.entity.EstateImage;
-import com.kosta.geekku.entity.User;
-import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.EstateBookmarkRepository;
 import com.kosta.geekku.repository.EstateDslRepository;
 import com.kosta.geekku.repository.EstateImageRepository;
 import com.kosta.geekku.repository.EstateRepository;
-import com.kosta.geekku.repository.UserRepository;
 import com.kosta.geekku.util.PageInfo;
 
 import lombok.RequiredArgsConstructor;

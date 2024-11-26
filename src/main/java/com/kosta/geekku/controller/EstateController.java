@@ -172,4 +172,6 @@ public class EstateController {
 			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	// 개인회원 마이페이지 - 매물 북마크 내역
 }
