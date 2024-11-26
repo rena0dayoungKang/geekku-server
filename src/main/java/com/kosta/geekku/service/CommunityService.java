@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kosta.geekku.dto.CommunityDto;
 import com.kosta.geekku.dto.CommunityFilterDto;
 import com.kosta.geekku.entity.Community;
+import com.kosta.geekku.entity.Estate;
 import com.kosta.geekku.entity.User;
 
 public interface CommunityService {
@@ -31,10 +32,12 @@ public interface CommunityService {
     
     // 커뮤니티 댓글 작성
     void createComment(Integer communityId, String userId, String content) throws Exception;
-    // 코뮤니티 댓글 삭제
+    // 커뮤니티 댓글 삭제
     void deleteComment(Integer commentId) throws Exception;
     
     User getUserProfile(String user) throws Exception;
     
     List<Community> getUserCommunities(String userId) throws Exception;
+    
+
 }
