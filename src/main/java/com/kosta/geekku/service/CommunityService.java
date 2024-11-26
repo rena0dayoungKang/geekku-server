@@ -41,4 +41,5 @@ public interface CommunityService {
 
     // 메인화면 - 집들이 조회수 순 3개
     List<CommunityDto> getCommunityListForMain() throws Exception;
+    
 }

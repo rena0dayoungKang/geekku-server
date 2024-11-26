@@ -174,19 +174,19 @@ public class CommunityController {
 	}
 
 	// 내가 쓴 커뮤니티 글 조회
-	@GetMapping("/test12/{userId}")
-	public ResponseEntity<Page<CommunityDto>> getCommunityListByUserId(
-			 @PathVariable String userId,
-		        @RequestParam(value = "page", defaultValue = "0") int page,
-		        @RequestParam(value = "size", defaultValue = "10") int size) {
-		    try {
-		        Pageable pageable = PageRequest.of(page, size); // 페이징 처리
-		        Page<CommunityDto> communityPosts = communityService.getPostsByUserId(userId, pageable);
-		        return ResponseEntity.ok(communityPosts);
-		    } catch (Exception e) {
-		        e.printStackTrace();
-		        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		    }
-		}
+//	@GetMapping("/test12/{userId}")
+//	public ResponseEntity<Page<CommunityDto>> getCommunityListByUserId(
+//			 @PathVariable String userId,
+//		        @RequestParam(value = "page", defaultValue = "0") int page,
+//		        @RequestParam(value = "size", defaultValue = "10") int size) {
+//		    try {
+//		        Pageable pageable = PageRequest.of(page, size); // 페이징 처리
+//		        Page<CommunityDto> communityPosts = communityService.getPostsByUserId(userId, pageable);
+//		        return ResponseEntity.ok(communityPosts);
+//		    } catch (Exception e) {
+//		        e.printStackTrace();
+//		        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//		    }
+//		}
 	
 }
