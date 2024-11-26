@@ -42,6 +42,6 @@ public class SampleDto {
 				.createdAt(createdAt)
 				.interior(Interior.builder().company(Company.builder().companyName(companyName).build()).build())
 				.build();
-		return sample;
+		return sample
 	}
 }

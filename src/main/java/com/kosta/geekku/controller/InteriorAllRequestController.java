@@ -106,7 +106,7 @@ public class InteriorAllRequestController {
 		}
 	}
 
-	// 집꾸 답변
+	// 방꾸 답변
 	@PostMapping("/interiorAnswerWrite")
 	public ResponseEntity<String> interiorAnswerWrite(InteriorAnswerDto interiorAnswerDto,
 			@RequestParam Integer requestAllNum) {

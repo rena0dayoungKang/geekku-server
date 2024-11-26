@@ -60,7 +60,7 @@ public class InteriorController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/user/interiorBookmark/{num}")
 	public ResponseEntity<String> interiorBookmark(String userId, @PathVariable Integer num) {
 		try {
@@ -84,58 +84,61 @@ public class InteriorController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/interiorSampleRegister")
 	public ResponseEntity<String> interiorSampleRegister(SampleDto sampleDto) {
 		try {
 			Integer sampleNum = interiorService.sampleRegister(sampleDto);
-			return new ResponseEntity<String>(String.valueOf(sampleNum),HttpStatus.OK);
-		} catch(Exception e) {
+			return new ResponseEntity<String>(String.valueOf(sampleNum), HttpStatus.OK);
+		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/interiorReviewRegister")
 	public ResponseEntity<String> interiorReviewRegister(ReviewDto reviewDto) {
 		try {
 			Integer reviewNum = interiorService.reviewRegister(reviewDto);
-			return new ResponseEntity<String>(String.valueOf(reviewNum),HttpStatus.OK);
+			return new ResponseEntity<String>(String.valueOf(reviewNum), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/sampleDetail")
-	public ResponseEntity<Map<String,Object>> sampleDetail(Integer num) {
+	public ResponseEntity<Map<String, Object>> sampleDetail(Integer num) {
 		try {
-			Map<String,Object> res = new HashMap<>();
+			Map<String, Object> res = new HashMap<>();
 			SampleDto sampleDto = interiorService.sampleDetail(num);
 			res.put("sample", sampleDto);
-			return new ResponseEntity<Map<String,Object>>(res,HttpStatus.OK);
+			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
+
 	@PostMapping("/interiorRequest")
 	public ResponseEntity<String> interiorRequest(InteriorRequestDto requestDto) {
 		try {
 			Integer requestNum = interiorService.interiorRequest(requestDto);
-			return new ResponseEntity<String>(String.valueOf(requestNum),HttpStatus.OK);
+			return new ResponseEntity<String>(String.valueOf(requestNum), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
+
 	@GetMapping("/requestDetail")
-	public ResponseEntity<Map<String,Object>> requestDetail(Integer num) {
+	public ResponseEntity<Map<String, Object>> requestDetail(Integer num) {
 		try {
 			Map<String,Object> res = new HashMap<>();
 			InteriorRequestDto requestDto = interiorService.requestDetail(num);
+
 			res.put("requestDetail", requestDto);
-			return new ResponseEntity<Map<String,Object>>(res,HttpStatus.OK);
+			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 

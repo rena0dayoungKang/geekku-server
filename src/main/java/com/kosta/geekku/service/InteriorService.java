@@ -1,6 +1,7 @@
 package com.kosta.geekku.service;
 
 import java.util.List;
+
 import java.util.Map;
 import org.springframework.data.domain.Page;
 import com.kosta.geekku.dto.InteriorDto;
@@ -11,14 +12,23 @@ import com.kosta.geekku.entity.InteriorSample;
 
 public interface InteriorService {
 	List<InteriorDto> interiorListForMain() throws Exception;
+  
 	List<SampleDto> sampleListForMain() throws Exception;
+
 	List<InteriorDto> interiorList(String possibleLocation) throws Exception;
+
 	Integer checkBookmark(String userId, Integer interiorNum) throws Exception;
+
 	boolean toggleBookmark(String userId, Integer interiorNum) throws Exception;
+
 	Integer interiorRegister(InteriorDto interiorDto) throws Exception;
+
 	InteriorDto interiorCompanyDetail(Integer num) throws Exception;
+
 	Integer sampleRegister(SampleDto sampleDto) throws Exception;
+
 	Integer reviewRegister(ReviewDto reviewDto) throws Exception;
+
 	SampleDto sampleDetail(Integer num) throws Exception;
 
 	Integer interiorRequest(InteriorRequestDto requestDto) throws Exception;
@@ -35,5 +45,16 @@ public interface InteriorService {
 	void updateReview(ReviewDto reviewDto, Integer num) throws Exception;
 	// 마이페이지 - 개인회원 인테리어 후기 삭제
 	void deleteReview(Integer num) throws Exception;
+
+	Integer interiorRequest(InteriorRequestDto requestDto) throws Exception;
+
+	InteriorRequestDto requestDetail(Integer num) throws Exception;
+
+	List<ReviewDto> interiorReviewList(PageInfo pageInfo, String companyId) throws Exception;
+
+	List<InteriorRequestDto> interiorRequestList(PageInfo pageInfo, String companyId) throws Exception;
+
+	List<SampleDto> interiorSampleList(PageInfo pageInfo, String companyId) throws Exception;
+
 
 }

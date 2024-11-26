@@ -68,7 +68,7 @@ public class InteriorAllRequestDslRepository {
 		return interiorAllList;
 	}
 
-	// 집꾸 답변
+	// 방꾸 답변
 	public Long interiorAllAnswerCount() throws Exception {
 		QInteriorAllAnswer interiorAllAnswer = QInteriorAllAnswer.interiorAllAnswer;
 
