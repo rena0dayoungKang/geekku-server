@@ -1,6 +1,8 @@
 package com.kosta.geekku.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -151,6 +153,34 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
+	public List<InteriorSample> sampleList(String date, String type, String style, Integer size, String location)
+			throws Exception {
+		List<InteriorSample> sampleDtoList = null;
+		Long allCnt = 0L;
+		sampleDtoList = interiorDslRepository.sampleListByFilter(date, type, style, size, location);
+		allCnt = interiorDslRepository.sampleCountByFilter(date, type, style, size, location);
+		return sampleDtoList;
+	}
+
+	@Override
+	public Map<String, Object> interiorDetail(Integer interiorNum) throws Exception {
+		Map<String,Object> detailInfo = new HashMap<>();
+		Interior interiorDetail = interiorRepository.findById(interiorNum).orElseThrow(()->new Exception("인테리어 업체 번호 오류"));
+		List<InteriorSample> sampleDetail = interiorSampleRepository.findByInteriorNum(interiorNum);
+		List<InteriorReview> reviewDetail = interiorReviewRepository.findByInterior_interiorNum(interiorNum);
+		
+		InteriorDto interiorInfo = interiorDetail.toDto();
+		List<SampleDto> sampleInfo = sampleDetail.stream().map(s->s.toDto()).collect(Collectors.toList());
+		List<ReviewDto> reviewInfo = reviewDetail.stream().map(r->r.toDto()).collect(Collectors.toList());				
+		
+		detailInfo.put("interiorDetail", interiorInfo);
+		detailInfo.put("sampleDetail", sampleInfo);
+		detailInfo.put("reviewDetail", reviewInfo);
+		return detailInfo;
+	}
+
+
+
 	public Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, String userId)
 			throws Exception {
 		Optional<User> user = userRepository.findById(UUID.fromString(userId));
@@ -185,5 +215,6 @@ public class InteriorSeviceImpl implements InteriorService {
 		InteriorReview review = interiorReviewRepository.findById(num).orElseThrow(() -> new Exception("리뷰 글번호 오류"));
 		interiorReviewRepository.deleteById(num);
 	}	
+
 
 }
