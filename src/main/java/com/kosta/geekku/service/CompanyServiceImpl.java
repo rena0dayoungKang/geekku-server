@@ -2,17 +2,26 @@ package com.kosta.geekku.service;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.CompanyDto;
 import com.kosta.geekku.entity.Company;
+import com.kosta.geekku.entity.Estate;
+import com.kosta.geekku.entity.HouseAnswer;
+import com.kosta.geekku.entity.OnestopAnswer;
 import com.kosta.geekku.entity.UFile;
 import com.kosta.geekku.repository.CompanyRepository;
+import com.kosta.geekku.repository.EstateRepository;
+import com.kosta.geekku.repository.HouseAnswerRepository;
+import com.kosta.geekku.repository.OnestopAnswerRepository;
 import com.kosta.geekku.repository.UFileRepository;
 
 @Service
@@ -21,8 +30,14 @@ public class CompanyServiceImpl implements CompanyService {
 	@Autowired
 	private CompanyRepository companyRepository;
 	@Autowired
+	private EstateRepository estateRepository;
+	@Autowired
+	private HouseAnswerRepository houseAnswerRepository;
+	@Autowired
+	private OnestopAnswerRepository onestopAnswerRepository;
+	@Autowired
 	private UFileRepository uFileRepository;
-
+	
 	@Value("${upload.path}")
 	private String uploadPath;
 
@@ -83,7 +98,7 @@ public class CompanyServiceImpl implements CompanyService {
 		companyRepository.save(company);
 	}
 
-	@Override // hsj 여기서부터 해야함
+	@Override 
 	public CompanyDto getCompanyProfile(String companyId) {
 
 	    Company company = companyRepository.findById(UUID.fromString(companyId))
@@ -95,5 +110,27 @@ public class CompanyServiceImpl implements CompanyService {
 	            .build();
 
 	}
+
+	@Override //
+	public List<Estate> getEstateCommunities(String companyId) throws Exception {
+		return estateRepository.findByCompany_CompanyId(UUID.fromString(companyId));
+	}
+
+	@Override
+	public void deleteEstateCommunity(Integer estateId) throws Exception {
+			Estate estate = estateRepository.findById(estateId).orElseThrow(()-> new Exception("해당 게시글을 찾을 수 없습니다."));
+			estateRepository.delete(estate);
+	}
+	
+	@Override
+	public Page<HouseAnswer> getAnswersByCompanyId(UUID companyId, Pageable pageable) {
+	    return houseAnswerRepository.findByCompanyId(companyId, pageable);
+	}
+
+	@Override
+	public Page<OnestopAnswer> getOnestopAnswersByCompanyId(UUID companyId, Pageable pageable) {
+        return onestopAnswerRepository.findByCompanyId(companyId, pageable);
+    }
+
 
 }

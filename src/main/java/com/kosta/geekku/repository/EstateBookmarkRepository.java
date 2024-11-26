@@ -1,5 +1,6 @@
 package com.kosta.geekku.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,4 +11,5 @@ public interface EstateBookmarkRepository extends JpaRepository<EstateBookmark, 
 	EstateBookmark findByEstateNumAndUserId(Integer estateNum, UUID userId);
 	EstateBookmark findByEstateNum(Integer estateNum);
 	EstateBookmark findByUserId(UUID userId);
+	List<EstateBookmark> findAllByUserId(UUID userId);
 }

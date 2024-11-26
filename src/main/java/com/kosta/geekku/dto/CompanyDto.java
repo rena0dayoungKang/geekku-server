@@ -42,6 +42,7 @@ public class CompanyDto {
 								.email(email)
 								.status(false)
 								.role(role)
+								.type("company")
 								.companyNumber(companyNumber)
 								.ceoName(ceoName)
 								.companyName(companyName)
