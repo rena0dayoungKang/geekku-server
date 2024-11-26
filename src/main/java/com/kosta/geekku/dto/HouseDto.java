@@ -25,8 +25,10 @@ public class HouseDto {
 	private Integer size;
 	private Integer jeonsePrice;
 	private Integer monthlyPrice;
+	private Integer depositPrice;
 	private Integer buyPrice;
 	private Date requestDate;
+	private boolean requestState;
 	private boolean allowPhone;
 	private String title;
 	private String content;
@@ -38,7 +40,7 @@ public class HouseDto {
 	private String userProfileImage;
 	private String userPhone;
 	
-	public House toEntity(User user) {
+	public House toEntity() {
 		House house = House.builder()
 				.houseNum(houseNum)
 				.type(type)
@@ -47,6 +49,7 @@ public class HouseDto {
 				.rentType(rentType)
 				.size(size)
 				.requestDate(requestDate)
+				.requestState(requestState)
 				.allowPhone(allowPhone)
 				.title(title)
 				.content(content)
@@ -59,6 +62,7 @@ public class HouseDto {
 			house.setJeonsePrice(jeonsePrice);
 		} else if (rentType.equals("monthly")) {
 			house.setMonthlyPrice(monthlyPrice);
+			house.setDepositPrice(depositPrice);
 		} else {
 			house.setBuyPrice(buyPrice);
 		}

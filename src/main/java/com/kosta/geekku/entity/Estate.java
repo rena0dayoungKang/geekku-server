@@ -45,8 +45,10 @@ public class Estate {
 	// private UUID companyId; // join column Company -companyId
 
 	private String type; // 매물유형(farmHouse, countryHouse, apt, land)
-	private String address1;
-	private String address2;
+	private String address1; // 도로명 주소
+	private String address2; // 상세 주소
+	@Column(name = "jibun_address")
+	private String jibunAddress; // 지번 주소
 	private String size1;
 	private String size2;
 	private Integer roomCount;
@@ -73,12 +75,30 @@ public class Estate {
 	private List<EstateImage> imageList = new ArrayList<>();
 
 	public EstateDto toDto() {
-		EstateDto estateDto = EstateDto.builder().estateNum(estateNum).companyId(company.getCompanyId())
-				.companyName(company.getCompanyName()).companyPhone(company.getPhone()).type(type).address1(address1)
-				.address2(address2).size1(size1).size2(size2).roomCount(roomCount).rentType(rentType)
-				.availableDate(availableDate).availableState(availableState).totalFloor(totalFloor).floor(floor)
-				.bathCount(bathCount).utility(utility).title(title).content(content).createdAt(createdAt).build();
-
+		EstateDto estateDto = EstateDto.builder()
+					.estateNum(estateNum)
+					.companyId(company.getCompanyId())
+					.companyName(company.getCompanyName())
+					.companyPhone(company.getPhone())
+					.type(type)
+					.address1(address1)
+					.address2(address2)
+					.jibunAddress(jibunAddress)
+					.size1(size1)
+					.size2(size2)
+					.roomCount(roomCount)
+					.rentType(rentType)
+					.availableDate(availableDate)
+					.availableState(availableState)
+					.totalFloor(totalFloor)
+					.floor(floor)
+					.bathCount(bathCount)
+					.utility(utility)
+					.title(title)
+					.content(content)
+					.createdAt(createdAt)
+					.build();
+		
 		if (imageList != null && imageList.size() > 0) {
 			estateDto.setEstateImageNums(
 					imageList.stream().map(i -> i.getEstateImageNum() + "").collect(Collectors.joining(",")));

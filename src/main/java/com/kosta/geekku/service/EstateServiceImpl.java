@@ -77,6 +77,11 @@ public class EstateServiceImpl implements EstateService {
 			estateDtoList = estateDslRepository.typeEstateListByPaging(pageRequest, type).stream().map(e -> e.toDto())
 					.collect(Collectors.toList());
 			allCnt = estateDslRepository.typeEstateCount(type);
+		} else if (type == null && keyword != null && !keyword.trim().equals("")) {	//키워드만 검색
+			estateDtoList = estateDslRepository.keywordEstateListByPaging(pageRequest, keyword).stream()
+					.map(e -> e.toDto()).collect(Collectors.toList());
+			allCnt = estateDslRepository.keywordEstateCount(keyword);
+
 		} else { // 타입선택 + 검색
 			estateDtoList = estateDslRepository.searchEstateListByPaging(pageRequest, type, keyword).stream()
 					.map(e -> e.toDto()).collect(Collectors.toList());

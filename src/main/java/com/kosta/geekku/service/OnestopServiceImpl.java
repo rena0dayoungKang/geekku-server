@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -16,6 +17,10 @@ import com.kosta.geekku.dto.HouseAnswerDto;
 import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
+import com.kosta.geekku.dto.ReviewDto;
+import com.kosta.geekku.entity.InteriorReview;
+import com.kosta.geekku.entity.Onestop;
+import com.kosta.geekku.entity.User;
 import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.House;
 import com.kosta.geekku.entity.HouseAnswer;
@@ -26,6 +31,7 @@ import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.OnestopAnswerRepository;
 import com.kosta.geekku.repository.OnestopDslRepository;
 import com.kosta.geekku.repository.OnestopRepository;
+import com.kosta.geekku.repository.UserRepository;
 import com.kosta.geekku.util.PageInfo;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +42,7 @@ public class OnestopServiceImpl implements OnestopService {
 
 	private final OnestopRepository onestopRepository;
 	private final OnestopDslRepository onestopDslRepository;
+	private final UserRepository userRepository;
 	private final OnestopAnswerRepository onestopAnswerRepository;
 	private final CompanyRepository companyRepository;
 
@@ -146,6 +153,16 @@ public class OnestopServiceImpl implements OnestopService {
 		Slice<OnestopAnswerDto> pageInfo = onestopAnswerRepository.findAllByCompany(company, pageable)
 				.map(OnestopAnswer::toDto);
 
+		return pageInfo;
+	}
+	
+	@Override
+	public Page<OnestopDto> onestopListForUserMypage(int page, int size, String userId) throws Exception {
+		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+		
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Page<OnestopDto> pageInfo = onestopRepository.findAllByUser(user, pageable).map(Onestop::toDto);
+		
 		return pageInfo;
 	}
 

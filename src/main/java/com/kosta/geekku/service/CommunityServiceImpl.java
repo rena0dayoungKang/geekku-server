@@ -3,12 +3,15 @@ package com.kosta.geekku.service;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -179,5 +182,11 @@ public class CommunityServiceImpl implements CommunityService {
 		List<Community> communities = communityRepository.findAllByUser_UserId(UUID.fromString(userId));
 		return communities.stream().map(community -> Community.builder().title(community.getTitle())
 				.viewCount(community.getViewCount()).build()).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<CommunityDto> getCommunityListForMain() throws Exception {
+		Page<Community> page = communityRepository.findAll(PageRequest.of(0, 3, Sort.by(Sort.Order.desc("viewCount"))));
+        return page.getContent().stream().map(c -> c.toDto()).collect(Collectors.toList());
 	}
 }

@@ -2,12 +2,13 @@ package com.kosta.geekku.service;
 
 import java.util.List;
 
+import java.util.Map;
+import org.springframework.data.domain.Page;
 import com.kosta.geekku.dto.InteriorDto;
-import com.kosta.geekku.dto.InteriorRequsetDto;
+import com.kosta.geekku.dto.InteriorRequestDto;
 import com.kosta.geekku.dto.ReviewDto;
 import com.kosta.geekku.dto.SampleDto;
 import com.kosta.geekku.entity.InteriorSample;
-import com.kosta.geekku.util.PageInfo;
 
 public interface InteriorService {
 	List<InteriorDto> interiorListForMain() throws Exception;
@@ -30,14 +31,30 @@ public interface InteriorService {
 
 	SampleDto sampleDetail(Integer num) throws Exception;
 
-	Integer interiorRequest(InteriorRequsetDto requestDto) throws Exception;
+	Integer interiorRequest(InteriorRequestDto requestDto) throws Exception;
+	InteriorRequestDto requestDetail(Integer num) throws Exception;
+	List<InteriorSample> sampleList(String date, String type, String style, Integer size,
+			String location) throws Exception;
+	Map<String,Object> interiorDetail(Integer interiorNum) throws Exception;
+	
+	// 마이페이지 - 개인회원 인테리어 문의 내역
+	Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, String userId) throws Exception;
+	// 마이페이지 - 개인회원 인테리어 후기 작성 내역
+	Page<ReviewDto> reviewListForUserMypage(int page, int size, String userId) throws Exception;
+	// 마이페이지 - 개인회원 인테리어 후기 수정
+	void updateReview(ReviewDto reviewDto, Integer num) throws Exception;
+	// 마이페이지 - 개인회원 인테리어 후기 삭제
+	void deleteReview(Integer num) throws Exception;
 
-	InteriorRequsetDto requestDetail(Integer num) throws Exception;
+	Integer interiorRequest(InteriorRequestDto requestDto) throws Exception;
+
+	InteriorRequestDto requestDetail(Integer num) throws Exception;
 
 	List<ReviewDto> interiorReviewList(PageInfo pageInfo, String companyId) throws Exception;
 
-	List<InteriorRequsetDto> interiorRequestList(PageInfo pageInfo, String companyId) throws Exception;
+	List<InteriorRequestDto> interiorRequestList(PageInfo pageInfo, String companyId) throws Exception;
 
 	List<SampleDto> interiorSampleList(PageInfo pageInfo, String companyId) throws Exception;
+
 
 }

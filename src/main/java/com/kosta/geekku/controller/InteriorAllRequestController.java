@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +33,7 @@ public class InteriorAllRequestController {
 	private final HttpSession session;
 
 	@PostMapping("/interiorAllWrite")
-	public ResponseEntity<String> makeAccount(@RequestBody InteriorAllDto interiorAllDto) {
+	public ResponseEntity<String> interiorAllWrite(@RequestBody InteriorAllDto interiorAllDto) {
 		try {
 			interiorAllService.interiorAllWrite(interiorAllDto);
 			return new ResponseEntity<String>("true", HttpStatus.OK);
@@ -148,6 +149,20 @@ public class InteriorAllRequestController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("집꾸답변 삭제 오류", HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/mypageUserInteriorAllList")
+	public ResponseEntity<Page<InteriorAllDto>> interiorAllRequestListForUserMypage(
+			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size, 
+			@RequestParam("userId") String userId) {
+		try {
+			Page<InteriorAllDto> interiorAllList = interiorAllService.interiorAllListForUserMypage(page, size, userId);
+			return new ResponseEntity<Page<InteriorAllDto>>(interiorAllList, HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Page<InteriorAllDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 }

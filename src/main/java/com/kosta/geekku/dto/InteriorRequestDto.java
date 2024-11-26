@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class InteriorRequsetDto {
+public class InteriorRequestDto {
 	private Integer requestNum;
 	private UUID userId;
 	private Integer interiorNum;

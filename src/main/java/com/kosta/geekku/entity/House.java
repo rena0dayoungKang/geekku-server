@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
 
 import com.kosta.geekku.dto.HouseDto;
 
@@ -32,6 +33,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@DynamicInsert
 @Entity
 public class House {
 	// 집꾸
@@ -39,7 +41,7 @@ public class House {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer houseNum;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "userId")
 	private User user;
 	// private UUID userId; //join column User - userId
@@ -51,8 +53,10 @@ public class House {
 	private Integer size;
 	private Integer jeonsePrice;
 	private Integer monthlyPrice;
+	private Integer depositPrice;
 	private Integer buyPrice;
 	private Date requestDate; // 입주희망 일자
+	private boolean requestState; // 입주희망 일자 미정 -> 0:정함 1:미정 
 	private boolean allowPhone;// 연락처 공개 여부-> 0:비공개 1:공개
 	private String title;
 	@Column(length = 1000)
@@ -74,6 +78,7 @@ public class House {
 				.rentType(rentType)
 				.size(size)
 				.requestDate(requestDate)
+				.requestState(requestState)
 				.allowPhone(allowPhone)
 				.userPhone(allowPhone ? user.getPhone() : null)
 				.title(title)
@@ -87,6 +92,7 @@ public class House {
 			houseDto.setJeonsePrice(jeonsePrice);
 		} else if (rentType.equals("monthly")) {
 			houseDto.setMonthlyPrice(monthlyPrice);
+			houseDto.setDepositPrice(depositPrice);
 		} else {
 			houseDto.setBuyPrice(buyPrice);
 		}

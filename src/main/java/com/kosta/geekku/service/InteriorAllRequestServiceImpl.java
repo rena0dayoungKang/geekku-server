@@ -5,24 +5,28 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.kosta.geekku.dto.HouseAnswerDto;
+import com.kosta.geekku.dto.HouseDto;
 import com.kosta.geekku.dto.InteriorAllDto;
 import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.InteriorAllAnswer;
 import com.kosta.geekku.entity.InteriorAllRequest;
+import com.kosta.geekku.entity.User;
 import com.kosta.geekku.entity.OnestopAnswer;
 import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.InteriorAllAnswerRepository;
 import com.kosta.geekku.repository.InteriorAllRequestDslRepository;
 import com.kosta.geekku.repository.InteriorAllRequestRepository;
+import com.kosta.geekku.repository.UserRepository;
 import com.kosta.geekku.util.PageInfo;
 
 import lombok.RequiredArgsConstructor;
@@ -34,6 +38,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	private final InteriorAllRequestRepository interiorAllRepository;
 	private final InteriorAllRequestDslRepository interiorAllRequestDslRepository;
 	private final InteriorAllAnswerRepository interiorAllAnswerRepository;
+	private final UserRepository userRepository;
 	private final CompanyRepository companyRepository;
 
 	@Override
@@ -131,6 +136,12 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	}
 
 	@Override
+	public Page<InteriorAllDto> interiorAllListForUserMypage(int page, int size, String userId) throws Exception {
+		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+		
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createAt"));
+		Page<InteriorAllDto> pageInfo = interiorAllRequestRepository.findAllByUser(user, pageable).map(InteriorAllRequest::toDto);
+
 	public Slice<InteriorAnswerDto> interiorAnswerListForMypage(Integer page, String companyId) throws Exception {
 
 		Optional<Company> company = companyRepository.findById(UUID.fromString(companyId));
@@ -138,6 +149,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 		Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Slice<InteriorAnswerDto> pageInfo = interiorAllAnswerRepository.findAllByCompany(company, pageable)
 				.map(InteriorAllAnswer::toDto);
+
 
 		return pageInfo;
 	}
