@@ -1,7 +1,6 @@
 package com.kosta.geekku.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -45,7 +44,7 @@ public class CommunityController {
 	}
 
 	// 커뮤니티 글 작성
-	@PostMapping("/user/test2") // 예시 http://localhost:8080/test2/ + json 조건
+	@PostMapping("/test2") // 예시 http://localhost:8080/test2/ + json 조건
 	public ResponseEntity<String> createCommunity(@RequestBody CommunityDto communityDto) {
 		Integer communityId = communityService.createCommunity(communityDto);
 		return new ResponseEntity<>("커뮤니티 생성: " + communityId, HttpStatus.CREATED);
@@ -68,18 +67,20 @@ public class CommunityController {
 		return ResponseEntity.ok(filteredList);
 	}
 
-	// 커뮤니티 글 작성 글자 포함(2번이랑 둘 중에 하나만 쓸 거임)
-	@PostMapping("/user/test5")
+	// 커뮤니티 글 작성 글자 포함(2번이랑 둘 중에 하나만 쓸 거임 /user 형태로 바꿔야함 나중에)
+	@PostMapping("/test5")
 	public ResponseEntity<String> createCommunity(@RequestParam("title") String title,
-			@RequestParam("content") String content, @RequestParam("type") String type,
-			@RequestParam(value = "coverImage", required = false) MultipartFile coverImage) {
-		try {
-			communityService.createCommunityWithCoverImage(title, content, type, coverImage);
-			return new ResponseEntity<>("커뮤니티 생성에 성공했습니다", HttpStatus.CREATED);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<>("커뮤니티 생성에 실패했습니다", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	        @RequestParam("content") String content, 
+	        @RequestParam("type") String type,
+	        @RequestParam("userId") String userId,  // userId 파라미터 추가
+	        @RequestParam(value = "coverImage", required = false) MultipartFile coverImage) {
+	    try {
+	        communityService.createCommunityWithCoverImage(title, content, type, coverImage, userId);  // userId를 서비스 메서드에 전달
+	        return new ResponseEntity<>("커뮤니티 생성에 성공했습니다", HttpStatus.CREATED);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return new ResponseEntity<>("커뮤니티 생성에 실패했습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
 
 	// 커뮤니티 글 수정
@@ -172,4 +173,20 @@ public class CommunityController {
 		}
 	}
 
+	// 내가 쓴 커뮤니티 글 조회
+	@GetMapping("/test12/{userId}")
+	public ResponseEntity<Page<CommunityDto>> getCommunityListByUserId(
+			 @PathVariable String userId,
+		        @RequestParam(value = "page", defaultValue = "0") int page,
+		        @RequestParam(value = "size", defaultValue = "10") int size) {
+		    try {
+		        Pageable pageable = PageRequest.of(page, size); // 페이징 처리
+		        Page<CommunityDto> communityPosts = communityService.getPostsByUserId(userId, pageable);
+		        return ResponseEntity.ok(communityPosts);
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		    }
+		}
+	
 }
