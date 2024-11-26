@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.kosta.geekku.dto.InteriorRequsetDto;
+import com.kosta.geekku.dto.InteriorRequestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,8 +49,8 @@ public class InteriorRequest {
 	@CreationTimestamp
 	private Timestamp createdAt;
 
-	public InteriorRequsetDto toDto() {
-		InteriorRequsetDto requestDto = InteriorRequsetDto.builder().requestNum(requestNum)
+	public InteriorRequestDto toDto() {
+		InteriorRequestDto requestDto = InteriorRequestDto.builder().requestNum(requestNum)
 				.userId(user.getUserId()).interiorNum(interior.getInteriorNum()).period(period)
 				.type(type).status(status).size(size).name(name).allowTime(allowTime).content(content)
 				.createdAt(createdAt).build();
