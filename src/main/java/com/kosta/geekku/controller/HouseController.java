@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -80,10 +81,10 @@ public class HouseController {
 	}
 
 	// 집꾸 답변
-	@PostMapping("/houseAnswerWrite")
-	public ResponseEntity<String> houseAnswerWrite(HouseAnswerDto houseAnswerDto, @RequestParam Integer houseNum) {
+	@PostMapping("/company/houseAnswerWrite")
+	public ResponseEntity<String> houseAnswerWrite(HouseAnswerDto houseAnswerDto) {
 		try {
-			Integer houseAnswerNum = houseService.houseAnswerWrite(houseAnswerDto, houseNum);
+			Integer houseAnswerNum = houseService.houseAnswerWrite(houseAnswerDto);
 			return new ResponseEntity<String>(String.valueOf(houseAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -91,10 +92,10 @@ public class HouseController {
 		}
 	}
 
-	@GetMapping("/houseAnswerList")
+	@GetMapping("/houseAnswerList/{houseNum}")
 	public ResponseEntity<Map<String, Object>> houseAnswerList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam("houseNum") Integer houseNum) {
+			@PathVariable Integer houseNum) {
 		try {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
