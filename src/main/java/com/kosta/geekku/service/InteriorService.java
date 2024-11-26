@@ -1,6 +1,7 @@
 package com.kosta.geekku.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequsetDto;
@@ -21,4 +22,7 @@ public interface InteriorService {
 	SampleDto sampleDetail(Integer num) throws Exception;
 	Integer interiorRequest(InteriorRequsetDto requestDto) throws Exception;
 	InteriorRequsetDto requestDetail(Integer num) throws Exception;
+	List<InteriorSample> sampleList(String date, String type, String style, Integer size,
+			String location) throws Exception;
+	Map<String,Object> interiorDetail(Integer interiorNum) throws Exception;
 }

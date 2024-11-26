@@ -3,8 +3,10 @@ package com.kosta.geekku.dto;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import com.kosta.geekku.entity.Interior;
 import com.kosta.geekku.entity.InteriorReview;
 import com.kosta.geekku.entity.InteriorReviewImage;
+import com.kosta.geekku.entity.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,6 +41,8 @@ public class ReviewDto {
 				.location(location)
 				.content(content)
 				.createdAt(createdAt)
+				.user(User.builder().userId(getUserId()).build())
+				.interior(Interior.builder().interiorNum(getInteriorNum()).build())
 				.build();
 		return review;
 	}
