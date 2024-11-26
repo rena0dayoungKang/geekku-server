@@ -34,7 +34,7 @@ public class InteriorController {
 	@GetMapping("/interiorMain")
 	public ResponseEntity<Map<String, Object>> interioMain() {
 		try {
-			List<InteriorSample> sampleList = interiorService.sampleListForMain();
+			List<SampleDto> sampleList = interiorService.sampleListForMain();
 			List<InteriorDto> interiorList = interiorService.interiorListForMain();
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("sampleList", sampleList);
