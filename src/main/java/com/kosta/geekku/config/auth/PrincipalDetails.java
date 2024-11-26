@@ -19,14 +19,21 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 	
 	private User user;
 	private Company company;
+	private String type;
 	private OAuth2UserInfo oAuth2UserInfo;
 	
 	public PrincipalDetails(User user) {
 		this.user = user;
+		this.type = "user";
 	}
 	
 	public PrincipalDetails(Company company) {
 		this.company = company;
+		this.type = "company";
+	}
+	
+	public String getType() {
+		return type;
 	}
 	
 	public PrincipalDetails(OAuth2UserInfo oAuth2UserInfo) {
