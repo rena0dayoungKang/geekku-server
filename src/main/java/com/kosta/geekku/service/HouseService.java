@@ -15,7 +15,7 @@ public interface HouseService {
 	void houseDelete(Integer houseNum) throws Exception;
 	
 	//집꾸 답변 서비스
-	Integer houseAnswerWrite(HouseAnswerDto houseAnswerDto, Integer houseNum) throws Exception;
+	Integer houseAnswerWrite(HouseAnswerDto houseAnswerDto) throws Exception;
 	List<HouseAnswerDto> houseAnswerList(PageInfo pageInfo, Integer houseNum) throws Exception;
 	void houseAnswerDelete(Integer houseAnswerNum, Integer houseNum) throws Exception;
 	
