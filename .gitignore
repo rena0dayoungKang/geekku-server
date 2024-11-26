@@ -13,6 +13,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+.Servers
 
 # External tool builders
 .externalToolBuilders/
@@ -121,3 +122,6 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/eclipse,java,gradle
+
+# Production 환경 설정 파일 무시
+application-prod.properties

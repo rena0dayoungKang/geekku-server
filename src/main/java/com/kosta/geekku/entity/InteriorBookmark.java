@@ -1,12 +1,14 @@
 package com.kosta.geekku.entity;
 
+import java.util.UUID;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+
+import com.kosta.geekku.dto.InteriorBookMarkDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,14 +25,25 @@ public class InteriorBookmark {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer bookmarkInteriorNum;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "userId")
-	private User user;
-	//private UUID userId; // join column User - userID
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "companyId")
-	private Company company;
-	//private UUID companyId; // join column Company - companyId
+
+	/*
+	 * @ManyToOne(fetch = FetchType.LAZY)
+	 * 
+	 * @JoinColumn(name = "userId") private User user;
+	 */
+
+	@Column
+	private UUID userId;
+	// private UUID userId; // join column User - userID
+
+	private Integer interiorNum;
+	// private UUID companyId; // join column Company - companyId
+
+	public InteriorBookMarkDto toDto() {
+		InteriorBookMarkDto interiorBookmarkDto = InteriorBookMarkDto.builder().bookmarkInteriorNum(bookmarkInteriorNum)
+				.userId(userId).interiorNum(interiorNum).build();
+
+		return interiorBookmarkDto;
+	}
+
 }

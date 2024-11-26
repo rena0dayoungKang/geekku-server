@@ -11,8 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.kosta.geekku.dto.SampleDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +36,10 @@ public class InteriorSample {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "companyId")
 	private Company company;
-	// private UUID companyId; //join colum company -companyId
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "interiorNum")
+	private Interior interior;
 
 	private String type; // 주거형태
 	private String style;
@@ -47,4 +53,10 @@ public class InteriorSample {
 	@CreationTimestamp
 	private Timestamp createdAt;
 
+	public SampleDto toDto() {
+		SampleDto sampleDto = SampleDto.builder().sampleNum(sampleNum).interiorNum(interior.getInteriorNum()).type(type)
+				.style(style).size(size).location(location).coverImage(coverImage).intro(intro).content(content)
+				.createdAt(createdAt).build();
+		return sampleDto;
+	}
 }

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class OnestopDto {
-	// 한번에 꾸하기
+	// �븳踰덉뿉 袁명븯湲�
 
 	private Integer onestopNum;
 	private User user;
@@ -25,17 +25,19 @@ public class OnestopDto {
 	private String rentType;
 	private Integer size;
 	private Integer money;
-	private String workType;
+	private boolean workType;// 시공종류 -> 0:부분시공 1:전체시공
 	private String interiorType;
 	private Integer movePersons;
-	private Integer allowPhone;
+	private boolean allowPhone; // 연락처 공개 0:비공개 1:공개
 	private String title;
 	private String content;
 	private Integer viewCount;
 	private Timestamp createdAt;
 
 	public Onestop toEntity() {
-		return Onestop.builder().title(title).content(content).build();
-
+		return Onestop.builder().onestopNum(onestopNum).user(user).type(type).address1(address1).address2(address2)
+				.rentType(rentType).size(size).money(money).workType(workType).interiorType(interiorType)
+				.movePersons(movePersons).allowPhone(allowPhone).title(title).content(content).viewCount(viewCount)
+				.createdAt(createdAt).build();
 	}
 }

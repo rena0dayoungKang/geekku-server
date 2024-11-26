@@ -44,6 +44,8 @@ public class QInteriorAllRequest extends EntityPathBase<InteriorAllRequest> {
 
     public final NumberPath<Integer> size = createNumber("size", Integer.class);
 
+    public final StringPath title = createString("title");
+
     public final StringPath type = createString("type");
 
     public final QUser user;

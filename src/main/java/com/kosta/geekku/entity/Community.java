@@ -16,6 +16,9 @@ import javax.persistence.ManyToOne;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.kosta.geekku.dto.CommunityDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +29,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Community {
 	// 집들이
 	@Id
@@ -47,7 +51,8 @@ public class Community {
 	private Date periodEndDate;
 	private Integer money;
 	private String style;
-	private Integer coverImage;
+	@Column(name = "cover_image")
+	private String coverImage;
 	private String title;
 	@Column(columnDefinition = "LONGTEXT")
 	@Lob
@@ -56,5 +61,26 @@ public class Community {
 	private Timestamp createdAt;
 	@ColumnDefault("0")
 	private Integer viewCount;
+	
+	public CommunityDto toDto() {
+	    return CommunityDto.builder()
+	        .communityNum(communityNum) // 커뮤니티 번호
+	        .title(title)              // 게시글 제목
+	        .content(content)          // 게시글 내용
+	        .type(type)                // 주거 형태
+	        .size(size)                // 평수
+	        .address1(address1)        // 주소 1 (시/도)
+	        .address2(address2)        // 주소 2 (구/동)
+	        .familyType(familyType)    // 가족 형태
+	        .interiorType(interiorType) // 인테리어 타입
+	        .periodStartDate(periodStartDate) // 시공 시작일
+	        .periodEndDate(periodEndDate)     // 시공 종료일
+	        .money(money)              // 예산
+	        .style(style)              // 스타일
+	        .coverImage(coverImage)    // 커버 이미지 ID
+	        .createdAt(createdAt)      // 생성 시간
+	        .viewCount(viewCount)      // 조회수
+	        .build();
+	}
 
 }

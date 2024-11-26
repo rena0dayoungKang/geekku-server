@@ -6,8 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
+import com.kosta.geekku.entity.InteriorAllAnswer;
 import com.kosta.geekku.entity.Onestop;
+import com.kosta.geekku.entity.OnestopAnswer;
+import com.kosta.geekku.entity.QInteriorAllAnswer;
 import com.kosta.geekku.entity.QOnestop;
+import com.kosta.geekku.entity.QOnestopAnswer;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Repository
@@ -34,17 +38,17 @@ public class OnestopDslRepository {
 		Long cnt = 0L;
 		if (type.equals("title")) {
 			cnt = jpaQueryFactory.select(onestop.count()).from(onestop).where(onestop.title.contains(word)).fetchOne();
-		} else if (type.equals("content")) {
-			cnt = jpaQueryFactory.select(onestop.count()).from(onestop).where(onestop.content.contains(word))
+		} else if (type.equals("rentType")) {
+			cnt = jpaQueryFactory.select(onestop.count()).from(onestop).where(onestop.rentType.contains(word))
 					.fetchOne();
-		} else if (type.equals("writer")) {
-			cnt = jpaQueryFactory.select(onestop.count()).from(onestop).where(onestop.user.nickname.contains(word))
+		} else if (type.equals("address1")) {
+			cnt = jpaQueryFactory.select(onestop.count()).from(onestop).where(onestop.address1.contains(word))
 					.fetchOne();
 		}
 		return cnt;
 	}
 
-	// 제목 내용 작성자로 검색 -> 작성자 대신 지역으로 변경 예정
+	// 제목, 지역, 거래타입
 	public List<Onestop> searchOnestopListByPaging(PageRequest pageRequest, String type, String word) throws Exception {
 		QOnestop onestop = QOnestop.onestop;
 		List<Onestop> onestopList = null;
@@ -52,12 +56,12 @@ public class OnestopDslRepository {
 			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.title.contains(word))
 					.orderBy(onestop.onestopNum.desc()).offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
 					.fetch();
-		} else if (type.equals("content")) {
+		} else if (type.equals("")) {
 			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.content.contains(word))
 					.orderBy(onestop.onestopNum.desc()).offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
 					.fetch();
-		} else if (type.equals("writer")) {
-			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.user.nickname.contains(word))
+		} else if (type.equals("address1")) {
+			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.address1.contains(word))
 					.orderBy(onestop.onestopNum.desc()).offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
 					.fetch();
 		}
@@ -70,4 +74,21 @@ public class OnestopDslRepository {
 	 * jpaQueryFactory.update(onestop).set(onestop.viewCount,
 	 * viewCount).where(onestop.onestopNum.eq(onestopNum)) .execute(); }
 	 */
+
+	// 방꾸 답변
+	public Long onestopAnswerCount() throws Exception {
+		QOnestopAnswer onestopAnswer = QOnestopAnswer.onestopAnswer;
+
+		return jpaQueryFactory.select(onestopAnswer.count()).from(onestopAnswer).fetchOne();
+	}
+
+	public List<OnestopAnswer> onestopAnswerListByPaging(PageRequest pageRequest) throws Exception {
+		QOnestopAnswer onestopAnswer = QOnestopAnswer.onestopAnswer;
+
+		List<OnestopAnswer> onestopAnswerList = jpaQueryFactory.selectFrom(onestopAnswer)
+				.orderBy(onestopAnswer.createdAt.asc()).offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
+				.fetch();
+
+		return onestopAnswerList;
+	}
 }

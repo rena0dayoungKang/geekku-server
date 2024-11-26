@@ -23,7 +23,7 @@ public class QCompany extends EntityPathBase<Company> {
 
     public final StringPath companyAddress = createString("companyAddress");
 
-    public final StringPath companyCertificationImage = createString("companyCertificationImage");
+    public final ArrayPath<byte[], Byte> companyCertificationImage = createArray("companyCertificationImage", byte[].class);
 
     public final ComparablePath<java.util.UUID> companyId = createComparable("companyId", java.util.UUID.class);
 
@@ -33,9 +33,7 @@ public class QCompany extends EntityPathBase<Company> {
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 
-    public final StringPath email1 = createString("email1");
-
-    public final StringPath email2 = createString("email2");
+    public final StringPath email = createString("email");
 
     public final StringPath estateNumber = createString("estateNumber");
 
@@ -43,7 +41,9 @@ public class QCompany extends EntityPathBase<Company> {
 
     public final StringPath phone = createString("phone");
 
-    public final StringPath profileImage = createString("profileImage");
+    public final ArrayPath<byte[], Byte> profileImage = createArray("profileImage", byte[].class);
+
+    public final EnumPath<Role> role = createEnum("role", Role.class);
 
     public final BooleanPath status = createBoolean("status");
 
