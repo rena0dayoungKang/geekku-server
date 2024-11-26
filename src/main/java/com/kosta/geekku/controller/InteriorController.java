@@ -171,4 +171,28 @@ public class InteriorController {
 			return new ResponseEntity<Page<ReviewDto>>(HttpStatus.OK);
 		}
 	}
+	
+	// 개인 마이페이지 - 인테리어 업체 후기 수정
+	@PostMapping("/mypageUserReviewUpdate/{num}")
+	public ResponseEntity<String> mypageUserReviewUpdate(ReviewDto reviewDto, @PathVariable Integer num) {
+		try {
+			interiorService.updateReview(reviewDto, num);
+			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("후기 수정 오류", HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	// 개인 마이페이지 - 인테리어 업체 후기 삭제
+	@PostMapping("/mypageUserReviewDelete/{num}")
+	public ResponseEntity<String> mypageUserReviewDelete(@PathVariable Integer num) {
+		try {
+			interiorService.deleteReview(num);
+			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("후기 삭제 오류", HttpStatus.BAD_REQUEST);
+		}
+	}
 }

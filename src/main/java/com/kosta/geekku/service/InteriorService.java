@@ -28,4 +28,8 @@ public interface InteriorService {
 	Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, String userId) throws Exception;
 	// 마이페이지 - 개인회원 인테리어 후기 작성 내역
 	Page<ReviewDto> reviewListForUserMypage(int page, int size, String userId) throws Exception;
+	// 마이페이지 - 개인회원 인테리어 후기 수정
+	void updateReview(ReviewDto reviewDto, Integer num) throws Exception;
+	// 마이페이지 - 개인회원 인테리어 후기 삭제
+	void deleteReview(Integer num) throws Exception;
 }

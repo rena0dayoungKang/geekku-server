@@ -169,6 +169,21 @@ public class InteriorSeviceImpl implements InteriorService {
 		Page<ReviewDto> pageInfo = interiorReviewRepository.findAllByUser(user, pageable).map(InteriorReview::toDto);
 		
 		return pageInfo;
+	}
+
+	@Override
+	public void updateReview(ReviewDto reviewDto, Integer num) throws Exception {
+		InteriorReview review = interiorReviewRepository.findById(num).orElseThrow(() -> new Exception("리뷰 글번호 오류"));
+
+		review.setContent(reviewDto.getContent());
+		// 이미지 수정 필요함
+		interiorReviewRepository.save(review);
+	}
+
+	@Override
+	public void deleteReview(Integer num) throws Exception {
+		InteriorReview review = interiorReviewRepository.findById(num).orElseThrow(() -> new Exception("리뷰 글번호 오류"));
+		interiorReviewRepository.deleteById(num);
 	}	
 
 }
