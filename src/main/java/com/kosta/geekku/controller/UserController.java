@@ -2,11 +2,13 @@ package com.kosta.geekku.controller;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,19 +17,29 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.config.jwt.JwtProperties;
+
+import com.kosta.geekku.dto.EstateBookMarkDto;
+import com.kosta.geekku.dto.InteriorBookMarkDto;
+
 import com.kosta.geekku.dto.UserDto;
 import com.kosta.geekku.entity.Role;
+import com.kosta.geekku.service.BookmarkService;
 import com.kosta.geekku.service.UserService;
+import com.kosta.geekku.util.PageInfo;
 
 @RestController
 public class UserController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private BookmarkService bookmarkService;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -147,4 +159,46 @@ public class UserController {
 		return formatDate;
 	}
 
+	@GetMapping("/mypagebookmark")
+	public ResponseEntity<Map<String, Object>> myEstateBookmarkList(
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+			@RequestParam("userId") String userId) {
+		try {
+			System.out.println(userId);
+			PageInfo pageInfo = new PageInfo();
+			pageInfo.setCurPage(page);
+			System.out.println("page" + page);
+			Slice<EstateBookMarkDto> myEstateBookmarkList = bookmarkService.mypageEstatebookmarkList(page, userId);
+			Map<String, Object> listInfo = new HashMap<>();
+			listInfo.put("myEstateBookmarkList", myEstateBookmarkList);
+			listInfo.put("pageInfo", pageInfo);
+
+			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@GetMapping("/mypagebookmarkInterior")
+	public ResponseEntity<Map<String, Object>> myInteriorBookmarkList(
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+			@RequestParam("userId") String userId) {
+		try {
+			System.out.println(userId);
+			PageInfo pageInfo = new PageInfo();
+			pageInfo.setCurPage(page);
+			System.out.println("page" + page);
+			Slice<InteriorBookMarkDto> myInteriorBookmarkList = bookmarkService.mypageInteriorbookmarkList(page,
+					userId);
+			Map<String, Object> listInfo = new HashMap<>();
+			listInfo.put("myInteriorBookmarkList", myInteriorBookmarkList);
+			listInfo.put("pageInfo", pageInfo);
+
+			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
 }

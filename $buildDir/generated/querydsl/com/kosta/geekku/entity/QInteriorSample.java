@@ -27,6 +27,8 @@ public class QInteriorSample extends EntityPathBase<InteriorSample> {
 
     public final NumberPath<Integer> interiorNum = createNumber("interiorNum", Integer.class);
 
+    public final QInterior interior;
+
     public final StringPath intro = createString("intro");
 
     public final StringPath location = createString("location");
@@ -49,6 +51,13 @@ public class QInteriorSample extends EntityPathBase<InteriorSample> {
 
     public QInteriorSample(PathMetadata metadata) {
         super(InteriorSample.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QInteriorSample(Class<? extends InteriorSample> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.company = inits.isInitialized("company") ? new QCompany(forProperty("company")) : null;
+        this.interior = inits.isInitialized("interior") ? new QInterior(forProperty("interior"), inits.get("interior")) : null;
     }
 
 }

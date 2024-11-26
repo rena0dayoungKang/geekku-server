@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.kosta.geekku.dto.InteriorBookMarkDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,11 +25,25 @@ public class InteriorBookmark {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer bookmarkInteriorNum;
-	
-	@Column(columnDefinition = "BINARY(16)", unique = true, nullable = false)
+
+	/*
+	 * @ManyToOne(fetch = FetchType.LAZY)
+	 * 
+	 * @JoinColumn(name = "userId") private User user;
+	 */
+
+	@Column
 	private UUID userId;
-	//private UUID userId; // join column User - userID
-	
+	// private UUID userId; // join column User - userID
+
 	private Integer interiorNum;
-	//private UUID companyId; // join column Company - companyId
+	// private UUID companyId; // join column Company - companyId
+
+	public InteriorBookMarkDto toDto() {
+		InteriorBookMarkDto interiorBookmarkDto = InteriorBookMarkDto.builder().bookmarkInteriorNum(bookmarkInteriorNum)
+				.userId(userId).interiorNum(interiorNum).build();
+
+		return interiorBookmarkDto;
+	}
+
 }

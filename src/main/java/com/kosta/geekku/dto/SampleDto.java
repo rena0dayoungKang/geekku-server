@@ -2,6 +2,7 @@ package com.kosta.geekku.dto;
 
 import java.sql.Timestamp;
 
+import com.kosta.geekku.entity.Interior;
 import com.kosta.geekku.entity.InteriorSample;
 
 import lombok.AllArgsConstructor;
@@ -24,20 +25,11 @@ public class SampleDto {
 	private String intro;
 	private String content;
 	private Timestamp createdAt;
-	
+
 	public InteriorSample toEntity() {
-		InteriorSample sample = InteriorSample.builder()
-				.sampleNum(sampleNum)
-				.interiorNum(interiorNum)
-				.type(type)
-				.style(style)
-				.size(size)
-				.location(location)
-				.coverImage(coverImage)
-				.intro(intro)
-				.content(content)
-				.createdAt(createdAt)
-				.build();
-		return sample;
+		return InteriorSample.builder().sampleNum(sampleNum)
+				.interior(Interior.builder().interiorNum(interiorNum).build()).type(type).style(style).size(size)
+				.location(location).coverImage(coverImage).intro(intro).content(content).createdAt(createdAt).build();
+
 	}
 }

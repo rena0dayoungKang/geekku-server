@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
 import org.springframework.stereotype.Service;
 
 import com.kosta.geekku.dto.InteriorDto;
@@ -29,8 +30,10 @@ import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.InteriorBookmarkRepository;
 import com.kosta.geekku.repository.InteriorDslRepository;
 import com.kosta.geekku.repository.InteriorRepository;
+import com.kosta.geekku.repository.InteriorRequestDslRepository;
 import com.kosta.geekku.repository.InteriorRequestRepository;
 import com.kosta.geekku.repository.InteriorReviewRepository;
+import com.kosta.geekku.repository.InteriorSampleDslRepository;
 import com.kosta.geekku.repository.InteriorSampleRepository;
 import com.kosta.geekku.repository.UserRepository;
 
@@ -45,9 +48,11 @@ public class InteriorSeviceImpl implements InteriorService {
 	private final InteriorBookmarkRepository interiorBookmarkRepository;
 	private final UserRepository userRepository;
 	private final InteriorSampleRepository interiorSampleRepository;
+	private final InteriorSampleDslRepository interiorSampleDslRepository;
 	private final InteriorReviewRepository interiorReviewRepository;
 	private final InteriorRequestRepository interiorRequestRepository;
-	
+	private final InteriorRequestDslRepository interiorRequestDslRepository;
+
 	@Value("${upload.path}")
 	private String uploadPath;
 
@@ -135,7 +140,7 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	@Override
 	public SampleDto sampleDetail(Integer num) throws Exception {
-		InteriorSample sample = interiorSampleRepository.findById(num).orElseThrow(()->new Exception("글 번호 오류"));
+		InteriorSample sample = interiorSampleRepository.findById(num).orElseThrow(() -> new Exception("글 번호 오류"));
 		return sample.toDto();
 	}
 
@@ -215,6 +220,59 @@ public class InteriorSeviceImpl implements InteriorService {
 		InteriorReview review = interiorReviewRepository.findById(num).orElseThrow(() -> new Exception("리뷰 글번호 오류"));
 		interiorReviewRepository.deleteById(num);
 	}	
+=======
+	public List<ReviewDto> interiorReviewList(PageInfo pageInfo, String companyId) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<InteriorRequestDto> interiorRequestList(PageInfo pageInfo, String companyId) throws Exception {
+		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
+		/*
+		 * InteriorRequest interiorRequest =
+		 * interiorRequestRepository.findById(companyId) .orElseThrow(() -> new
+		 * Exception("방꾸 글번호 오류"));
+		 */
+
+		/*
+		 * List<InteriorRequestDto> interiorRequestDtoList = interiorDslRepository
+		 * .interiorSampleListmypage(pageRequest,
+		 * UUID.fromString(companyId)).stream().map(e -> e.toDto())
+		 * .collect(Collectors.toList());
+		 */
+		Long cnt = interiorRequestDslRepository.interiorRequestCount();
+
+		Integer allPage = (int) (Math.ceil(cnt.doubleValue() / pageRequest.getPageSize()));
+		Integer startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
+		Integer endPage = Math.min(startPage + 10 - 1, allPage);
+
+		pageInfo.setAllPage(allPage);
+		pageInfo.setStartPage(startPage);
+		pageInfo.setEndPage(endPage);
+		return null;
+
+		/* return interiorRequestDtoList; */
+	}
+
+	@Override
+	public List<SampleDto> interiorSampleList(PageInfo pageInfo, String companyId) throws Exception {
+		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
+		List<SampleDto> interiorSampleDtoList = interiorDslRepository
+				.interiorSampleListmypage(pageRequest, UUID.fromString(companyId)).stream().map(e -> e.toDto())
+				.collect(Collectors.toList());
+		Long allCnt = interiorDslRepository.findMypageEstateCount(UUID.fromString(companyId));
+
+		Integer allPage = (int) (Math.ceil(allCnt.doubleValue() / pageRequest.getPageSize()));
+		Integer startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
+		Integer endPage = Math.min(startPage + 10 - 1, allPage);
+
+		pageInfo.setAllPage(allPage);
+		pageInfo.setStartPage(startPage);
+		pageInfo.setEndPage(endPage);
+
+		return interiorSampleDtoList;
+	}
 
 
 }
