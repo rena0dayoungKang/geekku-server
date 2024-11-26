@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.CompanyDto;
 import com.kosta.geekku.entity.Estate;
@@ -26,6 +27,7 @@ import com.kosta.geekku.entity.HouseAnswer;
 import com.kosta.geekku.entity.OnestopAnswer;
 import com.kosta.geekku.entity.Role;
 import com.kosta.geekku.service.CompanyService;
+import com.kosta.geekku.service.EstateNumberService;
 
 @RestController
 public class CompanyController {
@@ -33,8 +35,8 @@ public class CompanyController {
 	@Autowired
 	private CompanyService companyService; 
 
-//	@Autowired
-//	private EstateNumberService estateNumberService;
+	@Autowired
+	private EstateNumberService estateNumberService;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -61,20 +63,20 @@ public class CompanyController {
 	}
 
 
-//	@GetMapping("/searchEstate")
-//	public ResponseEntity<String> searchEstate(@RequestParam(required = false) String bsnmCmpnm,
-//			@RequestParam(required = false) String brkrNm, @RequestParam(required = false) String jurirno) {
-//		// 브이월드 Settings 출력
-//		estateNumberService.vworldSettings();
-//		try {
-//			String response = estateNumberService.searchEstate(bsnmCmpnm, brkrNm, jurirno);
-//			return new ResponseEntity<String>(response, HttpStatus.OK);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return new ResponseEntity<String>("조회할 수 없습니다", HttpStatus.BAD_REQUEST);
-//		}
-//	}
-//	
+	@GetMapping("/searchEstate")
+	public ResponseEntity<String> searchEstate(@RequestParam(required = false) String bsnmCmpnm,
+			@RequestParam(required = false) String brkrNm, @RequestParam(required = false) String jurirno) {
+		// 브이월드 Settings 출력
+		estateNumberService.vworldSettings();
+		try {
+			String response = estateNumberService.searchEstate(bsnmCmpnm, brkrNm, jurirno);
+			return new ResponseEntity<String>(response, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("조회할 수 없습니다", HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	//중개업자 프로필 조회
 
 	@GetMapping("/estateProfile/{companyId}") 

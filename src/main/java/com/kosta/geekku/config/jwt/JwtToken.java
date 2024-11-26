@@ -19,19 +19,19 @@ public class JwtToken {
 		//System.out.println("secret key : " + JwtProperties.SECRET);
 	}
 	
-	public String makeAccessToken(String username, String type) {
+	public String makeAccessToken(String username, String role) {
 		return JWT.create()
 					.withSubject(username)
-					.withClaim("type", type)
+					.withClaim("role", role)
 					.withIssuedAt(new Date(System.currentTimeMillis()))
 					.withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_EXPIRATION_TIME))
 					.sign(Algorithm.HMAC512(JwtProperties.SECRET));
 	}
 	
-	public String makeRefreshToken(String username, String type) {
+	public String makeRefreshToken(String username, String role) {
 		return JWT.create()
 					.withSubject(username)
-					.withClaim("type", type)
+					.withClaim("role", role)
 					.withIssuedAt(new Date(System.currentTimeMillis()))
 					.withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.REFRESH_EXPIRATION_TIME))
 					.sign(Algorithm.HMAC512(JwtProperties.SECRET));

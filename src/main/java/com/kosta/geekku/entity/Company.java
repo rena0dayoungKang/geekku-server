@@ -35,7 +35,7 @@ public class Company {
 	private UUID companyId;
 
 	private String username; // 기업회원 로그인 아이디
-	private String type; // company
+	private String type; // estate, interior
 	private String password;
 	private String phone;
 	private String email;
