@@ -17,4 +17,8 @@ public interface CommunityRepository extends JpaRepository<Community, Integer>, 
 	Optional<Community> findByCommunityNum(Integer communityNum);
 	List<Community> findAllByUser_UserId(UUID userId);
 
+
+	Page<Community> findByUser_UserId(UUID userId, Pageable pageable);
+
+
 }

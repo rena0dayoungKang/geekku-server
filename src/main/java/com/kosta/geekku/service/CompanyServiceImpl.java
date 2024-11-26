@@ -100,9 +100,15 @@ public class CompanyServiceImpl implements CompanyService {
 
 	@Override 
 	public CompanyDto getCompanyProfile(String companyId) {
-		Company company = companyRepository.findById(UUID.fromString(companyId)).orElseThrow();
-		return CompanyDto.builder().companyName(company.getCompanyName()).email(company.getEmail()) // email로 수정
-				.username(company.getUsername()).build();
+
+	    Company company = companyRepository.findById(UUID.fromString(companyId))
+	            .orElseThrow();
+	    return CompanyDto.builder()
+	            .companyName(company.getCompanyName())
+	            .email(company.getEmail()) // email로 수정
+	            .username(company.getUsername())
+	            .build();
+
 	}
 
 	@Override //

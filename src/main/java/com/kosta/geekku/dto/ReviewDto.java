@@ -34,7 +34,7 @@ public class ReviewDto {
 	public InteriorReview toEntity() {
 		InteriorReview review = InteriorReview.builder()
 				.reviewNum(reviewNum)
-				.companyName(companyName)
+				.companyName(getCompanyName())
 				.type(type)
 				.style(style)
 				.size(size)

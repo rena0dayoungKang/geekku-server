@@ -69,32 +69,63 @@ public class CommunityServiceImpl implements CommunityService {
 
 	@Transactional
 	@Override
-	public void createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage)
-			throws Exception {
-		Community community = Community.builder().title(title).content(content).type(type).build(); // 데이터 저장
-		community = communityRepository.save(community);
-		System.out.println("Community saved with ID: " + community.getCommunityNum());
-		// 파일 저장
-		if (coverImage == null || coverImage.isEmpty()) {
-			throw new IllegalArgumentException("파일이 비어 있거나 업로드되지 않았습니다.");
-		}
-		try {
-			File uploadDir = new File(uploadPath);// 디렉토리 확인 및 생성
-			if (!uploadDir.exists()) {
-				uploadDir.mkdirs();
-			}
-			String fileName = coverImage.getOriginalFilename();// 파일 저장 경로 생성
-			String filePath = uploadPath + "/" + fileName;
-			File dest = new File(filePath);// 파일 저장
-			coverImage.transferTo(dest);
-			community.setCoverImage(filePath);// 파일 경로를 엔티티에 업데이트
-			communityRepository.save(community);
-			System.out.println("파일 경로가 데이터베이스에 저장되었습니다: " + fileName);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.err.println("파일 저장 중 오류 발생: " + e.getMessage());
-			throw new RuntimeException("파일 저장에 실패했습니다. 경로를 확인하세요.");
-		}
+	public void createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage, String userId)
+	        throws Exception {
+	    // userId를 UUID로 변환 (userId가 UUID 형식이라고 가정)
+	    UUID userUUID;
+	    try {
+	        userUUID = UUID.fromString(userId);  // String을 UUID로 변환
+	    } catch (IllegalArgumentException e) {
+	        throw new IllegalArgumentException("유효하지 않은 userId 형식입니다.");
+	    }
+
+	    // userRepository에서 userId(UUID)로 사용자 조회
+	    User user = userRepository.findByUserId(userUUID);  // UUID로 조회
+	    if (user == null) {
+	        throw new IllegalArgumentException("유효하지 않은 사용자입니다.");
+	    }
+
+	    // 커뮤니티 객체 생성
+	    Community community = Community.builder()
+	            .title(title)
+	            .content(content)
+	            .type(type)
+	            .user(user)  // userId 추가
+	            .build();
+	    community = communityRepository.save(community);
+	    System.out.println("Community saved with ID: " + community.getCommunityNum());
+
+	    // 파일 저장 처리
+	    if (coverImage == null || coverImage.isEmpty()) {
+	        throw new IllegalArgumentException("파일이 비어 있거나 업로드되지 않았습니다.");
+	    }
+
+	    try {
+	        // 파일 저장 경로 확인
+	        File uploadDir = new File(uploadPath);
+	        if (!uploadDir.exists()) {
+	            uploadDir.mkdirs();
+	        }
+
+	        // 파일 이름과 경로 설정
+	        String fileName = coverImage.getOriginalFilename();
+	        if (fileName == null) {
+	            throw new IllegalArgumentException("파일 이름이 없습니다.");
+	        }
+	        String filePath = uploadPath + "/" + fileName;
+	        File dest = new File(filePath);  // 파일 객체 생성
+
+	        // 파일을 지정한 경로로 전송
+	        coverImage.transferTo(dest);
+	        community.setCoverImage(filePath);  // 파일 경로를 엔티티에 업데이트
+	        communityRepository.save(community);  // 업데이트된 커뮤니티 저장
+
+	        System.out.println("파일 경로가 데이터베이스에 저장되었습니다: " + fileName);
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        System.err.println("파일 저장 중 오류 발생: " + e.getMessage());
+	        throw new RuntimeException("파일 저장에 실패했습니다. 경로를 확인하세요.");
+	    }
 	}
 
 	@Override
@@ -135,8 +166,12 @@ public class CommunityServiceImpl implements CommunityService {
 		CommunityBookmark existingBookmark = communityBookmarkRepository
 				.findByUserUserIdAndCommunityCommunityNum(UUID.fromString(userId), communityNum);
 		if (existingBookmark == null) {
-			User user = userRepository.findById(UUID.fromString(userId))
-					.orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
+		//	User user = userRepository.findById(UUID.fromString(userId))
+		//			.orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
+
+			User user = userRepository.findByUserId(UUID.fromString(userId));
+//					.orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다.")); <- 수정함
+
 			Community community = communityRepository.findByCommunityNum(communityNum)
 					.orElseThrow(() -> new IllegalArgumentException("해당 커뮤니티를 찾을 수 없습니다."));
 			communityBookmarkRepository.save(CommunityBookmark.builder().user(user).community(community).build());
@@ -183,6 +218,7 @@ public class CommunityServiceImpl implements CommunityService {
 		return communities.stream().map(community -> Community.builder().title(community.getTitle())
 				.viewCount(community.getViewCount()).build()).collect(Collectors.toList());
 	}
+
 
 	@Override
 	public List<CommunityDto> getCommunityListForMain() throws Exception {

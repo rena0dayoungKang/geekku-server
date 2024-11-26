@@ -12,8 +12,8 @@ import com.kosta.geekku.entity.InteriorSample;
 
 public interface InteriorService {
 	List<InteriorDto> interiorListForMain() throws Exception;
-
-	List<InteriorSample> sampleListForMain() throws Exception;
+  
+	List<SampleDto> sampleListForMain() throws Exception;
 
 	List<InteriorDto> interiorList(String possibleLocation) throws Exception;
 

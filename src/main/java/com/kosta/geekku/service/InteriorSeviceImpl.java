@@ -65,9 +65,9 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public List<InteriorSample> sampleListForMain() throws Exception {
-		List<InteriorSample> sampleList = null;
-		sampleList = interiorDslRepository.findSampleListForMain();
+	public List<SampleDto> sampleListForMain() throws Exception {
+		List<SampleDto> sampleList = null;
+		sampleList = interiorDslRepository.findSampleListForMain().stream().map(s->s.toDto()).collect(Collectors.toList());
 		return sampleList;
 	}
 
@@ -171,7 +171,7 @@ public class InteriorSeviceImpl implements InteriorService {
 	public Map<String, Object> interiorDetail(Integer interiorNum) throws Exception {
 		Map<String,Object> detailInfo = new HashMap<>();
 		Interior interiorDetail = interiorRepository.findById(interiorNum).orElseThrow(()->new Exception("인테리어 업체 번호 오류"));
-		List<InteriorSample> sampleDetail = interiorSampleRepository.findByInteriorNum(interiorNum);
+		List<InteriorSample> sampleDetail = interiorSampleRepository.findByInterior_InteriorNum(interiorNum);
 		List<InteriorReview> reviewDetail = interiorReviewRepository.findByInterior_interiorNum(interiorNum);
 		
 		InteriorDto interiorInfo = interiorDetail.toDto();

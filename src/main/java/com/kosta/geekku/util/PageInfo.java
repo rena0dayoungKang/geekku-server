@@ -12,6 +12,7 @@ public class PageInfo {
     private Integer startPage = 1;
     private Integer endPage = 1;
     private Integer pageSize = 10;
+    private Long totalCount = 0L;
 
     public void calculatePages() {
         this.startPage = ((this.curPage - 1) / 10) * 10 + 1;
