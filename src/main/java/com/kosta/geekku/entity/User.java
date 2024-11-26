@@ -66,6 +66,9 @@ public class User {
 								.phone(phone)
 								.email(email)
 								.nickname(nickname)
+								.password(password)
+								.profileImage(profileImage)
+								.type(type)
 								.createdAt(createdAt)
 								.build();
 		return userDto;
