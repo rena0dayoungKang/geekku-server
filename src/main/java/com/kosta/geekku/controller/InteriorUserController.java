@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kosta.geekku.dto.EstateDto;
 import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequsetDto;
@@ -109,13 +110,17 @@ public class InteriorUserController {
 
 	// 인테리어업자 내가 작성한 인테리어 시공사례 모아보기
 	@GetMapping("/myInteriorSampleList")
-	public ResponseEntity<Map<String, Object>> interiorList(
-			@RequestParam(value = "interiorNum", required = false) Integer interiorNum) {
+	public ResponseEntity<Map<String, Object>> mypageEstateList(
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+			@RequestParam("companyId") String companyId) {
 		try {
-			List<SampleDto> interiorSampleList = interiorService.interiorSampleList(interiorNum);
-			System.out.println(interiorSampleList);
+			PageInfo pageInfo = new PageInfo();
+			pageInfo.setCurPage(page);
+			List<SampleDto> estateList = interiorService.interiorSampleList(pageInfo, companyId);
 			Map<String, Object> listInfo = new HashMap<>();
-			listInfo.put("interiorSampleList", interiorSampleList);
+			listInfo.put("estateList", estateList);
+			listInfo.put("pageInfo", pageInfo);
+
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -127,12 +132,12 @@ public class InteriorUserController {
 	@GetMapping("/myInteriorReviewList")
 	public ResponseEntity<Map<String, Object>> interiorReviewList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam("interiorNum") Integer interiorNum) {
+			@RequestParam("companyId") String companyId) {
 		try {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			List<ReviewDto> interiorReviewList = interiorService.interiorReviewList(pageInfo, interiorNum);
-			System.out.println(interiorReviewList);
+			List<ReviewDto> interiorReviewList = interiorService.interiorReviewList(pageInfo, companyId);
+			// System.out.println(interiorReviewList);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("interiorReviewList", interiorReviewList);
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
@@ -146,11 +151,11 @@ public class InteriorUserController {
 	@GetMapping("/myInteriorRequestList")
 	public ResponseEntity<Map<String, Object>> interiorRequestList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam("interiorNum") Integer interiorNum) {
+			@RequestParam("companyId") String companyId) {
 		try {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			List<InteriorRequsetDto> interiorRequestList = interiorService.interiorRequestList(pageInfo, interiorNum);
+			List<InteriorRequsetDto> interiorRequestList = interiorService.interiorRequestList(pageInfo, companyId);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("interiorRequestList", interiorRequestList);
 			listInfo.put("pageInfo", pageInfo);

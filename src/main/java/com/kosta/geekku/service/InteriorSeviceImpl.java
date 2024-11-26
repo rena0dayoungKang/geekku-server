@@ -152,19 +152,26 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public List<ReviewDto> interiorReviewList(PageInfo pageInfo, Integer interiorNum) throws Exception {
+	public List<ReviewDto> interiorReviewList(PageInfo pageInfo, String companyId) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<InteriorRequsetDto> interiorRequestList(PageInfo pageInfo, Integer interiorNum) throws Exception {
-		InteriorRequest interiorRequest = interiorRequestRepository.findById(interiorNum)
-				.orElseThrow(() -> new Exception("방꾸 글번호 오류"));
+	public List<InteriorRequsetDto> interiorRequestList(PageInfo pageInfo, String companyId) throws Exception {
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
+		/*
+		 * InteriorRequest interiorRequest =
+		 * interiorRequestRepository.findById(companyId) .orElseThrow(() -> new
+		 * Exception("방꾸 글번호 오류"));
+		 */
 
-		List<InteriorRequsetDto> interiorRequestDtoList = interiorRequestDslRepository
-				.interiorRequestListByPaging(pageRequest).stream().map(a -> a.toDto()).collect(Collectors.toList());
+		/*
+		 * List<InteriorRequsetDto> interiorRequestDtoList = interiorDslRepository
+		 * .interiorSampleListmypage(pageRequest,
+		 * UUID.fromString(companyId)).stream().map(e -> e.toDto())
+		 * .collect(Collectors.toList());
+		 */
 		Long cnt = interiorRequestDslRepository.interiorRequestCount();
 
 		Integer allPage = (int) (Math.ceil(cnt.doubleValue() / pageRequest.getPageSize()));
@@ -174,14 +181,28 @@ public class InteriorSeviceImpl implements InteriorService {
 		pageInfo.setAllPage(allPage);
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
+		return null;
 
-		return interiorRequestDtoList;
+		/* return interiorRequestDtoList; */
 	}
 
 	@Override
-	public List<SampleDto> interiorSampleList(Integer interiorNum) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public List<SampleDto> interiorSampleList(PageInfo pageInfo, String companyId) throws Exception {
+		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
+		List<SampleDto> interiorSampleDtoList = interiorDslRepository
+				.interiorSampleListmypage(pageRequest, UUID.fromString(companyId)).stream().map(e -> e.toDto())
+				.collect(Collectors.toList());
+		Long allCnt = interiorDslRepository.findMypageEstateCount(UUID.fromString(companyId));
+
+		Integer allPage = (int) (Math.ceil(allCnt.doubleValue() / pageRequest.getPageSize()));
+		Integer startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
+		Integer endPage = Math.min(startPage + 10 - 1, allPage);
+
+		pageInfo.setAllPage(allPage);
+		pageInfo.setStartPage(startPage);
+		pageInfo.setEndPage(endPage);
+
+		return interiorSampleDtoList;
 	}
 
 }

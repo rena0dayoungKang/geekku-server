@@ -34,10 +34,10 @@ public interface InteriorService {
 
 	InteriorRequsetDto requestDetail(Integer num) throws Exception;
 
-	List<ReviewDto> interiorReviewList(PageInfo pageInfo, Integer interiorNum) throws Exception;
+	List<ReviewDto> interiorReviewList(PageInfo pageInfo, String companyId) throws Exception;
 
-	List<InteriorRequsetDto> interiorRequestList(PageInfo pageInfo, Integer interiorNum) throws Exception;
+	List<InteriorRequsetDto> interiorRequestList(PageInfo pageInfo, String companyId) throws Exception;
 
-	List<SampleDto> interiorSampleList(Integer interiorNum) throws Exception;
+	List<SampleDto> interiorSampleList(PageInfo pageInfo, String companyId) throws Exception;
 
 }

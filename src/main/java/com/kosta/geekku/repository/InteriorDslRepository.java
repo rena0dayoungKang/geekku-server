@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
-import com.kosta.geekku.dto.SampleDto;
 import com.kosta.geekku.entity.Interior;
+import com.kosta.geekku.entity.InteriorRequest;
 import com.kosta.geekku.entity.InteriorSample;
 import com.kosta.geekku.entity.QInterior;
 import com.kosta.geekku.entity.QInteriorBookmark;
+import com.kosta.geekku.entity.QInteriorRequest;
 import com.kosta.geekku.entity.QInteriorSample;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -59,9 +61,34 @@ public class InteriorDslRepository {
 				.fetchOne();
 	}
 
-	public List<InteriorSample> interiorSampleListmypage(Integer interiorNum) throws Exception {
+	public List<InteriorSample> interiorSampleListmypage(PageRequest pageRequest, UUID companyId) throws Exception {
 		QInteriorSample interiorSample = QInteriorSample.interiorSample;
-		return jpaQueryFactory.selectFrom(interiorSample).where(interiorSample.interior.interiorNum.eq(interiorNum))
+		return jpaQueryFactory.selectFrom(interiorSample).where(interiorSample.company.companyId.eq(companyId))
 				.orderBy(interiorSample.createdAt.desc()).fetch();
 	}
+
+	/*
+	 * public List<InteriorSample> interiorReviewListmypage(PageRequest pageRequest,
+	 * UUID companyId) throws Exception { QInteriorRequest interiorRequest =
+	 * QInteriorSample.interiorSample; return
+	 * jpaQueryFactory.selectFrom(interiorSample).where(interiorSample.company.
+	 * companyId.eq(companyId)) .orderBy(interiorSample.createdAt.desc()).fetch(); }
+	 */
+
+	/*
+	 * public List<InteriorRequest> interiorRequestList(PageRequest pageRequest,
+	 * UUID companyId) throws Exception { QInteriorRequest interiorRequest =
+	 * QInteriorRequest.interiorRequest; return
+	 * jpaQueryFactory.selectFrom(interiorRequest).where(interiorRequest.company.
+	 * companyId.eq(companyId)) .orderBy(interiorRequest.createdAt.desc()).fetch();
+	 * }
+	 */
+
+	public Long findMypageEstateCount(UUID companyId) throws Exception {
+		QInteriorSample interiorsample = QInteriorSample.interiorSample;
+
+		return jpaQueryFactory.select(interiorsample.count()).from(interiorsample)
+				.where(interiorsample.company.companyId.eq(companyId)).fetchOne();
+	}
+
 }
