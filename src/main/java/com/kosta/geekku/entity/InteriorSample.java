@@ -33,7 +33,9 @@ public class InteriorSample {
 //	@JoinColumn(name = "interiorNum")
 //	private Interior interior;
 
+	
 	private Integer interiorNum;
+	private String companyId;
 
 	private String type; // 주거형태
 	private String style;
