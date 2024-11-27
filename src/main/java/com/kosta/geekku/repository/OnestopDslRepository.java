@@ -6,8 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
+import com.kosta.geekku.entity.InteriorAllAnswer;
 import com.kosta.geekku.entity.Onestop;
+import com.kosta.geekku.entity.OnestopAnswer;
+import com.kosta.geekku.entity.QInteriorAllAnswer;
 import com.kosta.geekku.entity.QOnestop;
+import com.kosta.geekku.entity.QOnestopAnswer;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Repository
@@ -70,4 +74,21 @@ public class OnestopDslRepository {
 	 * jpaQueryFactory.update(onestop).set(onestop.viewCount,
 	 * viewCount).where(onestop.onestopNum.eq(onestopNum)) .execute(); }
 	 */
+
+	// 방꾸 답변
+	public Long onestopAnswerCount() throws Exception {
+		QOnestopAnswer onestopAnswer = QOnestopAnswer.onestopAnswer;
+
+		return jpaQueryFactory.select(onestopAnswer.count()).from(onestopAnswer).fetchOne();
+	}
+
+	public List<OnestopAnswer> onestopAnswerListByPaging(PageRequest pageRequest) throws Exception {
+		QOnestopAnswer onestopAnswer = QOnestopAnswer.onestopAnswer;
+
+		List<OnestopAnswer> onestopAnswerList = jpaQueryFactory.selectFrom(onestopAnswer)
+				.orderBy(onestopAnswer.createdAt.asc()).offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
+				.fetch();
+
+		return onestopAnswerList;
+	}
 }

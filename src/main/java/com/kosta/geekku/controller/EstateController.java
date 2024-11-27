@@ -34,16 +34,16 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class EstateController {
-	
-	private final EstateService estateService; 
+
+	private final EstateService estateService;
 
 	@Value("${upload.path}")
 	private String uploadPath;
 
 //	/company/estateWrite로 경로 수정해주기
 	@PostMapping("/estateWrite")
-	public ResponseEntity<String> estateWrite(EstateDto estateDto, 
-			@RequestPart (name="images", required=false) MultipartFile[] images) {
+	public ResponseEntity<String> estateWrite(EstateDto estateDto,
+			@RequestPart(name = "images", required = false) MultipartFile[] images) {
 		try {
 			System.out.println(estateDto);
 			Integer estateNum = estateService.estateWrite(estateDto, images == null ? null : Arrays.asList(images));
@@ -53,18 +53,18 @@ public class EstateController {
 			return new ResponseEntity<String>("매물 등록 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/estateImage/{num}")
 	public void image(@PathVariable String num, HttpServletResponse response) {
 		try {
 			System.out.println(num);
-		       // 파일이 존재하지 않는 경우 처리
+			// 파일이 존재하지 않는 경우 처리
 			File file = new File(uploadPath, num);
-            if (!file.exists()) {
-                System.out.println("파일 존재하지 않음");
-                return;
-            }
-            InputStream ins = new FileInputStream(file);
+			if (!file.exists()) {
+				System.out.println("파일 존재하지 않음");
+				return;
+			}
+			InputStream ins = new FileInputStream(file);
 //			InputStream ins = new FileInputStream(new File(uploadPath, num));
 			FileCopyUtils.copy(ins, response.getOutputStream());
 			ins.close();
@@ -72,7 +72,7 @@ public class EstateController {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@PostMapping("/estateDetail")
 	public ResponseEntity<Map<String, Object>> estateDetail(@RequestBody Map<String, String> param) {
 		try {
@@ -80,13 +80,13 @@ public class EstateController {
 			Map<String, Object> res = new HashMap<>();
 			EstateDto estateDto = estateService.estateDetail(estateNum);
 			res.put("estate", estateDto);
-			
-			//북마크
+
+			// 북마크
 			if (param.get("userId") != null) {
 				boolean bookmark = estateService.checkBookmark(param.get("userId"), estateNum) != null;
 				res.put("bookmark", bookmark);
 			}
-			
+
 			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -95,12 +95,12 @@ public class EstateController {
 			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/estateList")
 	public ResponseEntity<Map<String, Object>> estateList(
-			@RequestParam(value="page", required=false, defaultValue = "1") Integer page,
-			@RequestParam(value="type", required=false) String type,
-			@RequestParam(value="keyword", required=false) String keyword) {
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+			@RequestParam(value = "type", required = false) String type,
+			@RequestParam(value = "keyword", required = false) String keyword) {
 		try {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
@@ -108,14 +108,14 @@ public class EstateController {
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("estateList", estateList);
 			listInfo.put("pageInfo", pageInfo);
-			
-			return new ResponseEntity<Map<String,Object>>(listInfo, HttpStatus.OK);
+
+			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/estateListForMain")
 	public ResponseEntity<List<EstateDto>> estateListForMain() {
 		try {
@@ -126,7 +126,7 @@ public class EstateController {
 			return new ResponseEntity<List<EstateDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 //	/company/estateDelete로 경로 수정해주기
 	@PostMapping("/estateDelete")
 	public ResponseEntity<String> estateDelete(@RequestParam Integer estateNum) {
@@ -138,10 +138,11 @@ public class EstateController {
 			return new ResponseEntity<String>("매물 삭제 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 //	/user/estateBookmark/{estateNum}로 경로 수정해주기
 	@PostMapping("/estateBookmark/{estateNum}")
-	public ResponseEntity<String> estateBookmark(@PathVariable Integer estateNum, @RequestParam("userId") String userId) {
+	public ResponseEntity<String> estateBookmark(@PathVariable Integer estateNum,
+			@RequestParam("userId") String userId) {
 		try {
 //			UUID userId = UUID.fromString(((PrincipalDetails)authentication.getPrincipal()).getUser().getId());
 			boolean heart = estateService.toggleBookmark(userId, estateNum);
@@ -151,12 +152,12 @@ public class EstateController {
 			return new ResponseEntity<String>("매물 북마크 실패", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	// 중개업자 마이페이지 - 매물 등록 내역
 //	/company/mypageEstateList로 경로 수정해주기
 	@GetMapping("/mypageEstateList")
 	public ResponseEntity<Map<String, Object>> mypageEstateList(
-			@RequestParam(value="page", required=false, defaultValue = "1") Integer page,
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 			@RequestParam("companyId") String companyId) {
 		try {
 			PageInfo pageInfo = new PageInfo();
@@ -165,13 +166,12 @@ public class EstateController {
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("estateList", estateList);
 			listInfo.put("pageInfo", pageInfo);
-			
-			return new ResponseEntity<Map<String,Object>>(listInfo, HttpStatus.OK);
+
+			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	// 개인회원 마이페이지 - 매물 북마크 내역
+
 }

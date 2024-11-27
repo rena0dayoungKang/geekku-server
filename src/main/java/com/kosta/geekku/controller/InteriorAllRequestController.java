@@ -33,7 +33,7 @@ public class InteriorAllRequestController {
 	private final HttpSession session;
 
 	@PostMapping("/interiorAllWrite")
-	public ResponseEntity<String> interiorAllWrite(@RequestBody InteriorAllDto interiorAllDto) {
+	public ResponseEntity<String> interiorAllWrite(InteriorAllDto interiorAllDto) {
 		try {
 			interiorAllService.interiorAllWrite(interiorAllDto);
 			return new ResponseEntity<String>("true", HttpStatus.OK);
@@ -106,7 +106,7 @@ public class InteriorAllRequestController {
 		}
 	}
 
-	// 집꾸 답변
+	// 방꾸 답변
 	@PostMapping("/interiorAnswerWrite")
 	public ResponseEntity<String> interiorAnswerWrite(InteriorAnswerDto interiorAnswerDto,
 			@RequestParam Integer requestAllNum) {
