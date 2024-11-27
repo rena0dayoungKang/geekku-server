@@ -2,32 +2,43 @@ package com.kosta.geekku.controller;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.config.jwt.JwtProperties;
+import com.kosta.geekku.dto.EstateBookMarkDto;
+import com.kosta.geekku.dto.InteriorBookMarkDto;
 import com.kosta.geekku.dto.UserDto;
 import com.kosta.geekku.entity.Role;
+import com.kosta.geekku.service.BookmarkService;
 import com.kosta.geekku.service.UserService;
+import com.kosta.geekku.util.PageInfo;
 
 @RestController
 public class UserController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private BookmarkService bookmarkService;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -73,8 +84,14 @@ public class UserController {
 	public ResponseEntity<String> updateUserInfo(Authentication authentication, @RequestBody UserDto userDto) {
 		try {
 			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId(); // 토큰에서 UUID를 추출
-			userService.updateUserInfo(userId, userDto);
-			return new ResponseEntity<String>("회원정보 수정 완료", HttpStatus.OK);
+			
+			Map<String, String> tokens = userService.updateUserInfo(userId, userDto);
+			
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Authorization", "Bearer " + tokens.get("accessToken"));
+			headers.add("refreshToken", tokens.get("refreshToken"));
+			
+			return new ResponseEntity<String>("회원정보 수정 완료", headers, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("회원정보 수정 실패", HttpStatus.BAD_REQUEST);
@@ -88,8 +105,8 @@ public class UserController {
 			String newPassword = param.get("newPassword");
 
 			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
-			
-			UserDto userDto = userService.getUser(userId);			
+
+			UserDto userDto = userService.getUser(userId);
 			if (!bCryptPasswordEncoder.matches(currentPassword, userDto.getPassword())) {
 				return new ResponseEntity<>("현재 비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
 			}
@@ -104,40 +121,51 @@ public class UserController {
 			return new ResponseEntity<String>("비밀번호 변경에 실패했습니다.", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/findIdByPhone")
 	public ResponseEntity<Map<String, String>> findIdByPhone(@RequestBody Map<String, String> param) {
 		try {
 			String phone = param.get("phone");
 			UserDto userDto = userService.findIdByPhone(phone);
-			
+
 			String formatDate = formattedDate(userDto);
-			
+
 			Map<String, String> result = new HashMap<>();
 			result.put("username", userDto.getUsername());
 			result.put("createdAt", formatDate);
-			return new ResponseEntity<Map<String,String>>(result, HttpStatus.OK);
+			return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String,String>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, String>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/findIdByEmail")
 	public ResponseEntity<Map<String, String>> findIdByEmail(@RequestBody Map<String, String> param) {
 		try {
 			String email = param.get("email");
 			UserDto userDto = userService.findIdByEmail(email);
-			
+
 			String formatDate = formattedDate(userDto);
-			
+
 			Map<String, String> result = new HashMap<>();
 			result.put("username", userDto.getUsername());
 			result.put("createdAt", formatDate);
-			return new ResponseEntity<Map<String,String>>(result, HttpStatus.OK);
+			return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String,String>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, String>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/checkNickname/{nickname}")
+	public ResponseEntity<String> checkNickname(@PathVariable String nickname) {
+		try {
+			boolean checkNickname = userService.checkDoubleNickname(nickname);
+			return new ResponseEntity<String>(String.valueOf(checkNickname), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("닉네임 중복체크 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -145,6 +173,50 @@ public class UserController {
 		LocalDate createdAtDate = userDto.getCreatedAt().toLocalDateTime().toLocalDate();
 		String formatDate = createdAtDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		return formatDate;
+	}
+
+	// 개인회원 마이페이지 - 매물 북마크 내역
+	@GetMapping("/mypagebookmark")
+	public ResponseEntity<Map<String, Object>> myEstateBookmarkList(
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+			@RequestParam("userId") String userId) {
+		try {
+			System.out.println(userId);
+			PageInfo pageInfo = new PageInfo();
+			pageInfo.setCurPage(page);
+			System.out.println("page" + page);
+			Slice<EstateBookMarkDto> myEstateBookmarkList = bookmarkService.mypageEstatebookmarkList(page, userId);
+			Map<String, Object> listInfo = new HashMap<>();
+			listInfo.put("myEstateBookmarkList", myEstateBookmarkList);
+			listInfo.put("pageInfo", pageInfo);
+
+			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@GetMapping("/mypagebookmarkInterior")
+	public ResponseEntity<Map<String, Object>> myInteriorBookmarkList(
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+			@RequestParam("userId") String userId) {
+		try {
+			System.out.println(userId);
+			PageInfo pageInfo = new PageInfo();
+			pageInfo.setCurPage(page);
+			System.out.println("page" + page);
+			Slice<InteriorBookMarkDto> myInteriorBookmarkList = bookmarkService.mypageInteriorbookmarkList(page,
+					userId);
+			Map<String, Object> listInfo = new HashMap<>();
+			listInfo.put("myInteriorBookmarkList", myInteriorBookmarkList);
+			listInfo.put("pageInfo", pageInfo);
+
+			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+		}
 	}
 
 }

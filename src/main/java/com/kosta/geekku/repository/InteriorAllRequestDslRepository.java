@@ -1,15 +1,20 @@
 package com.kosta.geekku.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Repository;
 
 import com.kosta.geekku.entity.InteriorAllAnswer;
 import com.kosta.geekku.entity.InteriorAllRequest;
 import com.kosta.geekku.entity.QInteriorAllAnswer;
 import com.kosta.geekku.entity.QInteriorAllRequest;
+import com.kosta.geekku.entity.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Repository
@@ -17,13 +22,13 @@ public class InteriorAllRequestDslRepository {
 	@Autowired
 	private JPAQueryFactory jpaQueryFactory;
 
-	// 조회수
+	// 議고쉶�닔
 	public Long findInteriorAllCount() throws Exception {
 		QInteriorAllRequest interiorAll = QInteriorAllRequest.interiorAllRequest;
 		return jpaQueryFactory.select(interiorAll.count()).from(interiorAll).fetchOne();
 	}
 
-	// 리스트 페이징처리
+	// 由ъ뒪�듃 �럹�씠吏뺤쿂由�
 	public List<InteriorAllRequest> findInteriorAllListByPaging(PageRequest pageRequest) throws Exception {
 		QInteriorAllRequest interiorAll = QInteriorAllRequest.interiorAllRequest;
 		return jpaQueryFactory.selectFrom(interiorAll).orderBy(interiorAll.requestAllNum.desc())
@@ -47,7 +52,7 @@ public class InteriorAllRequestDslRepository {
 		return cnt;
 	}
 
-	// 제목, 지역, 시공타입
+	// �젣紐�, 吏��뿭, �떆怨듯��엯
 	public List<InteriorAllRequest> searchInteriorAllListByPaging(PageRequest pageRequest, String type, String word)
 			throws Exception {
 		QInteriorAllRequest interiorAll = QInteriorAllRequest.interiorAllRequest;
@@ -68,7 +73,7 @@ public class InteriorAllRequestDslRepository {
 		return interiorAllList;
 	}
 
-	// 집꾸 답변
+	// 諛⑷씀 �떟蹂�
 	public Long interiorAllAnswerCount() throws Exception {
 		QInteriorAllAnswer interiorAllAnswer = QInteriorAllAnswer.interiorAllAnswer;
 
@@ -83,5 +88,10 @@ public class InteriorAllRequestDslRepository {
 				.limit(pageRequest.getPageSize()).fetch();
 
 		return interiorAllAnswerList;
+	}
+
+	public Streamable<Order> findAllByUser(Optional<User> user, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

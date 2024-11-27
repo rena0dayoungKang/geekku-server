@@ -13,6 +13,7 @@ import javax.persistence.Lob;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.util.Base64Utils;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.kosta.geekku.dto.UserDto;
@@ -72,6 +73,14 @@ public class User {
 								.type(type)
 								.createdAt(createdAt)
 								.build();
+		
+		if (profileImage != null) {
+			userDto.setProfileImageAsBase64("data:image/png;base64," + Base64Utils.encodeToString(profileImage));
+		}
+		if (socialProfileImage != null) {
+			userDto.setSocialProfileImageAsBase64("data:image/png;base64," + Base64Utils.encodeToString(socialProfileImage));
+		}
+		
 		return userDto;
 	}
 

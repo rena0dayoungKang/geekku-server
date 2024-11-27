@@ -166,8 +166,12 @@ public class CommunityServiceImpl implements CommunityService {
 		CommunityBookmark existingBookmark = communityBookmarkRepository
 				.findByUserUserIdAndCommunityCommunityNum(UUID.fromString(userId), communityNum);
 		if (existingBookmark == null) {
+		//	User user = userRepository.findById(UUID.fromString(userId))
+		//			.orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
+
 			User user = userRepository.findByUserId(UUID.fromString(userId));
 //					.orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다.")); <- 수정함
+
 			Community community = communityRepository.findByCommunityNum(communityNum)
 					.orElseThrow(() -> new IllegalArgumentException("해당 커뮤니티를 찾을 수 없습니다."));
 			communityBookmarkRepository.save(CommunityBookmark.builder().user(user).community(community).build());
@@ -211,9 +215,8 @@ public class CommunityServiceImpl implements CommunityService {
 	@Override
 	public List<Community> getUserCommunities(String userId) throws Exception {
 		List<Community> communities = communityRepository.findAllByUser_UserId(UUID.fromString(userId));
-		return communities.stream().map(community -> Community.builder().title(community.getTitle()) 
-				.viewCount(community.getViewCount()) 
-				.build()).collect(Collectors.toList());
+		return communities.stream().map(community -> Community.builder().title(community.getTitle())
+				.viewCount(community.getViewCount()).build()).collect(Collectors.toList());
 	}
 
 
