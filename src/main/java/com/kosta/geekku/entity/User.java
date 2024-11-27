@@ -48,6 +48,7 @@ public class User {
 	private Timestamp createdAt;
 	private boolean status; // 회원탈퇴여부 -> 0: 탈퇴X 1: 탈퇴O
 	private String type;	//user
+	private String fcmToken; // FcmToken 추가
 
 	// OAuth(소셜로그인)를 위해 구성하는 필드
 	@Enumerated(EnumType.STRING)

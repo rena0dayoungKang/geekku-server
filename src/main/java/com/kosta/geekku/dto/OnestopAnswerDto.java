@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class OnestopAnswerDto {
-	private Integer answerHouseNum;
+	private Integer answerOnestopNum;
 	private String content;
 	private Timestamp createdAt;
 	
@@ -26,15 +26,7 @@ public class OnestopAnswerDto {
 	private String companyProfileImage;
 	private String companyPhone;
 	private String companyAddress;
-	private Integer houseNum;
-	
-	public HouseAnswer toEntity() {
-		return HouseAnswer.builder()
-						.answerHouseNum(answerHouseNum)
-						.content(content)
-						.createdAt(createdAt)
-						.company(Company.builder().companyId(companyId).companyName(companyName).phone(companyPhone).build())
-						.house(House.builder().houseNum(houseNum).build())
-						.build();
-	}
+	private Integer onestopNum;
+	private UUID userId;
+	private String title;
 }
