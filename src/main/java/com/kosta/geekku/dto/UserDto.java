@@ -27,6 +27,9 @@ public class UserDto {
 	private String type;
 	private Timestamp createdAt;
 	
+	private String profileImageAsBase64;
+	private String socialProfileImageAsBase64;
+	
 	private Role role;
 	
 	public User toEntity() {		
