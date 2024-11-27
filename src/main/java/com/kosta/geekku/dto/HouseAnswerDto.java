@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class HouseAnswerDto {
 	private Integer answerHouseNum;
+	private String title;
 	private String content;
 	private Timestamp createdAt;
 	

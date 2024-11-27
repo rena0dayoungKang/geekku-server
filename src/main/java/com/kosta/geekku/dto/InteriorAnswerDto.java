@@ -21,6 +21,7 @@ public class InteriorAnswerDto {
 	private String content;
 	private Timestamp createdAt;
 
+	private String title;
 	private UUID companyId;
 	private String companyName;
 	private String companyProfileImage;
