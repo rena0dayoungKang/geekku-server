@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import org.springframework.data.domain.Slice;
+
 import com.kosta.geekku.dto.InteriorAllDto;
 import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.util.PageInfo;
@@ -25,7 +27,10 @@ public interface InteriorAllRequestService {
 	List<InteriorAnswerDto> interiorAnswerList(PageInfo pageInfo, Integer requestAllNum) throws Exception;
 
 	void interiorAnswerDelete(Integer answerAllNum, Integer requestAllNum) throws Exception;
-	
+
 	// 마이페이지 - 개인회원 방꾸 작성 내역
 	Page<InteriorAllDto> interiorAllListForUserMypage(int page, int size, String userId) throws Exception;
+
+	Slice<InteriorAnswerDto> interiorAnswerListForMypage(Integer page, String companyId) throws Exception;
+
 }

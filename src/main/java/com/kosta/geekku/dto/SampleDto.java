@@ -27,19 +27,12 @@ public class SampleDto {
 	private String content;
 	private Timestamp createdAt;
 	private String companyName;
-	
+
 	public InteriorSample toEntity() {
-		InteriorSample sample = InteriorSample.builder()
-				.sampleNum(sampleNum)
-				.interior(Interior.builder().interiorNum(interiorNum).build())
-				.type(type)
-				.style(style)
-				.size(size)
-				.location(location)
-				.coverImage(coverImage)
-				.interior(Interior.builder().intro(intro).build())
-				.content(content)
-				.createdAt(createdAt)
+		InteriorSample sample = InteriorSample.builder().sampleNum(sampleNum)
+				.interior(Interior.builder().interiorNum(interiorNum).build()).type(type).style(style).size(size)
+				.location(location).coverImage(coverImage).interior(Interior.builder().intro(intro).build())
+				.content(content).createdAt(createdAt)
 				.interior(Interior.builder().company(Company.builder().companyName(companyName).build()).build())
 				.build();
 		return sample;
