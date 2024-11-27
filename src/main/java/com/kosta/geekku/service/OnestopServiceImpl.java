@@ -75,6 +75,7 @@ public class OnestopServiceImpl implements OnestopService {
 	@Override
 	public Integer onestopWrite(OnestopDto onestopDto) throws Exception {
 		Onestop onestop = onestopDto.toEntity();
+		System.out.println(onestop);
 		onestopRepository.save(onestop);
 
 		return onestop.getOnestopNum();

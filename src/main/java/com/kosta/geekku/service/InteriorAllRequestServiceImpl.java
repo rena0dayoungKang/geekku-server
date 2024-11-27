@@ -68,12 +68,12 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
 		List<InteriorAllDto> interiorAllDtoList = null;
 		Long allCnt = 0L;
-		if (word == null || word.trim().equals("")) { // 전체 목록
+		if (word == null || word.trim().equals("")) { // �쟾泥� 紐⑸줉
 			interiorAllDtoList = interiorAllRequestDslRepository.findInteriorAllListByPaging(pageRequest).stream()
 					.map(b -> b.toDto()).collect(Collectors.toList());
 			System.out.println(interiorAllDtoList);
 			allCnt = interiorAllRequestDslRepository.findInteriorAllCount();
-		} else { // 검색
+		} else { // 寃��깋
 			interiorAllDtoList = interiorAllRequestDslRepository.searchInteriorAllListByPaging(pageRequest, type, word)
 					.stream().map(b -> b.toDto()).collect(Collectors.toList());
 			allCnt = interiorAllRequestDslRepository.searchInteriorAllCount(type, word);
@@ -99,7 +99,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	@Override
 	public Integer interiorAnswerWrite(InteriorAnswerDto interiorAnswerDto, Integer requestAllNum) throws Exception {
 		InteriorAllRequest interiorAllRequest = interiorAllRepository.findById(requestAllNum)
-				.orElseThrow(() -> new Exception("방꾸 글번호 오류"));
+				.orElseThrow(() -> new Exception("諛⑷씀 湲�踰덊샇 �삤瑜�"));
 		InteriorAllAnswer interiorAllAnswer = interiorAnswerDto.toEntity();
 		interiorAllAnswerRepository.save(interiorAllAnswer);
 		return interiorAllAnswer.getAnswerAllNum();
@@ -108,7 +108,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	@Override
 	public List<InteriorAnswerDto> interiorAnswerList(PageInfo pageInfo, Integer requestAllNum) throws Exception {
 		InteriorAllRequest interiorAll = interiorAllRepository.findById(requestAllNum)
-				.orElseThrow(() -> new Exception("방꾸 글번호 오류"));
+				.orElseThrow(() -> new Exception("諛⑷씀 湲�踰덊샇 �삤瑜�"));
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
 
 		List<InteriorAnswerDto> interiorAnswerDtoList = interiorAllRequestDslRepository
@@ -129,19 +129,24 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	@Transactional
 	@Override
 	public void interiorAnswerDelete(Integer answerAllNum, Integer requestAllNum) throws Exception {
-		interiorAllAnswerRepository.findById(answerAllNum).orElseThrow(() -> new Exception("답변이 존재하지 않습니다."));
+		interiorAllAnswerRepository.findById(answerAllNum).orElseThrow(() -> new Exception("�떟蹂��씠 議댁옱�븯吏� �븡�뒿�땲�떎."));
 		System.out.println(answerAllNum);
 		interiorAllAnswerRepository.deleteById(answerAllNum);
 
 	}
 
-	@Override
-	public Page<InteriorAllDto> interiorAllListForUserMypage(int page, int size, String userId) throws Exception {
-		Optional<User> user = userRepository.findById(UUID.fromString(userId));
-		
-		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createAt"));
-		Page<InteriorAllDto> pageInfo = interiorAllRequestRepository.findAllByUser(user, pageable).map(InteriorAllRequest::toDto);
+	/*
+	 * @Override public Page<InteriorAllDto> interiorAllListForUserMypage(int page,
+	 * int size, String userId) throws Exception { Optional<User> user =
+	 * userRepository.findById(UUID.fromString(userId));
+	 * 
+	 * Pageable pageable = PageRequest.of(page - 1, size,
+	 * Sort.by(Sort.Direction.DESC, "createAt")); Page<InteriorAllDto> pageInfo =
+	 * interiorAllRequestDslRepository.findAllByUser(user, pageable)
+	 * .map(InteriorAllRequest::toDto); }
+	 */
 
+	@Override
 	public Slice<InteriorAnswerDto> interiorAnswerListForMypage(Integer page, String companyId) throws Exception {
 
 		Optional<Company> company = companyRepository.findById(UUID.fromString(companyId));
@@ -150,8 +155,13 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 		Slice<InteriorAnswerDto> pageInfo = interiorAllAnswerRepository.findAllByCompany(company, pageable)
 				.map(InteriorAllAnswer::toDto);
 
-
 		return pageInfo;
+	}
+
+	@Override
+	public Page<InteriorAllDto> interiorAllListForUserMypage(int page, int size, String userId) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

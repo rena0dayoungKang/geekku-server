@@ -100,8 +100,8 @@ public class UserController {
 			String newPassword = param.get("newPassword");
 
 			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
-			
-			UserDto userDto = userService.getUser(userId);			
+
+			UserDto userDto = userService.getUser(userId);
 			if (!bCryptPasswordEncoder.matches(currentPassword, userDto.getPassword())) {
 				return new ResponseEntity<>("현재 비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
 			}
@@ -116,40 +116,40 @@ public class UserController {
 			return new ResponseEntity<String>("비밀번호 변경에 실패했습니다.", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/findIdByPhone")
 	public ResponseEntity<Map<String, String>> findIdByPhone(@RequestBody Map<String, String> param) {
 		try {
 			String phone = param.get("phone");
 			UserDto userDto = userService.findIdByPhone(phone);
-			
+
 			String formatDate = formattedDate(userDto);
-			
+
 			Map<String, String> result = new HashMap<>();
 			result.put("username", userDto.getUsername());
 			result.put("createdAt", formatDate);
-			return new ResponseEntity<Map<String,String>>(result, HttpStatus.OK);
+			return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String,String>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, String>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/findIdByEmail")
 	public ResponseEntity<Map<String, String>> findIdByEmail(@RequestBody Map<String, String> param) {
 		try {
 			String email = param.get("email");
 			UserDto userDto = userService.findIdByEmail(email);
-			
+
 			String formatDate = formattedDate(userDto);
-			
+
 			Map<String, String> result = new HashMap<>();
 			result.put("username", userDto.getUsername());
 			result.put("createdAt", formatDate);
-			return new ResponseEntity<Map<String,String>>(result, HttpStatus.OK);
+			return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String,String>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, String>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -159,6 +159,7 @@ public class UserController {
 		return formatDate;
 	}
 
+	// 개인회원 마이페이지 - 매물 북마크 내역
 	@GetMapping("/mypagebookmark")
 	public ResponseEntity<Map<String, Object>> myEstateBookmarkList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
@@ -201,4 +202,5 @@ public class UserController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
+
 }

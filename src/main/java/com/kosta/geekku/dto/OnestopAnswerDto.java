@@ -4,8 +4,6 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 import com.kosta.geekku.entity.Company;
-import com.kosta.geekku.entity.House;
-import com.kosta.geekku.entity.HouseAnswer;
 import com.kosta.geekku.entity.Onestop;
 import com.kosta.geekku.entity.OnestopAnswer;
 
@@ -29,6 +27,7 @@ public class OnestopAnswerDto {
 	private String companyPhone;
 	private String companyAddress;
 	private Integer onestopNum;
+	private UUID userId;
 
 	public OnestopAnswer toEntity() {
 		return OnestopAnswer.builder().answerOnestopNum(answerOnestopNum).content(content).createdAt(createdAt)

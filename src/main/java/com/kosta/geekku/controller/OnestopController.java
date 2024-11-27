@@ -30,13 +30,12 @@ import lombok.RequiredArgsConstructor;
 public class OnestopController {
 
 	private final OnestopService onestopService;
-	private final HttpSession session;
 
 	@PostMapping("/onestopWrite")
-	public ResponseEntity<String> makeAccount(@RequestBody OnestopDto onestopDto) {
+	public ResponseEntity<String> makeAccount(OnestopDto onestopDto) {
 		try {
-			onestopService.onestopWrite(onestopDto);
-			return new ResponseEntity<String>("true", HttpStatus.OK);
+			Integer onestopNum = onestopService.onestopWrite(onestopDto);
+			return new ResponseEntity<String>(String.valueOf(onestopNum), HttpStatus.OK);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,11 +103,12 @@ public class OnestopController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	// 개인 마이페이지 - 한번에 꾸하기 신청내역 리스트
+
+	// 媛쒖씤 留덉씠�럹�씠吏� - �븳踰덉뿉 袁명븯湲� �떊泥��궡�뿭 由ъ뒪�듃
 	@GetMapping("/mypageUserOnestopList")
 	public ResponseEntity<Page<OnestopDto>> mypageUserOnestopList(
-			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
-			@RequestParam(required = false, defaultValue = "10", value = "size") int size, 
+			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size,
 			@RequestParam("userId") String userId) {
 		try {
 			Page<OnestopDto> onestopList = onestopService.onestopListForUserMypage(page, size, userId);
@@ -116,9 +116,10 @@ public class OnestopController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Page<OnestopDto>>(HttpStatus.OK);
+		}
+	}
 
-
-	// 한꾸 답변
+	// �븳袁� �떟蹂�
 	@PostMapping("/onestopAnswerWrite")
 	public ResponseEntity<String> onestopAnswerDtoWrite(OnestopAnswerDto onestopAnswerDto,
 			@RequestParam Integer onestopNum) {
@@ -127,7 +128,7 @@ public class OnestopController {
 			return new ResponseEntity<String>(String.valueOf(onestopAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<String>("방꾸답변 등록 오류", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("諛⑷씀�떟蹂� �벑濡� �삤瑜�", HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -151,7 +152,6 @@ public class OnestopController {
 		}
 	}
 
-
 	@PostMapping("/onestopAnswerDelete")
 	public ResponseEntity<String> interiorAnswerDelete(@RequestParam("onestopAnswerNum") Integer onestopAnswerNum,
 			@RequestParam("onestopNum") Integer onestopNum) {
@@ -161,7 +161,7 @@ public class OnestopController {
 			return new ResponseEntity<String>("true", HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<String>("집꾸답변 삭제 오류", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("吏묎씀�떟蹂� �궘�젣 �삤瑜�", HttpStatus.BAD_REQUEST);
 		}
 	}
 }
