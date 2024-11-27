@@ -64,6 +64,7 @@ public class Company {
 										.type(type)
 										.phone(phone)
 										.email(email)
+										.profileImage(profileImage)
 										.ceoName(ceoName)
 										.companyNumber(companyNumber)
 										.companyName(companyName)

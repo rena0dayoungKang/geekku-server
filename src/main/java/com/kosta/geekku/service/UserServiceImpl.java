@@ -2,11 +2,14 @@ package com.kosta.geekku.service;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.kosta.geekku.config.jwt.JwtToken;
 import com.kosta.geekku.dto.UserDto;
 import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.CompanyRepository;
@@ -14,6 +17,9 @@ import com.kosta.geekku.repository.UserRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
+	
+	@Autowired
+	private JwtToken jwtToken;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -66,13 +72,21 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUserInfo(UUID userId, UserDto userDto) throws Exception {
+	public Map<String, String> updateUserInfo(UUID userId, UserDto userDto) throws Exception {
 		User user = userRepository.findById(userId).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
 		if(userDto.getNickname() != null) user.setNickname(userDto.getNickname());
 		if(userDto.getName() != null) user.setName(userDto.getName());
 		if(userDto.getPhone() != null) user.setPhone(userDto.getPhone());
 		if(userDto.getEmail() != null) user.setEmail(userDto.getEmail());
 		userRepository.save(user);
+		
+		String newAccessToken = jwtToken.makeAccessToken(userDto.getUsername(), userDto.getType());
+		String newRefreshToken = jwtToken.makeRefreshToken(userDto.getUsername(), userDto.getType());
+		
+		Map<String, String> tokens = new HashMap<>();
+		tokens.put("accessToken", newAccessToken);
+		tokens.put("refreshToken", newRefreshToken);
+		return tokens;
 	}
 
 	@Override

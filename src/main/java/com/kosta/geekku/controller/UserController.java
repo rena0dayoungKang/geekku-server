@@ -7,18 +7,19 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.geekku.config.auth.PrincipalDetails;
-import com.kosta.geekku.config.jwt.JwtProperties;
 import com.kosta.geekku.dto.UserDto;
 import com.kosta.geekku.entity.Role;
 import com.kosta.geekku.service.UserService;
@@ -73,8 +74,14 @@ public class UserController {
 	public ResponseEntity<String> updateUserInfo(Authentication authentication, @RequestBody UserDto userDto) {
 		try {
 			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId(); // 토큰에서 UUID를 추출
-			userService.updateUserInfo(userId, userDto);
-			return new ResponseEntity<String>("회원정보 수정 완료", HttpStatus.OK);
+			
+			Map<String, String> tokens = userService.updateUserInfo(userId, userDto);
+			
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Authorization", "Bearer " + tokens.get("accessToken"));
+			headers.add("refreshToken", tokens.get("refreshToken"));
+			
+			return new ResponseEntity<String>("회원정보 수정 완료", headers, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("회원정보 수정 실패", HttpStatus.BAD_REQUEST);
@@ -138,6 +145,17 @@ public class UserController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Map<String,String>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/checkNickname/{nickname}")
+	public ResponseEntity<String> checkNickname(@PathVariable String nickname) {
+		try {
+			boolean checkNickname = userService.checkDoubleNickname(nickname);
+			return new ResponseEntity<String>(String.valueOf(checkNickname), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("닉네임 중복체크 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
 
