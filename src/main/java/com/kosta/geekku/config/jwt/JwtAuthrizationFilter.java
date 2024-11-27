@@ -78,15 +78,15 @@ public class JwtAuthrizationFilter extends BasicAuthenticationFilter {
 			String username = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(accessToken)
 					.getClaim("sub").asString();
 
-			String type = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(accessToken)
-					.getClaim("type").asString();
+			String role = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(accessToken)
+					.getClaim("role").asString();
 
 			System.out.println("username:" + username);
-			System.out.println("type:" + type);
+			System.out.println("role:" + role);
 
 			// 1-2) username check
 			if (username == null || username.equals("")) throw new Exception();		
-			PrincipalDetails principalDetails = getPrincipayDetails(username, type);
+			PrincipalDetails principalDetails = getPrincipayDetails(username, role);
 			// 성공했다면
 			// 1-3) User를 Authentication로 생성하여 Security Session에 넣어준다. (그러면 Controller에서 사용할
 			// 수 있다)
@@ -113,19 +113,19 @@ public class JwtAuthrizationFilter extends BasicAuthenticationFilter {
 				// 2-1) 보안키, 만료시간 check
 				String username = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(refreshToken)
 						.getClaim("sub").asString();
-				String type = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(refreshToken)
-						.getClaim("type").asString();
+				String role = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(refreshToken)
+						.getClaim("role").asString();
 				System.out.println("username" + username);
-				System.out.println("type" + type);
+				System.out.println("role" + role);
 				// 2-2) username check
 				if (username == null || username.equals("")) throw new Exception("사용자가 없음"); // 사용자가 DB에 없을때
-				PrincipalDetails principalDetails = getPrincipayDetails(username, type);
+				PrincipalDetails principalDetails = getPrincipayDetails(username, role);
 				
 				Optional<User> ouser = userRepository.findByUsername(username);
 
 				// accessToken, refreshToken 다시 만들어 보낸다.
-				String reAccessToken = jwtToken.makeAccessToken(username, type);
-				String reRefreshToken = jwtToken.makeRefreshToken(username, type);
+				String reAccessToken = jwtToken.makeAccessToken(username, role);
+				String reRefreshToken = jwtToken.makeRefreshToken(username, role);
 				
 				Map<String, String> map = new HashMap<>();
 				map.put("access_token", JwtProperties.TOKEN_PREFIX + reAccessToken);
@@ -143,9 +143,9 @@ public class JwtAuthrizationFilter extends BasicAuthenticationFilter {
 		}
 	}
 	
-	PrincipalDetails getPrincipayDetails(String username, String type) throws Exception {
+	PrincipalDetails getPrincipayDetails(String username, String role) throws Exception {
 		PrincipalDetails principalDetails =null;
-		if(type.equals("user")) { //user
+		if(role.equals("user")) { //user
 			Optional<User> ouser = userRepository.findByUsername(username);
 			if (ouser.isEmpty()) throw new Exception(); // 사용자가 DB에 없을때
 			principalDetails = new PrincipalDetails(ouser.get());	

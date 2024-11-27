@@ -25,6 +25,7 @@ public class CompanyDto {
 	private String ceoName;
 	private String companyName;
 	private String companyAddress;
+	private String profileImage;
 	private byte[] companyCertificationImage;
 	
 	//부동산일경우
@@ -42,7 +43,7 @@ public class CompanyDto {
 								.email(email)
 								.status(false)
 								.role(role)
-								.type("company")
+								.type(type)
 								.companyNumber(companyNumber)
 								.ceoName(ceoName)
 								.companyName(companyName)

@@ -77,6 +77,7 @@ public class HouseServiceImpl implements HouseService {
 		pageInfo.setAllPage(allPage);
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
+		pageInfo.setTotalCount(allCnt);
 		
 		return houseDtoList;
 	}
@@ -88,8 +89,8 @@ public class HouseServiceImpl implements HouseService {
 	}
 
 	@Override
-	public Integer houseAnswerWrite(HouseAnswerDto houseAnswerDto, Integer houseNum) throws Exception {
-		House house = houseRepository.findById(houseNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
+	public Integer houseAnswerWrite(HouseAnswerDto houseAnswerDto) throws Exception {
+		House house = houseRepository.findById(houseAnswerDto.getHouseNum()).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
 		HouseAnswer houseAnswer = houseAnswerDto.toEntity();
 		houseAnswerRepository.save(houseAnswer);
 		return houseAnswer.getAnswerHouseNum();
