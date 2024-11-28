@@ -114,6 +114,11 @@ public class EstateServiceImpl implements EstateService {
 	@Override
 	public Integer checkBookmark(String userId, Integer estateNum) throws Exception {
 		EstateBookmark estateBookmark = estateBookmarkRepository.findByEstateNumAndUserId(estateNum, UUID.fromString(userId));
+		
+		if (estateBookmark == null) {
+			return null; // 북마크가 없는 경우 null 반환
+		}
+		
 		return estateBookmark.getBookmarkEstateNum();
 	}
 
