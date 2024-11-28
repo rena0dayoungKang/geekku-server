@@ -1,5 +1,6 @@
 package com.kosta.geekku.controller;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class CommunityController {
 	private CommunityService communityService;
 
 	// 페이징된 커뮤니티 리스트 조회
-	@GetMapping("/test1") // 예시 http://localhost:8080/test1?page=0&size=3
+	@GetMapping("/communityList") // 예시 http://localhost:8080/test1?page=0&size=3
 	public ResponseEntity<Page<CommunityDto>> getCommunityList(
 			@RequestParam(value = "page", defaultValue = "0") int page,
 			@RequestParam(value = "size", defaultValue = "10") int size) {
@@ -68,14 +69,24 @@ public class CommunityController {
 	}
 
 	// 커뮤니티 글 작성 글자 포함(2번이랑 둘 중에 하나만 쓸 거임 /user 형태로 바꿔야함 나중에)
-	@PostMapping("/test5")
+	@PostMapping("/communityCreate")
 	public ResponseEntity<String> createCommunity(@RequestParam("title") String title,
 	        @RequestParam("content") String content, 
 	        @RequestParam("type") String type,
 	        @RequestParam("userId") String userId,  // userId 파라미터 추가
+	        @RequestParam("address1") String address1,
+	        @RequestParam("address2") String address2,
+	        @RequestParam("familyType") String familyType,
+	        @RequestParam("interiorType") String interiorType,
+	        @RequestParam("money") Integer money,
+	        @RequestParam("periodStartDate") Date periodStartDate,
+	        @RequestParam("periodEndDate") Date periodEndDate,
+	        @RequestParam("size") Integer size,
+	        @RequestParam("style") String style,
 	        @RequestParam(value = "coverImage", required = false) MultipartFile coverImage) {
 	    try {
-	        communityService.createCommunityWithCoverImage(title, content, type, coverImage, userId);  // userId를 서비스 메서드에 전달
+	        communityService.createCommunityWithCoverImage(title, content, type, coverImage, userId, address1, address2, familyType,
+	        		interiorType, money, periodStartDate, periodEndDate, size, style);  // userId를 서비스 메서드에 전달
 	        return new ResponseEntity<>("커뮤니티 생성에 성공했습니다", HttpStatus.CREATED);
 	    } catch (Exception e) {
 	        e.printStackTrace();
