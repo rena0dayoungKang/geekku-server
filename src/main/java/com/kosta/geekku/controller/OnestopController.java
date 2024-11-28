@@ -1,10 +1,9 @@
 package com.kosta.geekku.controller;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpSession;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -12,14 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
-import com.kosta.geekku.dto.ReviewDto;
 import com.kosta.geekku.service.OnestopService;
 import com.kosta.geekku.util.PageInfo;
 
@@ -83,13 +79,17 @@ public class OnestopController {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
 			List<OnestopDto> onestopList = onestopService.onestopList(pageInfo, type, word);
+
+			// 리스트를 내림차순으로 정렬
+			onestopList.sort(Comparator.comparing(OnestopDto::getCreatedAt).reversed());
+
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("onestopList", onestopList);
 			listInfo.put("pageInfo", pageInfo);
-			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
+			return new ResponseEntity<>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
