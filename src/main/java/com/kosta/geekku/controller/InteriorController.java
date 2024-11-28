@@ -204,7 +204,7 @@ public class InteriorController {
 	public ResponseEntity<String> mypageUserReviewUpdate(ReviewDto reviewDto, @PathVariable Integer num) {
 		try {
 			interiorService.updateReview(reviewDto, num);
-			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("후기 수정 오류", HttpStatus.BAD_REQUEST);
@@ -216,7 +216,7 @@ public class InteriorController {
 	public ResponseEntity<String> mypageUserReviewDelete(@PathVariable Integer num) {
 		try {
 			interiorService.deleteReview(num);
-			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("후기 삭제 오류", HttpStatus.BAD_REQUEST);
