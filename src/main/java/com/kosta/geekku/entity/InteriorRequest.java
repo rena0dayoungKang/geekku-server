@@ -50,10 +50,21 @@ public class InteriorRequest {
 	private Timestamp createdAt;
 
 	public InteriorRequestDto toDto() {
-		InteriorRequestDto requestDto = InteriorRequestDto.builder().requestNum(requestNum)
-				.userId(user.getUserId()).interiorNum(interior.getInteriorNum()).period(period)
-				.type(type).status(status).size(size).name(name).allowTime(allowTime).content(content)
-				.createdAt(createdAt).build();
+		InteriorRequestDto requestDto = InteriorRequestDto.builder()
+				.requestNum(requestNum)
+				.userId(user.getUserId())
+				.name(user.getName())
+				.companyId(interior.getCompany().getCompanyId())
+				.interiorNum(interior.getInteriorNum())
+				.period(period)
+				.type(type)
+				.status(status)
+				.size(size)
+				.name(name)
+				.allowTime(allowTime)
+				.content(content)
+				.createdAt(createdAt)
+				.build();
 		return requestDto;
 	}
 	

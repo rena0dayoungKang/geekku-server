@@ -98,6 +98,7 @@ public class HouseServiceImpl implements HouseService {
 				.orElseThrow(() -> new Exception("吏묎씀 湲�踰덊샇 �삤瑜�"));
 		HouseAnswer houseAnswer = houseAnswerDto.toEntity();
 		houseAnswerRepository.save(houseAnswer);
+		
 		return houseAnswer.getAnswerHouseNum();
 	}
 

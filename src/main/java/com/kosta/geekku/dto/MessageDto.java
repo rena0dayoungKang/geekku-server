@@ -1,5 +1,6 @@
 package com.kosta.geekku.dto;
 
+import java.util.Date;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
@@ -14,7 +15,10 @@ import lombok.NoArgsConstructor;
 public class MessageDto {
 	private Integer num;
 	private String message;
-	private UUID receiver;
+	private UUID receiver; 
 	private String type;
 	private Integer detailPath;
+	private Date createAt;
+	private UUID sender;
+
 }

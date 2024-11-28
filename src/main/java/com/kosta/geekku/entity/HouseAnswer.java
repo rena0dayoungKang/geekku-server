@@ -62,6 +62,9 @@ public class HouseAnswer {
 							.companyId(company.getCompanyId())
 							.companyName(company.getCompanyName())
 							.companyPhone(company.getPhone())
+							.userId(house.getUser().getUserId())
+							.name(house.getUser().getName())
+							.userName(house.getUser().getUsername())
 							.build();
 		
 		if (company.getProfileImage() != null) {

@@ -48,10 +48,17 @@ public class InteriorAllAnswer {
 	private Timestamp createdAt;
 
 	public InteriorAnswerDto toDto() {
-		InteriorAnswerDto interiorAnswerDto = InteriorAnswerDto.builder().answerAllNum(answerAllNum).content(content)
-				.createdAt(createdAt).requestAllNum(interiorAllRequest.getRequestAllNum())
+		InteriorAnswerDto interiorAnswerDto = InteriorAnswerDto.builder()
+				.answerAllNum(answerAllNum)
+				.content(content)
+				.createdAt(createdAt)
+				.requestAllNum(interiorAllRequest.getRequestAllNum())
 				.companyId(company.getCompanyId()).companyName(company.getCompanyName())
-				.companyPhone(company.getPhone()).build();
+				.companyPhone(company.getPhone())
+				.userId(interiorAllRequest.getUser().getUserId())
+				.username(interiorAllRequest.getUser().getUsername())
+				.name(interiorAllRequest.getUser().getName())
+				.build();
 
 		if (company.getProfileImage() != null) {
 			try {

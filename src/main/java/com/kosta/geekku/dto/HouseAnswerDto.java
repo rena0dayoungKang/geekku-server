@@ -28,6 +28,9 @@ public class HouseAnswerDto {
 	private String companyPhone;
 	private String companyAddress;
 	private Integer houseNum;
+	private UUID userId;
+	private String userName;
+	private String name;
 	
 	public HouseAnswer toEntity() {
 		return HouseAnswer.builder()

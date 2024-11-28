@@ -62,6 +62,8 @@ public class Community {
 	@ColumnDefault("0")
 	private Integer viewCount;
 	
+	
+	
 	public CommunityDto toDto() {
 	    return CommunityDto.builder()
 	        .communityNum(communityNum) // 커뮤니티 번호

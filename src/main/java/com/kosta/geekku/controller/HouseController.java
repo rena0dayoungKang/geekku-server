@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.HouseAnswerDto;
 import com.kosta.geekku.dto.HouseDto;
+import com.kosta.geekku.service.FcmMessageService;
 import com.kosta.geekku.entity.EstateImage;
 import com.kosta.geekku.service.HouseService;
 import com.kosta.geekku.util.PageInfo;
@@ -37,7 +38,8 @@ import lombok.RequiredArgsConstructor;
 public class HouseController {
 
 	private final HouseService houseService;
-	
+	private final FcmMessageService fcmMessageService;
+
 	@Value("${upload.path}")
 	private String uploadPath;
 
@@ -95,10 +97,12 @@ public class HouseController {
 	}
 
 	// 집꾸 답변
-	@PostMapping("/houseAnswerWrite")
+	@PostMapping("/company/houseAnswerWrite") 
 	public ResponseEntity<String> houseAnswerWrite(HouseAnswerDto houseAnswerDto) {
 		try {
 			Integer houseAnswerNum = houseService.houseAnswerWrite(houseAnswerDto);
+			houseAnswerDto.setAnswerHouseNum(houseAnswerNum);
+			fcmMessageService.sendHouseAnswer(houseAnswerDto);
 			return new ResponseEntity<String>(String.valueOf(houseAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

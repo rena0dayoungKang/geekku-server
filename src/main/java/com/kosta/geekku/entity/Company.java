@@ -57,6 +57,8 @@ public class Company {
 	@Enumerated(EnumType.STRING)
 	private Role role;	//user, company 구분
 	
+	private String fcmToken; // FcmToken 추가
+	
 	public CompanyDto toDto() {
 		CompanyDto companyDto = CompanyDto.builder()
 										.companyId(companyId.toString())
