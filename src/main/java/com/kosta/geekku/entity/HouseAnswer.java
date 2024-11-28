@@ -47,12 +47,15 @@ public class HouseAnswer {
 	@Column(columnDefinition = "LONGTEXT")
 	@Lob
 	private String content;
+	@Column(length = 40)
+	private String title;
 	@CreationTimestamp
 	private Timestamp createdAt;
 	
 	public HouseAnswerDto toDto() {
 		HouseAnswerDto houseAnswerDto = HouseAnswerDto.builder()
 							.answerHouseNum(answerHouseNum)
+							.title(title)
 							.content(content)
 							.createdAt(createdAt)
 							.houseNum(house.getHouseNum())
