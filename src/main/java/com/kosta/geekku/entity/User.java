@@ -71,6 +71,7 @@ public class User {
 								.password(password)
 								.profileImage(profileImage)
 								.type(type)
+								.role(role)
 								.createdAt(createdAt)
 								.build();
 		

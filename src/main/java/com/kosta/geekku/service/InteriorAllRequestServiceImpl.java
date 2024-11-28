@@ -159,8 +159,12 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 
 	@Override
 	public Page<InteriorAllDto> interiorAllListForUserMypage(int page, int size, String userId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+		
+		Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createAt"));
+		Page<InteriorAllDto> pageInfo = interiorAllRepository.findAllByUser(user, pageable).map(InteriorAllRequest::toDto);
+		
+		return pageInfo;
 	}
 
 }

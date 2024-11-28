@@ -10,12 +10,14 @@ import javax.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.InteriorAllDto;
 import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.service.InteriorAllRequestService;
@@ -89,10 +91,10 @@ public class InteriorAllRequestController {
 		}
 	}
 
-	@PostMapping("/interiorAllDelete/{num}")
-	public ResponseEntity<String> onestopDelete(@PathVariable Integer num) {
+	@PostMapping("/user/interiorAllDelete/{requestAllNum}")
+	public ResponseEntity<String> interiorAllDelete(@PathVariable Integer requestAllNum) {
 		try {
-			interiorAllService.interiorAllDelete(num);
+			interiorAllService.interiorAllDelete(requestAllNum);
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -146,14 +148,16 @@ public class InteriorAllRequestController {
 		}
 	}
 
-	@GetMapping("/mypageUserInteriorAllList")
+	@GetMapping("/user/mypageUserInteriorAllList")
 	public ResponseEntity<Page<InteriorAllDto>> interiorAllRequestListForUserMypage(
+			Authentication authentication,
 			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
-			@RequestParam(required = false, defaultValue = "10", value = "size") int size,
-			@RequestParam("userId") String userId) {
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size
+			) {
 		try {
+			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
 			Page<InteriorAllDto> interiorAllList = interiorAllService.interiorAllListForUserMypage(page, size, userId);
-			return new ResponseEntity<Page<InteriorAllDto>>(interiorAllList, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Page<InteriorAllDto>>(interiorAllList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Page<InteriorAllDto>>(HttpStatus.BAD_REQUEST);

@@ -33,10 +33,6 @@ public class InteriorSample {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer sampleNum;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "companyId")
-	private Company company;
-
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "interiorNum")
 	private Interior interior;

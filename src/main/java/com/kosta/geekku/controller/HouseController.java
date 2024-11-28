@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.HouseAnswerDto;
 import com.kosta.geekku.dto.HouseDto;
 import com.kosta.geekku.service.FcmMessageService;
@@ -43,10 +46,11 @@ public class HouseController {
 	@Value("${upload.path}")
 	private String uploadPath;
 
-	@PostMapping("/houseWrite")
-	public ResponseEntity<String> houseWrite(HouseDto houseDto) {
+	@PostMapping("/user/houseWrite")
+	public ResponseEntity<String> houseWrite(Authentication authentication, HouseDto houseDto) {
 		try {
-			Integer houseNum = houseService.houseWrite(houseDto);
+			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
+			Integer houseNum = houseService.houseWrite(houseDto, userId);
 			return new ResponseEntity<String>(String.valueOf(houseNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -85,7 +89,7 @@ public class HouseController {
 		}
 	}
 
-	@PostMapping("/houseDelete/{houseNum}")
+	@PostMapping("/user/houseDelete/{houseNum}")
 	public ResponseEntity<String> houseDelete(@PathVariable Integer houseNum) {
 		try {
 			houseService.houseDelete(houseNum);
@@ -97,7 +101,7 @@ public class HouseController {
 	}
 
 	// 집꾸 답변
-	@PostMapping("/company/houseAnswerWrite") 
+	@PostMapping("/company/houseAnswerWrite")  //dto{title,content,companyId,userId,houseNum,userName,name,companyName}
 	public ResponseEntity<String> houseAnswerWrite(HouseAnswerDto houseAnswerDto) {
 		try {
 			Integer houseAnswerNum = houseService.houseAnswerWrite(houseAnswerDto);
@@ -197,12 +201,16 @@ public class HouseController {
 		}
 	}
 	
-	@GetMapping("/mypageUserHouseList")
+	@GetMapping("/user/mypageUserHouseList")
 	public ResponseEntity<Page<HouseDto>> houseListForUserMypage(
+			Authentication authentication,
 			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
-			@RequestParam(required = false, defaultValue = "10", value = "size") int size, 
-			@RequestParam("userId") String userId) {
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size) {		
 		try {
+			System.out.println("Principal: " + authentication.getPrincipal());
+			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
+			System.out.println("=====");
+			System.out.println(userId);
 			Page<HouseDto> houseList = houseService.houseListForUserMypage(page, size, userId);
 			return new ResponseEntity<Page<HouseDto>>(houseList, HttpStatus.OK);
 		} catch (Exception e) {

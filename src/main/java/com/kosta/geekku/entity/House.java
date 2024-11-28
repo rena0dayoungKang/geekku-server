@@ -85,7 +85,7 @@ public class House {
 				.content(content)
 				.viewCount(viewCount)
 				.createdAt(createdAt)
-				.name(user.getName())
+				.nickname(user.getNickname())
 				.build();
 		
 		if (rentType.equals("jeonse")) {
