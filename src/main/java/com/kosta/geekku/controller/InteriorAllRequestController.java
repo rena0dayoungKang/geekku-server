@@ -1,5 +1,6 @@
 package com.kosta.geekku.controller;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,15 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.InteriorAllDto;
 import com.kosta.geekku.dto.InteriorAnswerDto;
-import com.kosta.geekku.dto.OnestopDto;
 import com.kosta.geekku.service.InteriorAllRequestService;
 import com.kosta.geekku.util.PageInfo;
 
@@ -35,8 +32,8 @@ public class InteriorAllRequestController {
 	@PostMapping("/interiorAllWrite")
 	public ResponseEntity<String> interiorAllWrite(InteriorAllDto interiorAllDto) {
 		try {
-			interiorAllService.interiorAllWrite(interiorAllDto);
-			return new ResponseEntity<String>("true", HttpStatus.OK);
+			Integer interiorAllNum = interiorAllService.interiorAllWrite(interiorAllDto);
+			return new ResponseEntity<String>(String.valueOf(interiorAllNum), HttpStatus.OK);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -84,7 +81,10 @@ public class InteriorAllRequestController {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
 			List<InteriorAllDto> interiorAllList = interiorAllService.interiorAllList(pageInfo, type, word);
-			// System.out.println(interiorAllList);
+
+			// 리스트를 내림차순으로 정렬
+			//interiorAllList.sort(Comparator.comparing(InteriorAllDto::getCreatedAt).reversed());
+
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("interiorAllList", interiorAllList);
 			listInfo.put("pageInfo", pageInfo);
@@ -151,11 +151,11 @@ public class InteriorAllRequestController {
 			return new ResponseEntity<String>("집꾸답변 삭제 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/mypageUserInteriorAllList")
 	public ResponseEntity<Page<InteriorAllDto>> interiorAllRequestListForUserMypage(
-			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
-			@RequestParam(required = false, defaultValue = "10", value = "size") int size, 
+			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size,
 			@RequestParam("userId") String userId) {
 		try {
 			Page<InteriorAllDto> interiorAllList = interiorAllService.interiorAllListForUserMypage(page, size, userId);
