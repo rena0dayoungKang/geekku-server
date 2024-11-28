@@ -27,7 +27,7 @@ public class FcmController {
 		String type = param.get("type");
 		System.out.println(param);
 		try {
-			if (type.equals("user")) { 
+			if (type.equals("user")) {
 				fcmMessageService.registUserFcmToken(param.get("userId"), param.get("fcmToken"));
 			} else {
 				fcmMessageService.registCompanyFcmToken(param.get("userId"), param.get("fcmToken"));

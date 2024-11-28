@@ -15,7 +15,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 @Configuration
 public class FCMConfig {
-	 
+
 	@Bean
 	FirebaseMessaging firebaseMessaging() throws IOException {
 		ClassPathResource resource = new ClassPathResource("firebase/kosta-2424-25fc036013ba.json");

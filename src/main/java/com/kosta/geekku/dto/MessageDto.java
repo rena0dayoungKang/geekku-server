@@ -20,4 +20,5 @@ public class MessageDto {
 	private Integer detailPath;
 	private Date createAt;
 	private UUID sender;
+
 }

@@ -45,7 +45,7 @@ public class AlarmUser {
 
     @Column(nullable = false)
     private boolean status; // 알림 상태 (0: 미확인, 1: 확인)
- 
+
     // User와의 연관 관계 설정 : house, interior, onestop
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false) // userId 외래 키로 매핑
