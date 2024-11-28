@@ -101,7 +101,7 @@ public class HouseController {
 	}
 
 	// 집꾸 답변
-	@PostMapping("/company/houseAnswerWrite") 
+	@PostMapping("/company/houseAnswerWrite")  //dto{title,content,companyId,userId,houseNum,userName,name,companyName}
 	public ResponseEntity<String> houseAnswerWrite(HouseAnswerDto houseAnswerDto) {
 		try {
 			Integer houseAnswerNum = houseService.houseAnswerWrite(houseAnswerDto);

@@ -2,6 +2,7 @@ package com.kosta.geekku.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -69,12 +70,12 @@ public class CommunityServiceImpl implements CommunityService {
 
 	@Transactional
 	@Override
-	public void createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage, String userId)
-	        throws Exception {
-	    // userId를 UUID로 변환 (userId가 UUID 형식이라고 가정)
+	public void createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage,
+            String userId, String address1, String address2, String familyType,
+            String interiorType, Integer money, Date periodStartDate, Date periodEndDate,Integer size, String style) {
 	    UUID userUUID;
 	    try {
-	        userUUID = UUID.fromString(userId);  // String을 UUID로 변환
+	        userUUID = UUID.fromString(userId);
 	    } catch (IllegalArgumentException e) {
 	        throw new IllegalArgumentException("유효하지 않은 userId 형식입니다.");
 	    }
@@ -87,10 +88,19 @@ public class CommunityServiceImpl implements CommunityService {
 
 	    // 커뮤니티 객체 생성
 	    Community community = Community.builder()
-	            .title(title)
-	            .content(content)
-	            .type(type)
-	            .user(user)  // userId 추가
+	            .title(title)                     // 제목
+	            .content(content)                 // 내용
+	            .type(type)                       // 타입
+	            .user(user)                       // 사용자 (User 엔티티)
+	            .address1(address1)               // 주소 1
+	            .address2(address2)               // 주소 2
+	            .familyType(familyType)           // 가족 유형
+	            .interiorType(interiorType)       // 인테리어 유형
+	            .money(money)                     // 예산
+	            .periodStartDate(periodStartDate) // 시작 날짜
+	            .periodEndDate(periodEndDate)     // 종료 날짜
+	            .size(size)						  // 평수
+	            .style(style)                     // 스타일
 	            .build();
 	    community = communityRepository.save(community);
 	    System.out.println("Community saved with ID: " + community.getCommunityNum());
@@ -112,7 +122,7 @@ public class CommunityServiceImpl implements CommunityService {
 	        if (fileName == null) {
 	            throw new IllegalArgumentException("파일 이름이 없습니다.");
 	        }
-	        String filePath = uploadPath + "/" + fileName;
+	        String filePath = uploadPath + fileName;
 	        File dest = new File(filePath);  // 파일 객체 생성
 
 	        // 파일을 지정한 경로로 전송
