@@ -22,18 +22,17 @@ public class FCMConfig {
 		InputStream refreshToken = resource.getInputStream();
 		FirebaseApp firebaseApp = null;
 		List<FirebaseApp> firebaseAppList = FirebaseApp.getApps();
-		
-		if(firebaseAppList != null && !firebaseAppList.isEmpty()) { //firebase 어플리케이션 있는지 확인
-			for(FirebaseApp app : firebaseAppList) {
-				if(app.getName().equals(FirebaseApp.DEFAULT_APP_NAME)) {
+
+		if (firebaseAppList != null && !firebaseAppList.isEmpty()) { // firebase 어플리케이션 있는지 확인
+			for (FirebaseApp app : firebaseAppList) {
+				if (app.getName().equals(FirebaseApp.DEFAULT_APP_NAME)) {
 					firebaseApp = app;
 					break;
 				}
 			}
 		} else { // 없으면 생성
 			FirebaseOptions options = FirebaseOptions.builder()
-					.setCredentials(GoogleCredentials.fromStream(refreshToken))
-					.build();
+					.setCredentials(GoogleCredentials.fromStream(refreshToken)).build();
 			firebaseApp = FirebaseApp.initializeApp(options);
 		}
 		return FirebaseMessaging.getInstance(firebaseApp);

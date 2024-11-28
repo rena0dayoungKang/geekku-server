@@ -43,17 +43,16 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 
 	@Override
 	public Integer interiorAllWrite(InteriorAllDto interiorAllDto) throws Exception {
+		
 		InteriorAllRequest interiorAll = interiorAllDto.toEntity();
 		interiorAllRepository.save(interiorAll);
 		return interiorAll.getRequestAllNum();
 	}
 
 	@Override
-	public InteriorAllDto interiorDetail(Integer num) throws Exception {
-		InteriorAllRequest interiorAll = interiorAllRepository.findById(num).orElseThrow(() -> new Exception("글번호 오류"));
-		System.out.println("service" + num);
-		// interiorAllDslRepository.updateInteriorAllViewCount(num,
-		// interiorAll.getViewCount() + 1);
+	public InteriorAllDto interiorDetail(Integer interiorNum) throws Exception {
+		InteriorAllRequest interiorAll = interiorAllRepository.findById(interiorNum).orElseThrow(() -> new Exception("글번호 오류"));
+
 		return interiorAll.toDto();
 	}
 

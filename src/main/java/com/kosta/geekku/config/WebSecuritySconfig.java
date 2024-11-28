@@ -71,8 +71,8 @@ public class WebSecuritySconfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/user/**").hasRole("USER")
 				.antMatchers("/company/**").hasRole("COMPANY")
 				.antMatchers("/mypage/**").authenticated()
-//				.antMatchers("/estate/**").hasRole("COMPANY")
-//				.antMatchers("/interior/**").hasRole("COMPANY")
+//			.antMatchers("/estate/**").hasRole("COMPANY")
+//			.antMatchers("/interior/**").hasRole("COMPANY")
 				.anyRequest().permitAll()
 				.and()
 				.logout().logoutSuccessUrl("/");

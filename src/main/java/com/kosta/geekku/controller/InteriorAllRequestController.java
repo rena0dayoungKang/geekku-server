@@ -57,20 +57,14 @@ public class InteriorAllRequestController {
 	 */
 
 	@GetMapping("/interiorAllDetail/{num}")
-	public ResponseEntity<Map<String, Object>> interiorAllDetail(@PathVariable Integer num) {
+	public ResponseEntity<InteriorAllDto> interiorAllDetail(@PathVariable Integer num) {
 		try {
-			Map<String, Object> res = new HashMap<>();
-			System.out.println("controller" + num);
+			
 			InteriorAllDto interiorAllDto = interiorAllService.interiorDetail(num);
-			// boolean heart = interiorallService.checkHeart(boardDto.getWriter(), num) !=
-			// null;
-			res.put("interiorAll", interiorAllDto);
-			// res.put("heart", heart);
-
-			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
+			return new ResponseEntity<InteriorAllDto>(interiorAllDto, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<InteriorAllDto>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
