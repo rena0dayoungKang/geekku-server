@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -33,12 +34,13 @@ public class InteriorSample {
 	private Integer sampleNum;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "companyId")
+	private Company company;
+
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "interiorNum")
 	private Interior interior;
 
-	
-//	private Integer interiorNum;
-//	
 
 	private String type; // 주거형태
 	private String style;
@@ -63,6 +65,7 @@ public class InteriorSample {
 		SampleDto sampleDto = SampleDto.builder().sampleNum(sampleNum).interiorNum(interior.getInteriorNum()).type(type)
 				.style(style).size(size).location(location).coverImage(coverImage).intro(interior.getIntro()).companyName(interior.getCompany().getCompanyName())
 				.content(content).createdAt(createdAt).build();
+
 		return sampleDto;
 	}
 
