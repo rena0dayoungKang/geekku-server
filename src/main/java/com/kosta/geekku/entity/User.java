@@ -1,5 +1,7 @@
 package com.kosta.geekku.entity;
 
+
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -11,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.util.Base64Utils;
@@ -69,16 +72,16 @@ public class User {
 								.email(email)
 								.nickname(nickname)
 								.password(password)
-								.profileImage(profileImage)
 								.type(type)
 								.createdAt(createdAt)
 								.build();
 		
 		if (profileImage != null) {
-			userDto.setProfileImageAsBase64("data:image/png;base64," + Base64Utils.encodeToString(profileImage));
-		}
-		if (socialProfileImage != null) {
-			userDto.setSocialProfileImageAsBase64("data:image/png;base64," + Base64Utils.encodeToString(socialProfileImage));
+			try {
+				userDto.setProfileImageStr(new String(Base64.encodeBase64(profileImage), "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		return userDto;

@@ -2,14 +2,12 @@ package com.kosta.geekku.controller;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -21,8 +19,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.kosta.geekku.config.auth.PrincipalDetails;
-import com.kosta.geekku.config.jwt.JwtProperties;
 import com.kosta.geekku.dto.EstateBookMarkDto;
 import com.kosta.geekku.dto.InteriorBookMarkDto;
 import com.kosta.geekku.dto.UserDto;
@@ -81,20 +80,16 @@ public class UserController {
 	}
 
 	@PutMapping("/user/updateUserInfo")
-	public ResponseEntity<String> updateUserInfo(Authentication authentication, @RequestBody UserDto userDto) {
+	public ResponseEntity<Map<String, Object>> updateUserInfo(Authentication authentication,
+			@RequestParam("userDto") UserDto userDto,
+			@RequestParam(name = "profileImage", required = false) MultipartFile profile) {
 		try {
-			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId(); // 토큰에서 UUID를 추출
-			
-			Map<String, String> tokens = userService.updateUserInfo(userId, userDto);
-			
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("Authorization", "Bearer " + tokens.get("accessToken"));
-			headers.add("refreshToken", tokens.get("refreshToken"));
-			
-			return new ResponseEntity<String>("회원정보 수정 완료", headers, HttpStatus.OK);
+			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId(); // 토큰에서 UUID를 추출			
+			Map<String, Object> res = userService.updateUserInfo(userId, userDto, profile);
+			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<String>("회원정보 수정 실패", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -157,15 +152,16 @@ public class UserController {
 			return new ResponseEntity<Map<String, String>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	@GetMapping("/checkNickname/{nickname}")
-	public ResponseEntity<String> checkNickname(@PathVariable String nickname) {
+
+	@GetMapping("/checkNickname")
+	public ResponseEntity<Boolean> checkNickname(@RequestParam String nickname) {
 		try {
 			boolean checkNickname = userService.checkDoubleNickname(nickname);
-			return new ResponseEntity<String>(String.valueOf(checkNickname), HttpStatus.OK);
+			System.out.println(checkNickname);
+			return new ResponseEntity<Boolean>(checkNickname, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<String>("닉네임 중복체크 오류", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Boolean>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
