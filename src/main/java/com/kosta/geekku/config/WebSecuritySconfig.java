@@ -68,11 +68,11 @@ public class WebSecuritySconfig extends WebSecurityConfigurerAdapter {
 
 		http.addFilter(new JwtAuthrizationFilter(authenticationManager(), userRepository,companyRepository))
 				.authorizeRequests()
+				.antMatchers("/user/**").hasRole("USER")
+				.antMatchers("/company/**").hasRole("COMPANY")
 				.antMatchers("/mypage/**").authenticated()
 //				.antMatchers("/estate/**").hasRole("COMPANY")
 //				.antMatchers("/interior/**").hasRole("COMPANY")
-//				.antMatchers("/company/**").hasRole("COMPANY")
-				.antMatchers("/user/**").hasRole("USER")
 				.anyRequest().permitAll()
 				.and()
 				.logout().logoutSuccessUrl("/");

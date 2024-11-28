@@ -9,7 +9,7 @@ import com.kosta.geekku.dto.HouseDto;
 import com.kosta.geekku.util.PageInfo;
 
 public interface HouseService {
-	Integer houseWrite(HouseDto houseDto) throws Exception;
+	Integer houseWrite(HouseDto houseDto, String userId) throws Exception;
 	HouseDto houseDetail(Integer houseNum) throws Exception;
 	List<HouseDto> houseList(PageInfo pageInfo, String type, String keyword) throws Exception;
 	void houseDelete(Integer houseNum) throws Exception;
