@@ -91,4 +91,12 @@ public class OnestopDslRepository {
 
 		return onestopAnswerList;
 	}
+
+	public void updateOnestopViewCount(Integer onestopNum, Integer viewCount) throws Exception {
+		QOnestop onestop = QOnestop.onestop;
+
+		jpaQueryFactory.update(onestop).set(onestop.viewCount, viewCount).where(onestop.onestopNum.eq(onestopNum))
+				.execute();
+
+	}
 }

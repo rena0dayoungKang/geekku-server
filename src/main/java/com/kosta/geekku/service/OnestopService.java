@@ -12,13 +12,13 @@ import com.kosta.geekku.util.PageInfo;
 public interface OnestopService {
 	Integer onestopWrite(OnestopDto onestopDto) throws Exception;
 
-	OnestopDto onestopDetail(Integer num) throws Exception;
+	OnestopDto onestopDetail(Integer onestopNum) throws Exception;
 
 	// Integer onestopModify(OnestopDto onestopDto) throws Exception;
 
 	List<OnestopDto> onestopList(PageInfo pageInfo, String type, String word) throws Exception;
 
-	void onestopDelete(Integer onestopnum) throws Exception;
+	void onestopDelete(Integer onestopNum) throws Exception;
 
 	Integer onestopAnswerWrite(OnestopAnswerDto onestopAnswerDto, Integer onestopNum) throws Exception;
 

@@ -53,20 +53,14 @@ public class OnestopController {
 	 */
 
 	@GetMapping("/onestopDetail/{num}")
-	public ResponseEntity<Map<String, Object>> onestopDetail(@PathVariable Integer num) {
+	public ResponseEntity<OnestopDto> onestopDetail(@PathVariable Integer num) {
 		try {
-			Map<String, Object> res = new HashMap<>();
-			System.out.println("controller" + num);
-			OnestopDto onestopDto = onestopService.onestopDetail(num);
-			System.out.println(num);
-			// boolean heart = onestopService.checkHeart(boardDto.getWriter(), num) != null;
-			res.put("onestop", onestopDto);
-			// res.put("heart", heart);
 
-			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
+			OnestopDto onestopDto = onestopService.onestopDetail(num);
+			return new ResponseEntity<OnestopDto>(onestopDto, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<OnestopDto>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
