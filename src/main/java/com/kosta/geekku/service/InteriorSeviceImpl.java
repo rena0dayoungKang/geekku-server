@@ -113,6 +113,10 @@ public class InteriorSeviceImpl implements InteriorService {
 	@Override
 	public Integer interiorRegister(InteriorDto interiorDto) throws Exception {
 		Interior interior = interiorDto.toEntity();
+		String company = interior.getCompany().getCompanyName();
+		if(company == null) {
+			
+		}
 		interiorRepository.save(interior);
 		return interior.getInteriorNum();
 	}
