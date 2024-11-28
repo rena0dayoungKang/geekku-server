@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.geekku.dto.HouseAnswerDto;
 import com.kosta.geekku.dto.HouseDto;
+import com.kosta.geekku.service.FcmMessageService;
 import com.kosta.geekku.service.HouseService;
 import com.kosta.geekku.util.PageInfo;
 
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class HouseController {
 
 	private final HouseService houseService;
+	private final FcmMessageService fcmMessageService;
 
 	@PostMapping("/houseWrite")
 	public ResponseEntity<String> houseWrite(HouseDto houseDto) {
@@ -81,10 +83,12 @@ public class HouseController {
 	}
 
 	// 집꾸 답변
-	@PostMapping("/company/houseAnswerWrite")
+	@PostMapping("/company/houseAnswerWrite") 
 	public ResponseEntity<String> houseAnswerWrite(HouseAnswerDto houseAnswerDto) {
 		try {
 			Integer houseAnswerNum = houseService.houseAnswerWrite(houseAnswerDto);
+			houseAnswerDto.setAnswerHouseNum(houseAnswerNum);
+			fcmMessageService.sendHouseAnswer(houseAnswerDto);
 			return new ResponseEntity<String>(String.valueOf(houseAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

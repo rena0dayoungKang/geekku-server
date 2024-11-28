@@ -28,6 +28,7 @@ public class OnestopAnswerDto {
 	private String companyAddress;
 	private Integer onestopNum;
 	private UUID userId;
+	private String title;
 
 	public OnestopAnswer toEntity() {
 		return OnestopAnswer.builder().answerOnestopNum(answerOnestopNum).content(content).createdAt(createdAt)
