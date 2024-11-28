@@ -39,22 +39,19 @@ public class HouseServiceImpl implements HouseService {
 	private final CompanyRepository companyRepository;
 
 	@Override
-	public Integer houseWrite(HouseDto houseDto) throws Exception {
+	public Integer houseWrite(HouseDto houseDto, String userId) throws Exception {
 		House house = houseDto.toEntity();
-
-		User user = userRepository.findById(houseDto.getUserId())
-				.orElseThrow(() -> new RuntimeException("User not found"));
-		// House house = houseDto.toEntity(user);
-
+		User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new Exception("일반회원 찾기 오류"));
+		house.setUser(user);
 		houseRepository.save(house);
-
+		
 		return house.getHouseNum();
 	}
 
 	@Transactional
 	@Override
 	public HouseDto houseDetail(Integer houseNum) throws Exception {
-		House house = houseRepository.findById(houseNum).orElseThrow(() -> new Exception("吏묎씀 湲�踰덊샇 �삤瑜�"));
+		House house = houseRepository.findById(houseNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
 		houseDslRepository.updateHouseViewCount(houseNum, house.getViewCount() + 1);
 		return house.toDto();
 	}
@@ -88,28 +85,28 @@ public class HouseServiceImpl implements HouseService {
 
 	@Override
 	public void houseDelete(Integer houseNum) throws Exception {
-		houseRepository.findById(houseNum).orElseThrow(() -> new Exception("吏묎씀 湲�踰덊샇 �삤瑜�"));
+		houseRepository.findById(houseNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
 		houseRepository.deleteById(houseNum);
 	}
 
 	@Override
 	public Integer houseAnswerWrite(HouseAnswerDto houseAnswerDto) throws Exception {
-		House house = houseRepository.findById(houseAnswerDto.getHouseNum())
-				.orElseThrow(() -> new Exception("吏묎씀 湲�踰덊샇 �삤瑜�"));
+		House house = houseRepository.findById(houseAnswerDto.getHouseNum()).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
 		HouseAnswer houseAnswer = houseAnswerDto.toEntity();
 		houseAnswerRepository.save(houseAnswer);
+		
 		return houseAnswer.getAnswerHouseNum();
 	}
 
 	@Transactional
 	@Override
 	public List<HouseAnswerDto> houseAnswerList(PageInfo pageInfo, Integer houseNum) throws Exception {
-		House house = houseRepository.findById(houseNum).orElseThrow(() -> new Exception("吏묎씀 湲�踰덊샇 �삤瑜�"));
+		House house = houseRepository.findById(houseNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
 
-		List<HouseAnswerDto> houseAnswerDtoList = houseDslRepository.houseAnswerListByPaging(pageRequest).stream()
+		List<HouseAnswerDto> houseAnswerDtoList = houseDslRepository.houseAnswerListByPaging(pageRequest, houseNum).stream()
 				.map(a -> a.toDto()).collect(Collectors.toList());
-		Long cnt = houseDslRepository.houseAnswerCount();
+		Long cnt = houseDslRepository.houseAnswerCount(houseNum);
 
 		Integer allPage = (int) (Math.ceil(cnt.doubleValue() / pageRequest.getPageSize()));
 		Integer startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
@@ -118,14 +115,15 @@ public class HouseServiceImpl implements HouseService {
 		pageInfo.setAllPage(allPage);
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
-
+		pageInfo.setTotalCount(cnt);
+		
 		return houseAnswerDtoList;
 	}
 
 	@Transactional
 	@Override
 	public void houseAnswerDelete(Integer houseAnswerNum, Integer houseNum) throws Exception {
-		houseAnswerRepository.findById(houseAnswerNum).orElseThrow(() -> new Exception("�떟蹂��씠 議댁옱�븯吏� �븡�뒿�땲�떎."));
+		houseAnswerRepository.findById(houseAnswerNum).orElseThrow(() -> new Exception("집꾸 답변글 번호 오류"));
 		houseAnswerRepository.deleteById(houseAnswerNum);
 	}
 

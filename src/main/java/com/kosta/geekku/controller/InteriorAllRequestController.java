@@ -1,5 +1,6 @@
 package com.kosta.geekku.controller;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,18 +10,16 @@ import javax.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
+import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.InteriorAllDto;
 import com.kosta.geekku.dto.InteriorAnswerDto;
-import com.kosta.geekku.dto.OnestopDto;
 import com.kosta.geekku.service.InteriorAllRequestService;
 import com.kosta.geekku.util.PageInfo;
 
@@ -35,8 +34,8 @@ public class InteriorAllRequestController {
 	@PostMapping("/interiorAllWrite")
 	public ResponseEntity<String> interiorAllWrite(InteriorAllDto interiorAllDto) {
 		try {
-			interiorAllService.interiorAllWrite(interiorAllDto);
-			return new ResponseEntity<String>("true", HttpStatus.OK);
+			Integer interiorAllNum = interiorAllService.interiorAllWrite(interiorAllDto);
+			return new ResponseEntity<String>(String.valueOf(interiorAllNum), HttpStatus.OK);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -58,20 +57,14 @@ public class InteriorAllRequestController {
 	 */
 
 	@GetMapping("/interiorAllDetail/{num}")
-	public ResponseEntity<Map<String, Object>> interiorAllDetail(@PathVariable Integer num) {
+	public ResponseEntity<InteriorAllDto> interiorAllDetail(@PathVariable Integer num) {
 		try {
-			Map<String, Object> res = new HashMap<>();
-			System.out.println("controller" + num);
+			
 			InteriorAllDto interiorAllDto = interiorAllService.interiorDetail(num);
-			// boolean heart = interiorallService.checkHeart(boardDto.getWriter(), num) !=
-			// null;
-			res.put("interiorAll", interiorAllDto);
-			// res.put("heart", heart);
-
-			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
+			return new ResponseEntity<InteriorAllDto>(interiorAllDto, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<InteriorAllDto>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -84,7 +77,10 @@ public class InteriorAllRequestController {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
 			List<InteriorAllDto> interiorAllList = interiorAllService.interiorAllList(pageInfo, type, word);
-			// System.out.println(interiorAllList);
+
+			// 리스트를 내림차순으로 정렬
+			//interiorAllList.sort(Comparator.comparing(InteriorAllDto::getCreatedAt).reversed());
+
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("interiorAllList", interiorAllList);
 			listInfo.put("pageInfo", pageInfo);
@@ -95,10 +91,10 @@ public class InteriorAllRequestController {
 		}
 	}
 
-	@PostMapping("/interiorAllDelete/{num}")
-	public ResponseEntity<String> onestopDelete(@PathVariable Integer num) {
+	@PostMapping("/user/interiorAllDelete/{requestAllNum}")
+	public ResponseEntity<String> interiorAllDelete(@PathVariable Integer requestAllNum) {
 		try {
-			interiorAllService.interiorAllDelete(num);
+			interiorAllService.interiorAllDelete(requestAllNum);
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -151,15 +147,17 @@ public class InteriorAllRequestController {
 			return new ResponseEntity<String>("집꾸답변 삭제 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	@GetMapping("/mypageUserInteriorAllList")
+
+	@GetMapping("/user/mypageUserInteriorAllList")
 	public ResponseEntity<Page<InteriorAllDto>> interiorAllRequestListForUserMypage(
-			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
-			@RequestParam(required = false, defaultValue = "10", value = "size") int size, 
-			@RequestParam("userId") String userId) {
+			Authentication authentication,
+			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size
+			) {
 		try {
+			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
 			Page<InteriorAllDto> interiorAllList = interiorAllService.interiorAllListForUserMypage(page, size, userId);
-			return new ResponseEntity<Page<InteriorAllDto>>(interiorAllList, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Page<InteriorAllDto>>(interiorAllList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Page<InteriorAllDto>>(HttpStatus.BAD_REQUEST);

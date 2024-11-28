@@ -38,6 +38,8 @@ public class AlarmUser {
     private Integer userAlarmNum; // 알림 고유 번호
     
     @Column(nullable = false)
+    private String title; // 알림 제목 
+    @Column(nullable = false)
     private String message; // 알림 메시지
 
     @CreationTimestamp

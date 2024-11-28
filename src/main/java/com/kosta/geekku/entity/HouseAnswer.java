@@ -47,18 +47,24 @@ public class HouseAnswer {
 	@Column(columnDefinition = "LONGTEXT")
 	@Lob
 	private String content;
+	@Column(length = 40)
+	private String title;
 	@CreationTimestamp
 	private Timestamp createdAt;
 	
 	public HouseAnswerDto toDto() {
 		HouseAnswerDto houseAnswerDto = HouseAnswerDto.builder()
 							.answerHouseNum(answerHouseNum)
+							.title(title)
 							.content(content)
 							.createdAt(createdAt)
 							.houseNum(house.getHouseNum())
 							.companyId(company.getCompanyId())
 							.companyName(company.getCompanyName())
 							.companyPhone(company.getPhone())
+							.userId(house.getUser().getUserId())
+							.name(house.getUser().getName())
+							.userName(house.getUser().getUsername())
 							.build();
 		
 		if (company.getProfileImage() != null) {

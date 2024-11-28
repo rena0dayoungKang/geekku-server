@@ -36,7 +36,7 @@ public class HouseDto {
 	private Timestamp createdAt;
 	
 	private UUID userId;
-	private String name;
+	private String nickname;
 	private String userProfileImage;
 	private String userPhone;
 	
@@ -55,7 +55,7 @@ public class HouseDto {
 				.content(content)
 				.viewCount(viewCount)
 				.createdAt(createdAt)
-				.user(User.builder().userId(userId).name(name).phone(userPhone).build())
+				.user(User.builder().userId(userId).nickname(nickname).phone(userPhone).build())
 				.build();
 		
 		if (rentType.equals("jeonse")) {

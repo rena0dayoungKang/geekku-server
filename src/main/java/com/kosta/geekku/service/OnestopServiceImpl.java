@@ -13,20 +13,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kosta.geekku.dto.HouseAnswerDto;
-import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
-import com.kosta.geekku.dto.ReviewDto;
-import com.kosta.geekku.entity.InteriorReview;
-import com.kosta.geekku.entity.Onestop;
-import com.kosta.geekku.entity.User;
 import com.kosta.geekku.entity.Company;
-import com.kosta.geekku.entity.House;
-import com.kosta.geekku.entity.HouseAnswer;
-import com.kosta.geekku.entity.InteriorAllRequest;
 import com.kosta.geekku.entity.Onestop;
 import com.kosta.geekku.entity.OnestopAnswer;
+import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.OnestopAnswerRepository;
 import com.kosta.geekku.repository.OnestopDslRepository;
@@ -68,6 +60,7 @@ public class OnestopServiceImpl implements OnestopService {
 		pageInfo.setAllPage(allPage);
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
+		pageInfo.setTotalCount(allCnt);
 		return onestopDtoList;
 	}
 
@@ -81,11 +74,11 @@ public class OnestopServiceImpl implements OnestopService {
 		return onestop.getOnestopNum();
 	}
 
+	@Transactional
 	@Override
-	public OnestopDto onestopDetail(Integer num) throws Exception {
-		Onestop onestop = onestopRepository.findById(num).orElseThrow(() -> new Exception("글번호 오류"));
-		System.out.println("service" + num);
-		// onestopDslRepository.updateOnestopViewCount(num, onestop.getViewCount() + 1);
+	public OnestopDto onestopDetail(Integer onestopNum) throws Exception {
+		Onestop onestop = onestopRepository.findById(onestopNum).orElseThrow(() -> new Exception("글번호 오류"));
+		//onestopDslRepository.updateOnestopViewCount(onestopNum, onestop.getViewCount() + 1);
 		return onestop.toDto();
 	}
 
@@ -102,9 +95,9 @@ public class OnestopServiceImpl implements OnestopService {
 
 	@Override
 	@Transactional
-	public void onestopDelete(Integer num) throws Exception {
-		// boardLikeRepository.deleteByBoardNum(num);
-		onestopRepository.deleteById(num);
+	public void onestopDelete(Integer onestopNum) throws Exception {
+		onestopRepository.findById(onestopNum).orElseThrow(() -> new Exception("글 번호 오류"));
+		onestopRepository.deleteById(onestopNum);
 
 	}
 
@@ -156,14 +149,14 @@ public class OnestopServiceImpl implements OnestopService {
 
 		return pageInfo;
 	}
-	
+
 	@Override
 	public Page<OnestopDto> onestopListForUserMypage(int page, int size, String userId) throws Exception {
 		Optional<User> user = userRepository.findById(UUID.fromString(userId));
-		
+
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Page<OnestopDto> pageInfo = onestopRepository.findAllByUser(user, pageable).map(Onestop::toDto);
-		
+
 		return pageInfo;
 	}
 

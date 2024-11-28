@@ -1,6 +1,8 @@
 package com.kosta.geekku.service;
 
+import java.sql.Date;
 import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kosta.geekku.dto.CommunityDto;
 import com.kosta.geekku.dto.CommunityFilterDto;
 import com.kosta.geekku.entity.Community;
-import com.kosta.geekku.entity.Estate;
 import com.kosta.geekku.entity.User;
 
 public interface CommunityService {
@@ -22,8 +23,10 @@ public interface CommunityService {
     Page<CommunityDto> getFilteredCommunityList(CommunityFilterDto filterDto, Pageable pageable);
     
     // 커뮤니티 글 작성(임시)
-    void createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage, String userId) throws Exception;
-   
+    // void createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage, String userId) throws Exception;
+    void createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage,
+            String userId, String address1, String address2, String familyType,
+            String interiorType, Integer money, Date periodStartDate, Date periodEndDate,Integer size, String style);
     // 커뮤니티 글 수정
     void updateCommunity(Integer id, CommunityDto communityDto, MultipartFile coverImage) throws Exception;
     

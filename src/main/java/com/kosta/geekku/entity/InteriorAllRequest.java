@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.kosta.geekku.dto.InteriorAllDto;
@@ -47,6 +48,8 @@ public class InteriorAllRequest {
 	private String interiorType;
 	private boolean allowPhone; // 연락처 공개 0:비공개 1:공개
 	private String title;
+	@Column
+	private Integer viewCount;
 	@Column(length = 1000)
 	private String addContent;
 	@CreationTimestamp

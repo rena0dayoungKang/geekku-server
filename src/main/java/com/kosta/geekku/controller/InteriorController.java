@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequestDto;
 import com.kosta.geekku.dto.ReviewDto;
@@ -188,17 +190,18 @@ public class InteriorController {
 	}
 	
 	// 개인 마이페이지 - 인테리어 업체 후기 리스트
-	@GetMapping("/mypageUserReviewList")
+	@GetMapping("/user/mypageUserReviewList")
 	public ResponseEntity<Page<ReviewDto>> mypageUserReviewList(
+			Authentication authentication,
 			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
-			@RequestParam(required = false, defaultValue = "10", value = "size") int size, 
-			@RequestParam("userId") String userId) {
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size) {
 		try {
+			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
 			Page<ReviewDto> reviewList = interiorService.reviewListForUserMypage(page, size, userId);
 			return new ResponseEntity<Page<ReviewDto>>(reviewList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Page<ReviewDto>>(HttpStatus.OK);
+			return new ResponseEntity<Page<ReviewDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	
@@ -207,7 +210,7 @@ public class InteriorController {
 	public ResponseEntity<String> mypageUserReviewUpdate(ReviewDto reviewDto, @PathVariable Integer num) {
 		try {
 			interiorService.updateReview(reviewDto, num);
-			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("후기 수정 오류", HttpStatus.BAD_REQUEST);
@@ -219,7 +222,7 @@ public class InteriorController {
 	public ResponseEntity<String> mypageUserReviewDelete(@PathVariable Integer num) {
 		try {
 			interiorService.deleteReview(num);
-			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("후기 삭제 오류", HttpStatus.BAD_REQUEST);

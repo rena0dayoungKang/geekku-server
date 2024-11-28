@@ -28,6 +28,9 @@ public class InteriorAnswerDto {
 	private String companyPhone;
 	private String companyAddress;
 	private Integer requestAllNum;
+	private UUID userId;
+	private String username;
+	private String name;
 
 	public InteriorAllAnswer toEntity() {
 		return InteriorAllAnswer.builder().answerAllNum(answerAllNum).content(content).createdAt(createdAt)

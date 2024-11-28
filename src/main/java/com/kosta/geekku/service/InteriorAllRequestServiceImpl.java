@@ -43,17 +43,16 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 
 	@Override
 	public Integer interiorAllWrite(InteriorAllDto interiorAllDto) throws Exception {
+		
 		InteriorAllRequest interiorAll = interiorAllDto.toEntity();
 		interiorAllRepository.save(interiorAll);
 		return interiorAll.getRequestAllNum();
 	}
 
 	@Override
-	public InteriorAllDto interiorDetail(Integer num) throws Exception {
-		InteriorAllRequest interiorAll = interiorAllRepository.findById(num).orElseThrow(() -> new Exception("글번호 오류"));
-		System.out.println("service" + num);
-		// interiorAllDslRepository.updateInteriorAllViewCount(num,
-		// interiorAll.getViewCount() + 1);
+	public InteriorAllDto interiorDetail(Integer interiorNum) throws Exception {
+		InteriorAllRequest interiorAll = interiorAllRepository.findById(interiorNum).orElseThrow(() -> new Exception("글번호 오류"));
+
 		return interiorAll.toDto();
 	}
 
@@ -160,8 +159,12 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 
 	@Override
 	public Page<InteriorAllDto> interiorAllListForUserMypage(int page, int size, String userId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+		
+		Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createAt"));
+		Page<InteriorAllDto> pageInfo = interiorAllRepository.findAllByUser(user, pageable).map(InteriorAllRequest::toDto);
+		
+		return pageInfo;
 	}
 
 }

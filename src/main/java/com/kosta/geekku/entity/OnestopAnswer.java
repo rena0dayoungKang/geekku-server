@@ -48,6 +48,8 @@ public class OnestopAnswer {
 	@Column(columnDefinition = "LONGTEXT")
 	@Lob
 	private String content;
+	@Column(length = 40)
+	private String title;
 	@CreationTimestamp
 	private Timestamp createdAt;
 

@@ -2,6 +2,7 @@ package com.kosta.geekku.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,33 +24,46 @@ public class FcmController {
 	
 	@PostMapping("/fcmToken")
 	public ResponseEntity<String> fcmToken(@RequestBody Map<String,String> param) {
+		String type = param.get("type");
 		System.out.println(param);
-		fcmMessageService.registFcmToken(param.get("username"),param.get("fcmToken"));
-		return new ResponseEntity<String>("true", HttpStatus.OK);
+		try {
+			if (type.equals("user")) {
+				fcmMessageService.registUserFcmToken(param.get("userId"), param.get("fcmToken"));
+			} else {
+				fcmMessageService.registCompanyFcmToken(param.get("userId"), param.get("fcmToken"));
+			}
+			return new ResponseEntity<String>("true", HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("false", HttpStatus.BAD_REQUEST);
+		}
 	}
 	
-	@PostMapping("/alarms")
-	public ResponseEntity<List<MessageDto>> alarms(@RequestBody Map<String,String> param) {
-		return new ResponseEntity<List<MessageDto>>(fcmMessageService.getAlarmList(param.get("username")),HttpStatus.OK);
+	@PostMapping("/userAlarms")
+	public ResponseEntity<List<MessageDto>> userAlarms(@RequestBody Map<String,String> param) {
+		try {		
+			System.out.println(param.get("userId"));
+			return new ResponseEntity<List<MessageDto>>(fcmMessageService.getUserAlarmList(UUID.fromString(param.get("userId"))),HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<MessageDto>>(HttpStatus.BAD_REQUEST);	
+		}
 	}
 	
+	@PostMapping("/companyAlarms")
+	public ResponseEntity<List<MessageDto>> companyAlarms(@RequestBody Map<String,String> param) {
+		try {		
+			return new ResponseEntity<List<MessageDto>>(fcmMessageService.getCompanyAlarmList(UUID.fromString(param.get("userId"))),HttpStatus.OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<MessageDto>>(HttpStatus.BAD_REQUEST);	
+		}
+	}
+
 	@GetMapping("/confirm/{num}")
 	public ResponseEntity<Boolean> confirmAlarm(@PathVariable Integer num) {
 		Boolean confirm = fcmMessageService.confirmAlarm(num);
 		return new ResponseEntity<Boolean>(confirm, HttpStatus.OK);
 	}
-	
-	@PostMapping("/confirmAll")
-	public ResponseEntity<Boolean> confirmAlarmAll(@RequestBody Map<String, List<Integer>> param) {
-		System.out.println(param);
-		Boolean confirm = fcmMessageService.confirmAlarmAll(param.get("alarmList"));
-		return new ResponseEntity<Boolean>(confirm, HttpStatus.OK);
-	}
-	
-	@PostMapping("/sendAlarm")
-	public ResponseEntity<Boolean> sendAlarm(@RequestBody MessageDto messageDto) {
-		Boolean sendSucces = fcmMessageService.sendAlarm(messageDto);
-		return new ResponseEntity<Boolean>(sendSucces, HttpStatus.OK);
-	}
-	
 }
+

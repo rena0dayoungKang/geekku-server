@@ -28,6 +28,7 @@ public class InteriorRequestDto {
 	private Integer allowTime;
 	private String content;
 	private Timestamp createdAt;
+	private UUID companyId;
 	
 	public InteriorRequest toEntity() {
 		InteriorRequest request = InteriorRequest.builder()
