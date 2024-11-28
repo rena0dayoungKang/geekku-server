@@ -3,6 +3,8 @@ package com.kosta.geekku.service;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.kosta.geekku.dto.UserDto;
 
 public interface UserService {
@@ -18,7 +20,7 @@ public interface UserService {
 
 	UserDto getUser(String username) throws Exception;
 
-	Map<String, String> updateUserInfo(UUID userId, UserDto userDto) throws Exception;
+	Map<String, Object> updateUserInfo(UUID userId, UserDto userDto, MultipartFile file) throws Exception;
 
 	void changePassword(UUID userId, String newPassword) throws Exception;
 

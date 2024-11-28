@@ -8,16 +8,20 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Base64Utils;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.geekku.config.jwt.JwtToken;
 import com.kosta.geekku.dto.UserDto;
 import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.UserRepository;
+import com.kosta.geekku.util.ProfileImage;
 
 @Service
 public class UserServiceImpl implements UserService {
-	
+
 	@Autowired
 	private JwtToken jwtToken;
 
@@ -26,6 +30,14 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private CompanyRepository companyRepository;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+	
+	@Autowired
+	private ProfileImage profileImage;
+	
+	
 
 	@Override
 	public void joinPerson(UserDto userDto) throws Exception {
@@ -72,28 +84,42 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Map<String, String> updateUserInfo(UUID userId, UserDto userDto) throws Exception {
+	public Map<String, Object> updateUserInfo(UUID userId, UserDto userDto, MultipartFile profile) throws Exception {
 		User user = userRepository.findById(userId).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
-		if(userDto.getNickname() != null) user.setNickname(userDto.getNickname());
-		if(userDto.getName() != null) user.setName(userDto.getName());
-		if(userDto.getPhone() != null) user.setPhone(userDto.getPhone());
-		if(userDto.getEmail() != null) user.setEmail(userDto.getEmail());
-		userRepository.save(user);
+
+		if (userDto.getNickname() != null)
+			user.setNickname(userDto.getNickname());
+		if (userDto.getName() != null)
+			user.setName(userDto.getName());
+		if (userDto.getPhone() != null)
+			user.setPhone(userDto.getPhone());
+		if (userDto.getEmail() != null)
+			user.setEmail(userDto.getEmail());
 		
+		if (profile != null && !profile.isEmpty()) {
+			user.setProfileImage(profile.getBytes());
+		}
+		
+		userRepository.save(user);
+
 		String newAccessToken = jwtToken.makeAccessToken(userDto.getUsername(), userDto.getType());
 		String newRefreshToken = jwtToken.makeRefreshToken(userDto.getUsername(), userDto.getType());
-		
+
 		Map<String, String> tokens = new HashMap<>();
 		tokens.put("accessToken", newAccessToken);
 		tokens.put("refreshToken", newRefreshToken);
-		return tokens;
+
+		Map<String, Object> res = new HashMap<>();
+		res.put("token", objectMapper.writeValueAsString(tokens));
+		res.put("user", user.toDto());
+		return res;
 	}
 
 	@Override
 	public void changePassword(UUID userId, String newPassword) throws Exception {
 		User user = userRepository.findById(userId).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
 		user.setPassword(newPassword);
-		userRepository.save(user);		
+		userRepository.save(user);
 	}
 
 	@Override

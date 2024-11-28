@@ -23,13 +23,12 @@ public class UserDto {
 	private String phone;
 	private String email;
 	private String nickname;
-	private byte[] profileImage;
 	private String type;
 	private Timestamp createdAt;
 	
-	private String profileImageAsBase64;
-	private String socialProfileImageAsBase64;
-	
+	private byte[] profileImage;
+	private String profileImageStr;
+
 	private Role role;
 	
 	public User toEntity() {		
