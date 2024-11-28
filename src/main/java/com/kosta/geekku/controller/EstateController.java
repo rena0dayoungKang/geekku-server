@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.EstateDto;
 import com.kosta.geekku.service.EstateService;
 import com.kosta.geekku.util.PageInfo;
@@ -57,7 +59,6 @@ public class EstateController {
 	@GetMapping("/estateImage/{num}")
 	public void image(@PathVariable String num, HttpServletResponse response) {
 		try {
-			System.out.println(num);
 			// 파일이 존재하지 않는 경우 처리
 			File file = new File(uploadPath, num);
 			if (!file.exists()) {
@@ -74,16 +75,18 @@ public class EstateController {
 	}
 
 	@PostMapping("/estateDetail")
-	public ResponseEntity<Map<String, Object>> estateDetail(@RequestBody Map<String, String> param) {
+	public ResponseEntity<Map<String, Object>> estateDetail(@RequestBody Map<String, Object> params){
 		try {
-			Integer estateNum = Integer.parseInt(param.get("estateNum"));
+			Integer estateNum = (Integer)params.get("estateNum");
+			String userId = (String)params.get("userId");
+			
 			Map<String, Object> res = new HashMap<>();
 			EstateDto estateDto = estateService.estateDetail(estateNum);
 			res.put("estate", estateDto);
-
-			// 북마크
-			if (param.get("userId") != null) {
-				boolean bookmark = estateService.checkBookmark(param.get("userId"), estateNum) != null;
+			
+			//북마크
+			if (userId != null) {
+				boolean bookmark = estateService.checkBookmark(userId, estateNum) != null;
 				res.put("bookmark", bookmark);
 			}
 
@@ -138,15 +141,13 @@ public class EstateController {
 			return new ResponseEntity<String>("매물 삭제 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
-
-//	/user/estateBookmark/{estateNum}로 경로 수정해주기
-	@PostMapping("/estateBookmark/{estateNum}")
-	public ResponseEntity<String> estateBookmark(@PathVariable Integer estateNum,
-			@RequestParam("userId") String userId) {
+  
+	@PostMapping("/user/estateBookmark/{estateNum}")
+	public ResponseEntity<String> estateBookmark(Authentication authentication, @PathVariable Integer estateNum) {
 		try {
-//			UUID userId = UUID.fromString(((PrincipalDetails)authentication.getPrincipal()).getUser().getId());
-			boolean heart = estateService.toggleBookmark(userId, estateNum);
-			return new ResponseEntity<String>(String.valueOf(heart), HttpStatus.OK);
+			UUID userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId();
+			boolean bookmark = estateService.toggleBookmark(userId.toString(), estateNum);
+			return new ResponseEntity<String>(String.valueOf(bookmark), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("매물 북마크 실패", HttpStatus.BAD_REQUEST);

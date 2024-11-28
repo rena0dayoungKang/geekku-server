@@ -32,6 +32,7 @@ public class HouseAnswerDto {
 	public HouseAnswer toEntity() {
 		return HouseAnswer.builder()
 						.answerHouseNum(answerHouseNum)
+						.title(title)
 						.content(content)
 						.createdAt(createdAt)
 						.company(Company.builder().companyId(companyId).companyName(companyName).phone(companyPhone).build())

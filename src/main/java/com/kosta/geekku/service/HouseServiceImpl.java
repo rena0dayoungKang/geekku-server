@@ -118,7 +118,8 @@ public class HouseServiceImpl implements HouseService {
 		pageInfo.setAllPage(allPage);
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
-
+		pageInfo.setTotalCount(cnt);
+		
 		return houseAnswerDtoList;
 	}
 
