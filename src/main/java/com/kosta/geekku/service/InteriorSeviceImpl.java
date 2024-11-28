@@ -76,7 +76,7 @@ public class InteriorSeviceImpl implements InteriorService {
 	public List<InteriorDto> interiorList(String possibleLocation) throws Exception {
 		List<InteriorDto> interiorDtoList = null;
 		Long allCnt = 0L;
-		if (possibleLocation == null) {
+		if (possibleLocation.equals("전체")) {
 			interiorDtoList = interiorDslRepository.interiorListAll().stream().map(i -> i.toDto())
 					.collect(Collectors.toList());
 			allCnt = interiorDslRepository.interiorCountAll();
