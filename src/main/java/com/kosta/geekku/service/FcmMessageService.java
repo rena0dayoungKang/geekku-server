@@ -44,10 +44,11 @@ public class FcmMessageService {
 		AlarmUser alarm = AlarmUser.builder()
 		    .user(user.getUserId()) // UUID 타입 전달
 		    .company(Company.builder().companyId(houseAnswerDto.getCompanyId()).build())
-		    .message(houseAnswerDto.getTitle())
+		    .message(houseAnswerDto.getContent())
 		    .status(false)
 		    .type("house")
 		    .detailPath(houseAnswerDto.getAnswerHouseNum())
+		    .title(houseAnswerDto.getTitle())
 		    .build();
 
 		alarmRepository.save(alarm);	
@@ -60,6 +61,7 @@ public class FcmMessageService {
 				.putData("type", alarm.getType())
 				.putData("detailPath", alarm.getDetailPath()+"")
 				.putData("sender", houseAnswerDto.getCompanyName())
+				.putData("title", alarm.getTitle())
 				.build();
 		
 		try {
@@ -100,6 +102,7 @@ public class FcmMessageService {
 				.putData("type", alarm.getType())
 				.putData("detailPath", alarm.getDetailPath()+"")
 				.putData("sender", interiorAnswerDto.getCompanyName())
+				.putData("title", alarm.getTitle())
 				.build();
 		
 		try {
@@ -140,6 +143,7 @@ public class FcmMessageService {
 				.putData("type", alarm.getType())
 				.putData("detailPath", alarm.getDetailPath()+"")
 				.putData("sender", onestopAnswerDto.getCompanyName())
+				.putData("title", alarm.getTitle())
 				.build();
 		
 		try {
@@ -174,7 +178,7 @@ public class FcmMessageService {
 
 		alarmRepository.save(alarm);	
 		
-		//4. Alarm 전성
+		//4. Alarm 전송
 		Message message = Message.builder()
 				.setToken(fcmToken)
 				.putData("num", alarm.getUserAlarmNum()+"")
@@ -182,6 +186,7 @@ public class FcmMessageService {
 				.putData("type", alarm.getType())
 				.putData("detailPath", alarm.getDetailPath()+"")
 				.putData("sender", interiorRequestDto.getName())
+				.putData("title", alarm.getTitle())
 				.build();
 		
 		try {
@@ -204,6 +209,7 @@ public class FcmMessageService {
 									.sender(alarm.getCompany().getCompanyId())
 									.type(alarm.getType())
 									.detailPath(alarm.getDetailPath())
+									.title(alarm.getTitle())
 									.build())
 								    .collect(Collectors.toList());
 		System.out.println(A);
@@ -221,6 +227,7 @@ public class FcmMessageService {
 									.sender(alarm.getCompany().getCompanyId())
 									.type(alarm.getType())
 									.detailPath(alarm.getDetailPath())
+									.title(alarm.getTitle())
 									.build())
 								    .collect(Collectors.toList());
 	}

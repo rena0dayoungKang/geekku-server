@@ -94,8 +94,11 @@ public class HouseServiceImpl implements HouseService {
 
 	@Override
 	public Integer houseAnswerWrite(HouseAnswerDto houseAnswerDto) throws Exception {
-		House house = houseRepository.findById(houseAnswerDto.getHouseNum())
-				.orElseThrow(() -> new Exception("吏묎씀 湲�踰덊샇 �삤瑜�"));
+//		House house = houseRepository.findById(houseAnswerDto.getHouseNum())
+//				.orElseThrow(() -> new Exception("吏묎씀 湲�踰덊샇 �삤瑜�"));
+		Optional<House> optionalHouse = houseRepository.findById(houseAnswerDto.getHouseNum());
+		House house = optionalHouse.orElseThrow(() -> new Exception("해당 집을 찾을 수 없습니다."));
+
 		HouseAnswer houseAnswer = houseAnswerDto.toEntity();
 		houseAnswerRepository.save(houseAnswer);
 		
