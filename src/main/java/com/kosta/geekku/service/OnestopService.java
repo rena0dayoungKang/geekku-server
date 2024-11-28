@@ -12,7 +12,7 @@ import com.kosta.geekku.util.PageInfo;
 public interface OnestopService {
 	Integer onestopWrite(OnestopDto onestopDto) throws Exception;
 
-	OnestopDto onestopDetail(Integer onestopnum) throws Exception;
+	OnestopDto onestopDetail(Integer num) throws Exception;
 
 	// Integer onestopModify(OnestopDto onestopDto) throws Exception;
 

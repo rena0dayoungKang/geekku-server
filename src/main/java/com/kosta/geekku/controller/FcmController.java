@@ -66,3 +66,4 @@ public class FcmController {
 		return new ResponseEntity<Boolean>(confirm, HttpStatus.OK);
 	}
 }
+
