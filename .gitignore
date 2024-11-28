@@ -125,3 +125,6 @@ gradle-app.setting
 
 # Production 환경 설정 파일 무시
 application-prod.properties
+
+# firebase 설정파일 무시
+kosta-2424-25fc036013ba.json

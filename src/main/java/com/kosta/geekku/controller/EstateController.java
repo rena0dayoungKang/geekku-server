@@ -78,17 +78,16 @@ public class EstateController {
 	public ResponseEntity<Map<String, Object>> estateDetail(@RequestBody Map<String, Object> params){
 		try {
 			Integer estateNum = (Integer)params.get("estateNum");
-			String userId = (String)params.get("userId");
-			
+
 			Map<String, Object> res = new HashMap<>();
 			EstateDto estateDto = estateService.estateDetail(estateNum);
 			res.put("estate", estateDto);
 			
 			//북마크
-			if (userId != null) {
-				boolean bookmark = estateService.checkBookmark(userId, estateNum) != null;
+			if (params.get("userId") != null) {
+				boolean bookmark = estateService.checkBookmark((String)params.get("userId"), estateNum) != null;
 				res.put("bookmark", bookmark);
-			}
+			} 
 
 			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
 		} catch (Exception e) {

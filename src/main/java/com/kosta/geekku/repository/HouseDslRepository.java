@@ -102,18 +102,20 @@ public class HouseDslRepository {
 	}
 	
 	// 집꾸 답변
-	public Long houseAnswerCount() throws Exception {
+	public Long houseAnswerCount(Integer houseNum) throws Exception {
 		QHouseAnswer houseAnswer = QHouseAnswer.houseAnswer;
 		
 		return jpaQueryFactory.select(houseAnswer.count())
 					.from(houseAnswer)
+					.where(houseAnswer.house.houseNum.eq(houseNum))
 					.fetchOne();
 	}
 	
-	public List<HouseAnswer> houseAnswerListByPaging(PageRequest pageRequest) throws Exception {
+	public List<HouseAnswer> houseAnswerListByPaging(PageRequest pageRequest, Integer houseNum) throws Exception {
 		QHouseAnswer houseAnswer = QHouseAnswer.houseAnswer;
 		
 		List<HouseAnswer> houseAnswerList = jpaQueryFactory.selectFrom(houseAnswer)
+									.where(houseAnswer.house.houseNum.eq(houseNum))
 									.orderBy(houseAnswer.createdAt.asc())
 									.offset(pageRequest.getOffset())
 									.limit(pageRequest.getPageSize())
