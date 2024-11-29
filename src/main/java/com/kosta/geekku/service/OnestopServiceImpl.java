@@ -151,8 +151,8 @@ public class OnestopServiceImpl implements OnestopService {
 	}
 
 	@Override
-	public Page<OnestopDto> onestopListForUserMypage(int page, int size, String userId) throws Exception {
-		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+	public Page<OnestopDto> onestopListForUserMypage(int page, int size, UUID userId) throws Exception {
+		Optional<User> user = userRepository.findById(userId);
 
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Page<OnestopDto> pageInfo = onestopRepository.findAllByUser(user, pageable).map(Onestop::toDto);
