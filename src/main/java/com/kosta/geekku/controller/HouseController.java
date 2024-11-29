@@ -103,6 +103,7 @@ public class HouseController {
 	public ResponseEntity<String> houseAnswerWrite(Authentication authentication, HouseAnswerDto houseAnswerDto) {
 		try {
 			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId();
+			System.out.println(companyId);
 			Integer houseAnswerNum = houseService.houseAnswerWrite(houseAnswerDto, companyId);
 			houseAnswerDto.setAnswerHouseNum(houseAnswerNum);
 		//	fcmMessageService.sendHouseAnswer(houseAnswerDto);

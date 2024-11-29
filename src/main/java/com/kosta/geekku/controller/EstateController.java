@@ -42,12 +42,10 @@ public class EstateController {
 	@Value("${upload.path}")
 	private String uploadPath;
 
-//	/company/estateWrite로 경로 수정해주기
-	@PostMapping("/estateWrite")
+	@PostMapping("/company/estateWrite")
 	public ResponseEntity<String> estateWrite(EstateDto estateDto,
 			@RequestPart(name = "images", required = false) MultipartFile[] images) {
 		try {
-			System.out.println(estateDto);
 			Integer estateNum = estateService.estateWrite(estateDto, images == null ? null : Arrays.asList(images));
 			return new ResponseEntity<String>(String.valueOf(estateNum), HttpStatus.OK);
 		} catch (Exception e) {
@@ -129,8 +127,7 @@ public class EstateController {
 		}
 	}
 
-//	/company/estateDelete로 경로 수정해주기
-	@PostMapping("/estateDelete")
+	@PostMapping("/company/estateDelete")
 	public ResponseEntity<String> estateDelete(@RequestParam Integer estateNum) {
 		try {
 			estateService.estateDelete(estateNum);
@@ -154,8 +151,7 @@ public class EstateController {
 	}
 
 	// 중개업자 마이페이지 - 매물 등록 내역
-//	/company/mypageEstateList로 경로 수정해주기
-	@GetMapping("/mypageEstateList")
+	@GetMapping("/company/mypageEstateList")
 	public ResponseEntity<Map<String, Object>> mypageEstateList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 			@RequestParam("companyId") String companyId) {
