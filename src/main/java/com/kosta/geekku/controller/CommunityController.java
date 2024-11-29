@@ -2,11 +2,11 @@ package com.kosta.geekku.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,10 +31,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kosta.geekku.dto.CommunityCommentDto;
 import com.kosta.geekku.dto.CommunityDto;
 import com.kosta.geekku.dto.CommunityFilterDto;
 import com.kosta.geekku.entity.Community;
 import com.kosta.geekku.entity.User;
+import com.kosta.geekku.repository.CommunityRepository;
 import com.kosta.geekku.service.CommunityService;
 
 @RestController
@@ -45,8 +47,10 @@ public class CommunityController {
 	
 	@Autowired
 	private CommunityService communityService;
+	@Autowired
+	private CommunityRepository communityRepository;
 
-	// 페이징된 커뮤니티 리스트 조회
+	// 커뮤니티 리스트 조회
 	@GetMapping("/communityList") // 예시 http://localhost:8080/test1?page=0&size=3
 	public ResponseEntity<Page<CommunityDto>> getCommunityList(
 			@RequestParam(value = "page", defaultValue = "0") int page,
@@ -54,6 +58,14 @@ public class CommunityController {
 		Pageable pageable = PageRequest.of(page, size);
 		Page<CommunityDto> communityList = communityService.getCommunityList(pageable);
 		return ResponseEntity.ok(communityList);
+	}
+	
+	@GetMapping("/communityList/count")
+	public ResponseEntity<Map<String, Long>> getCommunityListCount() {
+	    long totalCount = communityRepository.count(); // 커뮤니티 테이블의 총 개수
+	    Map<String, Long> response = new HashMap<>();
+	    response.put("totalElements", totalCount);
+	    return ResponseEntity.ok(response);
 	}
 
 	// 커뮤니티 글 작성
@@ -64,11 +76,18 @@ public class CommunityController {
 	}
 
 	// 커뮤니티 글 상세 조회
-	@GetMapping("/test3/{num}") // 예시 http://localhost:8080/test3/1
+	@GetMapping("/communityDetail/{num}") // 예시 http://localhost:8080/test3/1
 	public ResponseEntity<CommunityDto> getCommunityDetail(@PathVariable Integer num) {
 		CommunityDto communityDetail = communityService.getCommunityDetail(num);
 		return new ResponseEntity<>(communityDetail, HttpStatus.OK);
 	}
+//    @GetMapping("/communityDetail/{num}")
+//    public ResponseEntity<CommunityDto> getCommunityDetail(@PathVariable Integer num,
+//                                                           @RequestParam String userId) { <-- 북마크 때문에 userid도 받아야되나 고민 중
+//        CommunityDto communityDetail = communityService.getCommunityDetail(num, userId);
+//        return new ResponseEntity<>(communityDetail, HttpStatus.OK);
+//    }
+	
 
 	// 필터링 조회
 	@PostMapping("/test4") // 예시 http://localhost:8080/test4/ + json 조건
@@ -82,7 +101,7 @@ public class CommunityController {
 
 	// 커뮤니티 글 작성 글자 포함(2번이랑 둘 중에 하나만 쓸 거임 /user 형태로 바꿔야함 나중에)
 	@PostMapping("/communityCreate")
-	public ResponseEntity<String> createCommunity(@RequestParam("title") String title,
+	public ResponseEntity<Integer> createCommunity(@RequestParam("title") String title,
 	        @RequestParam("content") String content, 
 	        @RequestParam("type") String type,
 	        @RequestParam("userId") String userId,  // userId 파라미터 추가
@@ -97,13 +116,13 @@ public class CommunityController {
 	        @RequestParam("style") String style,
 	        @RequestParam(value = "coverImage", required = false) MultipartFile coverImage) {
 	    try {
-	        communityService.createCommunityWithCoverImage(title, content, type, coverImage, userId, address1, address2, familyType,
+	        Integer communityNum = communityService.createCommunityWithCoverImage(title, content, type, coverImage, userId, address1, address2, familyType,
 	        		interiorType, money, periodStartDate, periodEndDate, size, style);  // userId를 서비스 메서드에 전달
-	        return new ResponseEntity<>("커뮤니티 생성에 성공했습니다", HttpStatus.CREATED);
+	        return new ResponseEntity<>(communityNum, HttpStatus.CREATED);
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        return new ResponseEntity<>("커뮤니티 생성에 실패했습니다", HttpStatus.INTERNAL_SERVER_ERROR);
-	    }
+	        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	        }
 	}
 
 	// 커뮤니티 글 수정
@@ -143,11 +162,22 @@ public class CommunityController {
 			return ResponseEntity.status(500).body("서버 오류가 발생했습니다. 오류: " + e.getMessage());
 		}
 	}
+	
+	// 댓글 조회 (특정 커뮤니티의 댓글 목록)
+    @GetMapping("/communityComment/{communityNum}")
+    public ResponseEntity<List<CommunityCommentDto>> getCommunityComments(@PathVariable Integer communityNum) {
+        try {
+        	List<CommunityCommentDto> comments = communityService.getCommentsByCommunityId(communityNum);
+        	return new ResponseEntity<>(comments, HttpStatus.OK);
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+    }	
+	
 
 	// 커뮤니티 댓글 작성
-	@PostMapping("/user/test8") // 예시
-								// http://localhost:8080/test8?communityId=3&userId=7e7506d5-b944-40c8-a269-c3c58d2067bb&content="댓글
-								// 내용"
+	@PostMapping("/communityCommentWrite")
 	public ResponseEntity<String> createComment(@RequestParam("communityId") Integer communityId,
 			@RequestParam("userId") String userId, @RequestParam("content") String content) {
 
