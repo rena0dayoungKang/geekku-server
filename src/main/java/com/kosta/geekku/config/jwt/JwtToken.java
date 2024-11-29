@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
