@@ -7,13 +7,11 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -30,7 +28,6 @@ import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.HouseAnswerDto;
 import com.kosta.geekku.dto.HouseDto;
 import com.kosta.geekku.service.FcmMessageService;
-import com.kosta.geekku.entity.EstateImage;
 import com.kosta.geekku.service.HouseService;
 import com.kosta.geekku.util.PageInfo;
 

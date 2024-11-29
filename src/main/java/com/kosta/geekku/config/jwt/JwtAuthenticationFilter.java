@@ -34,11 +34,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		String accesToken = null;
 		String refreshToken = null;
 		if(principalDetails.getUser()!=null || principalDetails.getOAuth2UserInfo()!=null) {
-			accesToken = jwtToken.makeAccessToken(principalDetails.getUsername(), "user");			
-			refreshToken = jwtToken.makeRefreshToken(principalDetails.getUsername(), "user");
+			accesToken = jwtToken.makeAccessToken(principalDetails.getUsername(), "ROLE_USER");			
+			refreshToken = jwtToken.makeRefreshToken(principalDetails.getUsername(), "ROLE_USER");
 		} else if(principalDetails.getCompany()!=null) {
-			accesToken = jwtToken.makeAccessToken(principalDetails.getUsername(), "company");			
-			refreshToken = jwtToken.makeRefreshToken(principalDetails.getUsername(), "company");
+			accesToken = jwtToken.makeAccessToken(principalDetails.getUsername(), "ROLE_COMPANY");			
+			refreshToken = jwtToken.makeRefreshToken(principalDetails.getUsername(), "ROLE_COMPANY");
 		}
 		
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -52,6 +52,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		response.addHeader(JwtProperties.HEADER_STRING, token);
 		response.setContentType("application/json; charset=utf-8");
 		response.getWriter().write("true");
+		
+//		System.out.println("Access Token Role: " + (principalDetails.getUser() != null ? "ROLE_USER" : "ROLE_COMPANY"));
+//		System.out.println("Access Token: " + accesToken);
+//		System.out.println("Refresh Token: " + refreshToken);
 		
 	}
 
