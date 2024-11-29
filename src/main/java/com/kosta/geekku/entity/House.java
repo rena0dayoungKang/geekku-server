@@ -46,21 +46,21 @@ public class House {
 	private User user;
 	// private UUID userId; //join column User - userId
 
-	private String type;// 留ㅻЪ�쑀�삎
+	private String type;// 매물유형
 	private String address1;
 	private String address2;
-	private String rentType; // 嫄곕옒 醫낅쪟(�쟾�꽭,�썡�꽭,留ㅻℓ)
+	private String rentType; // 거래 종류(전세,월세,매매)
 	private Integer size;
 	private Integer jeonsePrice;
 	private Integer monthlyPrice;
 	private Integer depositPrice;
 	private Integer buyPrice;
-	private Date requestDate; // �엯二쇳씗留� �씪�옄
-	private boolean requestState; // �엯二쇳씗留� �씪�옄 誘몄젙 -> 0:�젙�븿 1:誘몄젙 
-	private boolean allowPhone;// �뿰�씫泥� 怨듦컻 �뿬遺�-> 0:鍮꾧났媛� 1:怨듦컻
+	private Date requestDate; // 입주희망 일자
+	private boolean requestState; // 입주희망 일자 미정 -> 0:미정x 1:미정
+	private boolean allowPhone;// 연락처 공개 여부-> 0:비공개 1:공개
 	private String title;
 	@Column(length = 1000)
-	private String content; // 1000�옄
+	private String content; // 1000자 제한
 	@ColumnDefault("0")
 	private Integer viewCount;
 	@CreationTimestamp

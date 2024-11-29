@@ -30,7 +30,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@DynamicInsert //조회수
+@DynamicInsert // 조회수
 @Entity
 public class InteriorAllRequest {
 	// 방꾸 신청
@@ -60,16 +60,15 @@ public class InteriorAllRequest {
 	private String addContent;
 	@CreationTimestamp
 	private Timestamp createAt;
-	
+
 	@OneToMany(mappedBy = "interiorAll", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	private List<InteriorAllRequest> interiorAll = new ArrayList<>();
-
 
 	public InteriorAllDto toDto() {
 		InteriorAllDto interiorAllDto = InteriorAllDto.builder().requestAllNum(requestAllNum).user(user).name(name)
 				.phone(phone).type(interiorType).size(size).address1(address1).address2(address2).money(money)
 				.workType(workType).interiorType(interiorType).allowPhone(allowPhone).title(title)
-				.addContent(addContent).createAt(createAt).build();
+				.addContent(addContent).viewCount(viewCount).createAt(createAt).build();
 		return interiorAllDto;
 	}
 

@@ -3,6 +3,7 @@ package com.kosta.geekku.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -181,7 +182,7 @@ public class InteriorController {
 			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
 			@RequestParam(required = false, defaultValue = "10", value = "size") int size) {
 		try {
-			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
+			UUID userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId();
 			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestListForUserMypage(page, size, userId);
 			return new ResponseEntity<Page<InteriorRequestDto>>(interiorRequestList, HttpStatus.OK);
 		} catch (Exception e) {
@@ -197,7 +198,7 @@ public class InteriorController {
 			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
 			@RequestParam(required = false, defaultValue = "10", value = "size") int size) {
 		try {
-			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
+			UUID userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId();
 			Page<ReviewDto> reviewList = interiorService.reviewListForUserMypage(page, size, userId);
 			return new ResponseEntity<Page<ReviewDto>>(reviewList, HttpStatus.OK);
 		} catch (Exception e) {
@@ -207,8 +208,8 @@ public class InteriorController {
 	}
 	
 	// 개인 마이페이지 - 인테리어 업체 후기 수정
-	@PostMapping("/mypageUserReviewUpdate/{num}")
-	public ResponseEntity<String> mypageUserReviewUpdate(ReviewDto reviewDto, @PathVariable Integer num) {
+	@PostMapping("/user/mypageUserReviewUpdate/{num}")
+	public ResponseEntity<String> mypageUserReviewUpdate(Authentication authentication, ReviewDto reviewDto, @PathVariable Integer num) {
 		try {
 			interiorService.updateReview(reviewDto, num);
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);

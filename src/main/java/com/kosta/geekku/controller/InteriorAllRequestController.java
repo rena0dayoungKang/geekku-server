@@ -58,7 +58,6 @@ public class InteriorAllRequestController {
 	@GetMapping("/interiorAllDetail/{num}")
 	public ResponseEntity<InteriorAllDto> interiorAllDetail(@PathVariable Integer num) {
 		try {
-
 			InteriorAllDto interiorAllDto = interiorAllService.interiorDetail(num);
 			return new ResponseEntity<InteriorAllDto>(interiorAllDto, HttpStatus.OK);
 		} catch (Exception e) {
