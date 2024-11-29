@@ -68,8 +68,8 @@ public class WebSecuritySconfig extends WebSecurityConfigurerAdapter {
 
 		http.addFilter(new JwtAuthrizationFilter(authenticationManager(), userRepository,companyRepository))
 				.authorizeRequests()
-				.antMatchers("/user/**").hasRole("USER")
-				.antMatchers("/company/**").hasRole("COMPANY")
+				.antMatchers("/user/**").access("hasRole('ROLE_USER')") //hasRole("ROLE_USER")
+				.antMatchers("/company/**").access("hasRole('ROLE_COMPANY')") //.hasRole("ROLE_COMPANY")
 				.antMatchers("/mypage/**").authenticated()
 //			.antMatchers("/estate/**").hasRole("COMPANY")
 //			.antMatchers("/interior/**").hasRole("COMPANY")
