@@ -140,7 +140,7 @@ public class HouseController {
 	@GetMapping("/editorImage/{filename}")
 	public void image(@PathVariable String filename, HttpServletResponse response) {
 		try {
-		       // 파일이 존재하지 않는 경우 처리
+		    // 파일이 존재하지 않는 경우 처리
 			File file = new File(uploadPath, filename);
             if (!file.exists()) {
                 System.out.println("파일 존재하지 않음");
