@@ -80,10 +80,11 @@ public class UserController {
 		}
 	}
 
-	@PutMapping("/user/updateUserInfo")
+	@PostMapping("/user/updateUserInfo")
 	public ResponseEntity<Map<String, Object>> updateUserInfo(Authentication authentication,
-			@RequestParam("userDto") UserDto userDto,
-			@RequestParam(name = "profileImage", required = false) MultipartFile profile) {
+			UserDto userDto,
+			@RequestParam(name = "file", required = false) MultipartFile profile) {
+		System.out.println("-----------");
 		try {
 			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId(); // 토큰에서 UUID를 추출			
 			Map<String, Object> res = userService.updateUserInfo(userId, userDto, profile);
