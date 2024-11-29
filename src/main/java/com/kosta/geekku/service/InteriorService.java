@@ -2,6 +2,7 @@ package com.kosta.geekku.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
@@ -43,10 +44,10 @@ public interface InteriorService {
 	Map<String, Object> interiorDetail(Integer interiorNum) throws Exception;
 
 	// 개인 마이페이지 - 인테리어 문의 내역
-	Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, String userId) throws Exception;
+	Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, UUID userId) throws Exception;
 
 	// 개인 마이페이지 - 인테리어 후기 작성내역
-	Page<ReviewDto> reviewListForUserMypage(int page, int size, String userId) throws Exception;
+	Page<ReviewDto> reviewListForUserMypage(int page, int size, UUID userId) throws Exception;
 
 	// 개인 마이페이지 - 인테리어 후기 수정
 	void updateReview(ReviewDto reviewDto, Integer num) throws Exception;
