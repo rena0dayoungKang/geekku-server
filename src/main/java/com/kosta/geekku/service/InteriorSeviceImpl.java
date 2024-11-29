@@ -215,7 +215,7 @@ public class InteriorSeviceImpl implements InteriorService {
 	@Override
 	public void updateReview(ReviewDto reviewDto, Integer num) throws Exception {
 		InteriorReview review = interiorReviewRepository.findById(num)
-				.orElseThrow(() -> new Exception("由щ럭 湲�踰덊샇 �삤瑜�"));
+				.orElseThrow(() -> new Exception("인테리어 후기 글번호 오류"));
 
 		review.setContent(reviewDto.getContent());
 		// �씠誘몄� �닔�젙 �븘�슂�븿
@@ -225,7 +225,7 @@ public class InteriorSeviceImpl implements InteriorService {
 	@Override
 	public void deleteReview(Integer num) throws Exception {
 		InteriorReview review = interiorReviewRepository.findById(num)
-				.orElseThrow(() -> new Exception("由щ럭 湲�踰덊샇 �삤瑜�"));
+				.orElseThrow(() -> new Exception("인테리어 후기 글번호 오류"));
 		interiorReviewRepository.deleteById(num);
 	}
 
@@ -258,6 +258,8 @@ public class InteriorSeviceImpl implements InteriorService {
 		pageInfo.setAllPage(allPage);
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
+		pageInfo.setTotalCount(cnt);
+		
 		return null;
 
 		/* return interiorRequestDtoList; */
