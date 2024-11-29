@@ -1,15 +1,24 @@
 package com.kosta.geekku.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.sql.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +40,9 @@ import com.kosta.geekku.service.CommunityService;
 @RestController
 public class CommunityController {
 
+	@Value("${upload.path}")
+    private String uploadPath;
+	
 	@Autowired
 	private CommunityService communityService;
 
@@ -199,5 +211,26 @@ public class CommunityController {
 //		        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 //		    }
 //		}
+	
+	@GetMapping("/communityImage/{imageName}")
+	public void getImage(@PathVariable String imageName, HttpServletResponse response) {
+	    try {
+	        String uploadPath = "C:/geekku/image_upload/communityImage/";
+	        File file = new File(uploadPath, imageName);
+	        if (!file.exists()) {
+	            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	            return;
+	        }
+	        InputStream ins = new FileInputStream(file);
+	        response.setContentType("image/png");  // 이미지 MIME 타입 설정 (필요시 이미지 형식 변경)
+	        FileCopyUtils.copy(ins, response.getOutputStream());  // 파일을 OutputStream으로 복사
+	        ins.close();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);  // 서버 오류
+	    }
+	}
+
+
 	
 }

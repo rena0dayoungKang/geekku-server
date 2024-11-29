@@ -174,13 +174,14 @@ public class InteriorController {
 	}
 
 	
-	// 개인 마이페이지 - 방꾸 신청내역 리스트
-	@GetMapping("/mypageUserInteriorRequestList")
+	// 개인 마이페이지 - 1:1 인테리어 문의내역 리스트
+	@GetMapping("/user/mypageUserInteriorRequestList")
 	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(
+			Authentication authentication,
 			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
-			@RequestParam(required = false, defaultValue = "10", value = "size") int size, 
-			@RequestParam("userId") String userId) {
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size) {
 		try {
+			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
 			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestListForUserMypage(page, size, userId);
 			return new ResponseEntity<Page<InteriorRequestDto>>(interiorRequestList, HttpStatus.OK);
 		} catch (Exception e) {
@@ -218,10 +219,10 @@ public class InteriorController {
 	}
 	
 	// 개인 마이페이지 - 인테리어 업체 후기 삭제
-	@PostMapping("/mypageUserReviewDelete/{num}")
-	public ResponseEntity<String> mypageUserReviewDelete(@PathVariable Integer num) {
+	@PostMapping("/user/mypageUserReviewDelete/{reviewNum}")
+	public ResponseEntity<String> mypageUserReviewDelete(@PathVariable Integer reviewNum) {
 		try {
-			interiorService.deleteReview(num);
+			interiorService.deleteReview(reviewNum);
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

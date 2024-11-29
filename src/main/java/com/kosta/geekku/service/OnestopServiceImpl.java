@@ -78,7 +78,7 @@ public class OnestopServiceImpl implements OnestopService {
 	@Override
 	public OnestopDto onestopDetail(Integer onestopNum) throws Exception {
 		Onestop onestop = onestopRepository.findById(onestopNum).orElseThrow(() -> new Exception("글번호 오류"));
-		//onestopDslRepository.updateOnestopViewCount(onestopNum, onestop.getViewCount() + 1);
+		onestopDslRepository.updateOnestopViewCount(onestopNum, onestop.getViewCount() + 1);
 		return onestop.toDto();
 	}
 

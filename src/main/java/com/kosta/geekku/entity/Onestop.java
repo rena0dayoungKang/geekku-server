@@ -1,7 +1,10 @@
 package com.kosta.geekku.entity;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,9 +13,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
 
 import com.kosta.geekku.dto.OnestopDto;
 
@@ -25,13 +30,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@DynamicInsert //조회수
 @Entity
 public class Onestop {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer onestopNum;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "userId")
 	private User user;
 	// private UUID userId; //join column User - userId
@@ -54,11 +60,20 @@ public class Onestop {
 	@CreationTimestamp
 	private Timestamp createdAt;
 
+	@OneToMany(mappedBy = "onestop", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	private List<OnestopAnswer> onestopAnswerList = new ArrayList<>();
+
 	public OnestopDto toDto() {
 		OnestopDto onestopDto = OnestopDto.builder().onestopNum(onestopNum).user(user).type(type).address1(address1)
 				.address2(address2).rentType(rentType).size(size).money(money).workType(workType)
 				.interiorType(interiorType).movePersons(movePersons).allowPhone(allowPhone).title(title)
 				.content(content).viewCount(viewCount).createdAt(createdAt).build();
+		/*
+		 * if (user.getProfileImage() != null) { try {
+		 * onestopDto.setUserProfileImage(new
+		 * String(Base64.encodeBase64(user.getProfileImage()), "UTF-8")); } catch
+		 * (UnsupportedEncodingException e) { e.printStackTrace(); } }
+		 */
 		return onestopDto;
 	}
 }

@@ -94,4 +94,11 @@ public class InteriorAllRequestDslRepository {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public void updateOnestopViewCount(Integer interiorNum, Integer viewCount) throws Exception {
+		QInteriorAllRequest interiorall = QInteriorAllRequest.interiorAllRequest;
+
+		jpaQueryFactory.update(interiorall).set(interiorall.viewCount, viewCount)
+				.where(interiorall.requestAllNum.eq(interiorNum)).execute();
+	}
 }
