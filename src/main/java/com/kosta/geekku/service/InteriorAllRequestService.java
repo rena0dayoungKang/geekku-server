@@ -1,6 +1,7 @@
 package com.kosta.geekku.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
@@ -22,7 +23,7 @@ public interface InteriorAllRequestService {
 
 	void interiorAllDelete(Integer num) throws Exception;
 
-	Integer interiorAnswerWrite(InteriorAnswerDto interiorAnswerDto, Integer requestAllNum) throws Exception;
+	Integer interiorAnswerWrite(InteriorAnswerDto interiorAnswerDto,  UUID companyId) throws Exception;
 
 	List<InteriorAnswerDto> interiorAnswerList(PageInfo pageInfo, Integer requestAllNum) throws Exception;
 
