@@ -21,7 +21,7 @@ public interface OnestopService {
 
 	void onestopDelete(Integer onestopNum) throws Exception;
 
-	Integer onestopAnswerWrite(OnestopAnswerDto onestopAnswerDto, Integer onestopNum) throws Exception;
+	Integer onestopAnswerWrite(OnestopAnswerDto onestopAnswerDto, UUID companyId) throws Exception;
 
 	List<OnestopAnswerDto> onestopAnswerList(PageInfo pageInfo, Integer onestopNum) throws Exception;
 

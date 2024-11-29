@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
+//import com.kosta.geekku.service.FcmMessageService;
 import com.kosta.geekku.service.OnestopService;
 import com.kosta.geekku.util.PageInfo;
 
@@ -29,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class OnestopController {
 
 	private final OnestopService onestopService;
+	// private final FcmMessageService fcmMessageService;
 
 	@PostMapping("/onestopWrite")
 	public ResponseEntity<String> makeAccount(OnestopDto onestopDto) {
@@ -90,7 +92,7 @@ public class OnestopController {
 		}
 	}
 
-	@PostMapping("/onestopDelete/{num}")
+	@PostMapping("/user/onestopDelete/{num}")
 	public ResponseEntity<String> onestopDelete(@PathVariable Integer num) {
 		try {
 			onestopService.onestopDelete(num);
@@ -103,12 +105,11 @@ public class OnestopController {
 
 	// 개인 마이페이지 - 한번에 꾸하기 신청내역
 	@GetMapping("/user/mypageUserOnestopList")
-	public ResponseEntity<Page<OnestopDto>> mypageUserOnestopList(
-			Authentication authentication,
+	public ResponseEntity<Page<OnestopDto>> mypageUserOnestopList(Authentication authentication,
 			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
 			@RequestParam(required = false, defaultValue = "10", value = "size") int size) {
 		try {
-			UUID userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId();
+			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
 			Page<OnestopDto> onestopList = onestopService.onestopListForUserMypage(page, size, userId);
 			return new ResponseEntity<Page<OnestopDto>>(onestopList, HttpStatus.OK);
 		} catch (Exception e) {
@@ -117,12 +118,15 @@ public class OnestopController {
 		}
 	}
 
-	// �븳袁� �떟蹂�
-	@PostMapping("/onestopAnswerWrite")
-	public ResponseEntity<String> onestopAnswerDtoWrite(OnestopAnswerDto onestopAnswerDto,
-			@RequestParam Integer onestopNum) {
+	// 한꾸 답변
+	@PostMapping("/company/onestopAnswerWrite")
+	public ResponseEntity<String> onestopAnswerDtoWrite(Authentication authentication,
+			OnestopAnswerDto onestopAnswerDto) {
 		try {
-			Integer onestopAnswerNum = onestopService.onestopAnswerWrite(onestopAnswerDto, onestopNum);
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
+			Integer onestopAnswerNum = onestopService.onestopAnswerWrite(onestopAnswerDto, companyId);
+			onestopAnswerDto.setAnswerOnestopNum(onestopAnswerNum);
+			// fcmMessageService.sendOnestopAnswer(onestopAnswerDto);
 			return new ResponseEntity<String>(String.valueOf(onestopAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -130,7 +134,7 @@ public class OnestopController {
 		}
 	}
 
-	@GetMapping("/onestopAnswerList")
+	@GetMapping("/onestopAnswerList/{onestopNum}")
 	public ResponseEntity<Map<String, Object>> onestopAnswerList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 			@RequestParam("onestopNum") Integer onestopNum) {
@@ -150,7 +154,7 @@ public class OnestopController {
 		}
 	}
 
-	@PostMapping("/onestopAnswerDelete")
+	@PostMapping("/company/onestopAnswerDelete")
 	public ResponseEntity<String> interiorAnswerDelete(@RequestParam("onestopAnswerNum") Integer onestopAnswerNum,
 			@RequestParam("onestopNum") Integer onestopNum) {
 		try {

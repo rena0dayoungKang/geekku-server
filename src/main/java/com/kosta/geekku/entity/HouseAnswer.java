@@ -2,6 +2,7 @@ package com.kosta.geekku.entity;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -62,9 +63,9 @@ public class HouseAnswer {
 							.companyId(company.getCompanyId())
 							.companyName(company.getCompanyName())
 							.companyPhone(company.getPhone())
-							.userId(house.getUser().getUserId())
-							.name(house.getUser().getName())
-							.userName(house.getUser().getUsername())
+							.userId(house.getUser() != null ? house.getUser().getUserId() : UUID.fromString(""))
+							.name(house.getUser() != null ? house.getUser().getName() : "")
+							.userName(house.getUser() != null ? house.getUser().getUsername() : "")
 							.build();
 		
 		if (company.getProfileImage() != null) {

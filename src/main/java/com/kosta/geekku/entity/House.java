@@ -86,6 +86,7 @@ public class House {
 				.viewCount(viewCount)
 				.createdAt(createdAt)
 				.nickname(user.getNickname())
+				.userId(user.getUserId())
 				.build();
 		
 		if (rentType.equals("jeonse")) {

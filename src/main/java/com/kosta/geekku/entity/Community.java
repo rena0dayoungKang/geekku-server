@@ -65,6 +65,7 @@ public class Community {
 	
 	
 	public CommunityDto toDto() {
+		boolean isOwner = this.user != null && this.user.getUserId().equals(user.getUserId());
 	    return CommunityDto.builder()
 	        .communityNum(communityNum) // 커뮤니티 번호
 	        .title(title)              // 게시글 제목
@@ -82,6 +83,8 @@ public class Community {
 	        .coverImage(coverImage)    // 커버 이미지 ID
 	        .createdAt(createdAt)      // 생성 시간
 	        .viewCount(viewCount)      // 조회수
+	        .username(user != null ? user.getUsername() : null) // 작성자 이름 
+	        .isOwner(isOwner)
 	        .build();
 	}
 
