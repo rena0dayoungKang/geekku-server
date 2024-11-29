@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -51,6 +50,8 @@ public class QInteriorAllRequest extends EntityPathBase<InteriorAllRequest> {
     public final QUser user;
 
     public final BooleanPath workType = createBoolean("workType");
+    
+    public final NumberPath<Integer> viewCount = createNumber("viewCount", Integer.class);
 
     public QInteriorAllRequest(String variable) {
         this(InteriorAllRequest.class, forVariable(variable), INITS);

@@ -1,6 +1,7 @@
 package com.kosta.geekku.dto;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 import com.kosta.geekku.entity.Onestop;
 import com.kosta.geekku.entity.User;
@@ -33,11 +34,18 @@ public class OnestopDto {
 	private String content;
 	private Integer viewCount;
 	private Timestamp createdAt;
+	
+	private UUID userId;
+	private String nickname;
+	private String userProfileImage;
+	private String userPhone;
+	
 
 	public Onestop toEntity() {
 		return Onestop.builder().onestopNum(onestopNum).user(user).type(type).address1(address1).address2(address2)
 				.rentType(rentType).size(size).money(money).workType(workType).interiorType(interiorType)
 				.movePersons(movePersons).allowPhone(allowPhone).title(title).content(content).viewCount(viewCount)
+				.user(User.builder().userId(userId).nickname(nickname).phone(userPhone).build())
 				.createdAt(createdAt).build();
 	}
 }

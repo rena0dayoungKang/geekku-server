@@ -14,7 +14,7 @@ public interface InteriorAllRequestService {
 
 	Integer interiorAllWrite(InteriorAllDto interiorAllDto) throws Exception;
 
-	InteriorAllDto interiorDetail(Integer num) throws Exception;
+	InteriorAllDto interiorDetail(Integer interiorNum) throws Exception;
 
 	Integer interiorAllModify(InteriorAllDto interiorAllDto) throws Exception;
 
