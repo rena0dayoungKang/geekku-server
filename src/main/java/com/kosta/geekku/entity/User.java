@@ -16,7 +16,6 @@ import javax.persistence.Lob;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.util.Base64Utils;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.kosta.geekku.dto.UserDto;
