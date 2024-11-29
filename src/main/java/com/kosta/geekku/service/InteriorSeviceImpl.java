@@ -131,6 +131,7 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	public Integer sampleRegister(SampleDto sampleDto) throws Exception {
 		InteriorSample sample = sampleDto.toEntity();
+		System.out.println(sample);
 		interiorSampleRepository.save(sample);
 //		if(sampleDto.getInteriorNum() ==  )	//�궗濡� �씤�뀒由ъ뼱踰덊샇�� �옉�꽦�옄 �씤�뀒由ъ뼱踰덊샇媛� 媛숈쓣寃쎌슦留� �옉�꽦
 		return sample.getSampleNum();

@@ -1,6 +1,7 @@
 package com.kosta.geekku.dto;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.Interior;
@@ -26,14 +27,19 @@ public class SampleDto {
 	private String intro;
 	private String content;
 	private Timestamp createdAt;
+	private UUID companyId;
 	private String companyName;
 
 	public InteriorSample toEntity() {
 		InteriorSample sample = InteriorSample.builder().sampleNum(sampleNum)
-				.interior(Interior.builder().interiorNum(interiorNum).build()).type(type).style(style).size(size)
-				.location(location).coverImage(coverImage).interior(Interior.builder().intro(intro).build())
+				.interior(Interior.builder()
+						.interiorNum(interiorNum).intro(intro).build())
+				.type(type)
+				.style(style)
+				.size(size)
+				.location(location)
+				.coverImage(coverImage)
 				.content(content).createdAt(createdAt)
-				.interior(Interior.builder().company(Company.builder().companyName(companyName).build()).build())
 				.build();
 		return sample;
 	}

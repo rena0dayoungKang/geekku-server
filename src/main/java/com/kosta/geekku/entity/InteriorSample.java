@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -58,8 +57,14 @@ public class InteriorSample {
 //	}
 	
 	public SampleDto toDto() {
-		SampleDto sampleDto = SampleDto.builder().sampleNum(sampleNum).interiorNum(interior.getInteriorNum()).type(type)
-				.style(style).size(size).location(location).coverImage(coverImage).intro(interior.getIntro()).companyName(interior.getCompany().getCompanyName())
+		SampleDto sampleDto = SampleDto.builder().sampleNum(sampleNum)
+				.interiorNum(interior.getInteriorNum()).type(type)
+				.style(style)
+				.size(size)
+				.location(location)
+				.coverImage(coverImage)
+				.intro(interior.getIntro())
+				.companyName(interior.getCompany().getCompanyName())
 				.content(content).createdAt(createdAt).build();
 
 		return sampleDto;

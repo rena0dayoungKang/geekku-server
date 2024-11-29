@@ -13,7 +13,6 @@ import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.kosta.geekku.dto.InteriorDto;
 
 import lombok.AllArgsConstructor;
@@ -26,7 +25,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+//@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Interior {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,9 +49,16 @@ public class Interior {
 	private Timestamp createdAt;
 
 	public InteriorDto toDto() {
-		InteriorDto interiorDto = InteriorDto.builder().interiorNum(interiorNum).possiblePart(possiblePart)
-				.period(period).recentCount(recentCount).repairDate(repairDate).possibleLocation(possibleLocation)
-				.coverImage(coverImage).intro(intro).content(content).createdAt(createdAt)
+		InteriorDto interiorDto = InteriorDto.builder().interiorNum(interiorNum)
+				.possiblePart(possiblePart)
+				.period(period)
+				.recentCount(recentCount)
+				.repairDate(repairDate)
+				.possibleLocation(possibleLocation)
+				.coverImage(coverImage)
+				.intro(intro)
+				.content(content)
+				.createdAt(createdAt)
 				.companyName(company.getCompanyName()).companyId(company.getCompanyId()).build();
 		return interiorDto;
 	}

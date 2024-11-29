@@ -134,7 +134,7 @@ public class InteriorController {
 	@GetMapping("/requestDetail")
 	public ResponseEntity<Map<String, Object>> requestDetail(Integer num) {
 		try {
-			Map<String,Object> res = new HashMap<>();
+			Map<String, Object> res = new HashMap<>();
 			InteriorRequestDto requestDto = interiorService.requestDetail(num);
 
 			res.put("requestDetail", requestDto);
@@ -145,58 +145,55 @@ public class InteriorController {
 	}
 
 	@GetMapping("/sampleList")
-	public ResponseEntity<Map<String,Object>> sampleList(
-			@RequestParam(required = false) String date,
-			@RequestParam(required = false) String type,
-			@RequestParam(required = false) String style,
-			@RequestParam(required = false) Integer size,
-			@RequestParam(required = false) String location) {
+	public ResponseEntity<Map<String, Object>> sampleList(@RequestParam(required = false) String date,
+			@RequestParam(required = false) String type, @RequestParam(required = false) String style,
+			@RequestParam(required = false) Integer size, @RequestParam(required = false) String location) {
 		try {
 			List<InteriorSample> sampleList = interiorService.sampleList(date, type, style, size, location);
 			System.out.println(sampleList);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("sampleList", sampleList);
-			return new ResponseEntity<Map<String,Object>>(listInfo,HttpStatus.OK);
-		} catch(Exception e) {
+			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
+		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
-		}
-	}
-	@GetMapping("/interiorDetail")
-	public ResponseEntity<Map<String,Object>> interiorDetail(Integer num) {
-		try {
-			Map<String,Object> detailInfo = interiorService.interiorDetail(num);
-			return new ResponseEntity<Map<String,Object>>(detailInfo, HttpStatus.OK);
-		} catch(Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
-	
+	@GetMapping("/interiorDetail")
+	public ResponseEntity<Map<String, Object>> interiorDetail(Integer num) {
+		try {
+			Map<String, Object> detailInfo = interiorService.interiorDetail(num);
+			return new ResponseEntity<Map<String, Object>>(detailInfo, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
 	// 개인 마이페이지 - 방꾸 신청내역 리스트
 	@GetMapping("/mypageUserInteriorRequestList")
 	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(
-			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
-			@RequestParam(required = false, defaultValue = "10", value = "size") int size, 
+			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size,
 			@RequestParam("userId") String userId) {
 		try {
-			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestListForUserMypage(page, size, userId);
+			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestListForUserMypage(page, size,
+					userId);
 			return new ResponseEntity<Page<InteriorRequestDto>>(interiorRequestList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Page<InteriorRequestDto>>(HttpStatus.OK);
 		}
 	}
-	
+
 	// 개인 마이페이지 - 인테리어 업체 후기 리스트
 	@GetMapping("/user/mypageUserReviewList")
-	public ResponseEntity<Page<ReviewDto>> mypageUserReviewList(
-			Authentication authentication,
-			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
+	public ResponseEntity<Page<ReviewDto>> mypageUserReviewList(Authentication authentication,
+			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
 			@RequestParam(required = false, defaultValue = "10", value = "size") int size) {
 		try {
-			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
+			String userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString();
 			Page<ReviewDto> reviewList = interiorService.reviewListForUserMypage(page, size, userId);
 			return new ResponseEntity<Page<ReviewDto>>(reviewList, HttpStatus.OK);
 		} catch (Exception e) {
@@ -204,7 +201,7 @@ public class InteriorController {
 			return new ResponseEntity<Page<ReviewDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	// 개인 마이페이지 - 인테리어 업체 후기 수정
 	@PostMapping("/mypageUserReviewUpdate/{num}")
 	public ResponseEntity<String> mypageUserReviewUpdate(ReviewDto reviewDto, @PathVariable Integer num) {
@@ -216,7 +213,7 @@ public class InteriorController {
 			return new ResponseEntity<String>("후기 수정 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	// 개인 마이페이지 - 인테리어 업체 후기 삭제
 	@PostMapping("/mypageUserReviewDelete/{num}")
 	public ResponseEntity<String> mypageUserReviewDelete(@PathVariable Integer num) {

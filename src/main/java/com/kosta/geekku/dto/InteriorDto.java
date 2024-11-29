@@ -32,8 +32,14 @@ public class InteriorDto {
 	public Interior toEntity() {
 		Interior interior = Interior.builder().interiorNum(interiorNum)
 				.company(Company.builder().companyId(getCompanyId()).companyName(getCompanyName()).build())
-				.possiblePart(false).period(period).recentCount(recentCount).repairDate(repairDate)
-				.possibleLocation(possibleLocation).coverImage(coverImage).intro(intro).content(content)
+				.possiblePart(false)
+				.period(period)
+				.recentCount(recentCount)
+				.repairDate(repairDate)
+				.possibleLocation(possibleLocation)
+				.coverImage(coverImage)
+				.intro(intro)
+				.content(content)
 				.createdAt(createdAt).build();
 		if (createdAt != null) {
 			interior.setCreatedAt(createdAt);
