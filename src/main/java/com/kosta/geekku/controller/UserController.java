@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -54,7 +55,7 @@ public class UserController {
 	}
 
 	@PostMapping("/joinPerson") // JoinPerson.js
-	public ResponseEntity<String> joinPeron(@RequestBody UserDto userDto) {
+	public ResponseEntity<String> joinPeron(@ModelAttribute UserDto userDto) {
 		try {
 			userDto.setRole(Role.ROLE_USER);
 			String rawPassword = userDto.getPassword();
@@ -159,6 +160,18 @@ public class UserController {
 			boolean checkNickname = userService.checkDoubleNickname(nickname);
 			System.out.println(checkNickname);
 			return new ResponseEntity<Boolean>(checkNickname, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Boolean>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/checkDoubleId")
+	public ResponseEntity<Boolean> checkDoubleId(@RequestParam String username){
+		try {
+			boolean checkDoubleId = userService.checkDoubleId(username);
+			System.out.println(checkDoubleId);
+			return new ResponseEntity<Boolean>(checkDoubleId, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Boolean>(HttpStatus.BAD_REQUEST);

@@ -45,7 +45,7 @@ public class CompanyServiceImpl implements CompanyService {
 	public void joinCompany(CompanyDto companyDto, MultipartFile file) throws Exception {
 
 		// type이 "부동산" 인 경우 estateNumber가 null이면 예외처리
-		if ("부동산".equals(companyDto.getType()) && isNullOrEmpty(companyDto.getEstateNumber())) {
+		if ("estate".equals(companyDto.getType()) && isNullOrEmpty(companyDto.getEstateNumber())) {
 			throw new IllegalArgumentException("부동산타입은 중개등록번호 입력해야함");
 		}
 

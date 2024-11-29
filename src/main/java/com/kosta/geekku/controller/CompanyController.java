@@ -33,7 +33,7 @@ import com.kosta.geekku.service.EstateNumberService;
 public class CompanyController {
 
 	@Autowired
-	private CompanyService companyService; 
+	private CompanyService companyService;
 
 	@Autowired
 	private EstateNumberService estateNumberService;
@@ -62,10 +62,16 @@ public class CompanyController {
 		}
 	}
 
-
 	@GetMapping("/searchEstate")
 	public ResponseEntity<String> searchEstate(@RequestParam(required = false) String bsnmCmpnm,
 			@RequestParam(required = false) String brkrNm, @RequestParam(required = false) String jurirno) {
+
+		// 전달된 요청 파라미터 출력
+		System.out.println("Received Parameters:");
+		System.out.println("bsnmCmpnm: " + bsnmCmpnm);
+		System.out.println("brkrNm: " + brkrNm);
+		System.out.println("jurirno: " + jurirno);
+
 		// 브이월드 Settings 출력
 		estateNumberService.vworldSettings();
 		try {
@@ -76,67 +82,67 @@ public class CompanyController {
 			return new ResponseEntity<String>("조회할 수 없습니다", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	//중개업자 프로필 조회
 
-	@GetMapping("/estateProfile/{companyId}") 
-    public ResponseEntity<?> getBrokerProfile(@PathVariable String companyId) {
-        try {
-            CompanyDto companyProfile = companyService.getCompanyProfile(companyId);
-            return ResponseEntity.ok(companyProfile);
-        } catch (Exception e) {
-        	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저 정보를 찾을 수 없습니다.");
-        }
-    }
-	
-	// 중개업자 쓴 글 보기(수정해야할 수도 있음)
-	@GetMapping("/estateCommunities/{companyId}") // 예시: http://localhost:8080/brokerCommunities/7e7506d5-b944-40c8-a269-c3c58d2067bb
-	public ResponseEntity<?> getEstateCommunities(@PathVariable String companyId) {
-	    try {
-	        List<Estate> estate = companyService.getEstateCommunities(companyId);
-	        return ResponseEntity.ok(estate);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중개업자가 작성한 게시글을 찾을 수 없습니다.");
-	    }
+	// 중개업자 프로필 조회
+
+	@GetMapping("/estateProfile/{companyId}")
+	public ResponseEntity<?> getBrokerProfile(@PathVariable String companyId) {
+		try {
+			CompanyDto companyProfile = companyService.getCompanyProfile(companyId);
+			return ResponseEntity.ok(companyProfile);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저 정보를 찾을 수 없습니다.");
+		}
 	}
-	
+
+	// 중개업자 쓴 글 보기(수정해야할 수도 있음)
+	@GetMapping("/estateCommunities/{companyId}") // 예시:
+													// http://localhost:8080/brokerCommunities/7e7506d5-b944-40c8-a269-c3c58d2067bb
+	public ResponseEntity<?> getEstateCommunities(@PathVariable String companyId) {
+		try {
+			List<Estate> estate = companyService.getEstateCommunities(companyId);
+			return ResponseEntity.ok(estate);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중개업자가 작성한 게시글을 찾을 수 없습니다.");
+		}
+	}
+
 	// 중개업자가 쓴 글 삭제하기 (테스트 해야함)
 	@DeleteMapping("/estateCommunityDelete/{estateId}")
 	public ResponseEntity<?> deleteEstateCommunity(@PathVariable Integer estateId) {
 		try {
 			companyService.deleteEstateCommunity(estateId);
 			return new ResponseEntity<>("게시글 삭제에 실패했습니다", HttpStatus.INTERNAL_SERVER_ERROR);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중개업자가 작성한 게시글을 찾을 수 없습니다.");
 		}
 	}
-	
+
 	// 중개업자 집꾸하기 답변 글 조회 (테스트 해야함) + 페이징 처리
 	@GetMapping("/estateAnswered/{companyId}")
 	public ResponseEntity<?> getEstateAnswered(@PathVariable UUID companyId, Pageable pageable) {
-	    try {
-	        Page<HouseAnswer> houseAnswers = companyService.getAnswersByCompanyId(companyId, pageable);
-	        return ResponseEntity.ok(houseAnswers);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중개업자가 작성한 게시글을 찾을 수 없습니다.");
-	    }
+		try {
+			Page<HouseAnswer> houseAnswers = companyService.getAnswersByCompanyId(companyId, pageable);
+			return ResponseEntity.ok(houseAnswers);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중개업자가 작성한 게시글을 찾을 수 없습니다.");
+		}
 	}
-	
-	@GetMapping("/onestopAnswered/{companyId}")
-    public ResponseEntity<?> getOnestopAnswered(@PathVariable UUID companyId, Pageable pageable) {
-        try {
-            // 회사 ID와 페이지 정보를 받아서 조회
-            Page<OnestopAnswer> onestopAnswers = companyService.getOnestopAnswersByCompanyId(companyId, pageable);
-            return ResponseEntity.ok(onestopAnswers);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중개업자가 작성한 Onestop 답변을 찾을 수 없습니다.");
-        }
-    }
 
+	@GetMapping("/onestopAnswered/{companyId}")
+	public ResponseEntity<?> getOnestopAnswered(@PathVariable UUID companyId, Pageable pageable) {
+		try {
+			// 회사 ID와 페이지 정보를 받아서 조회
+			Page<OnestopAnswer> onestopAnswers = companyService.getOnestopAnswersByCompanyId(companyId, pageable);
+			return ResponseEntity.ok(onestopAnswers);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중개업자가 작성한 Onestop 답변을 찾을 수 없습니다.");
+		}
+	}
 
 	@GetMapping("/company/companyInfo")
 	public ResponseEntity<CompanyDto> getCompanyInfo(Authentication authentication) {
@@ -149,7 +155,7 @@ public class CompanyController {
 			return new ResponseEntity<CompanyDto>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PutMapping("/company/updateCompanyInfo")
 	public ResponseEntity<String> updateCompanyInfo(Authentication authentication, @RequestBody CompanyDto companyDto) {
 		try {
@@ -160,6 +166,6 @@ public class CompanyController {
 			e.printStackTrace();
 			return new ResponseEntity<String>("회원정보 수정 실패", HttpStatus.BAD_REQUEST);
 		}
-		
+
 	}
 }
