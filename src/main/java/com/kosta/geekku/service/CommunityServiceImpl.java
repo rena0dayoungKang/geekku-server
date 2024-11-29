@@ -104,32 +104,24 @@ public class CommunityServiceImpl implements CommunityService {
 	            .build();
 	    community = communityRepository.save(community);
 	    System.out.println("Community saved with ID: " + community.getCommunityNum());
-
 	    // 파일 저장 처리
 	    if (coverImage == null || coverImage.isEmpty()) {
 	        throw new IllegalArgumentException("파일이 비어 있거나 업로드되지 않았습니다.");
 	    }
-
 	    try {
-	        // 파일 저장 경로 확인
 	        File uploadDir = new File(uploadPath);
 	        if (!uploadDir.exists()) {
 	            uploadDir.mkdirs();
 	        }
-
-	        // 파일 이름과 경로 설정
 	        String fileName = coverImage.getOriginalFilename();
 	        if (fileName == null) {
 	            throw new IllegalArgumentException("파일 이름이 없습니다.");
 	        }
-	        String filePath = uploadPath + fileName;
+	        String filePath = uploadPath + "communityImage/" + fileName;
 	        File dest = new File(filePath);  // 파일 객체 생성
-
-	        // 파일을 지정한 경로로 전송
 	        coverImage.transferTo(dest);
-	        community.setCoverImage(filePath);  // 파일 경로를 엔티티에 업데이트
+	        community.setCoverImage(fileName);  // 파일 경로를 엔티티에 업데이트
 	        communityRepository.save(community);  // 업데이트된 커뮤니티 저장
-
 	        System.out.println("파일 경로가 데이터베이스에 저장되었습니다: " + fileName);
 	    } catch (IOException e) {
 	        e.printStackTrace();
