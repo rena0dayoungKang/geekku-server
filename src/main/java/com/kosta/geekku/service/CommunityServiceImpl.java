@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kosta.geekku.dto.CommunityCommentDto;
 import com.kosta.geekku.dto.CommunityDto;
 import com.kosta.geekku.dto.CommunityFilterDto;
 import com.kosta.geekku.entity.Community;
@@ -46,8 +46,9 @@ public class CommunityServiceImpl implements CommunityService {
 
 	@Override
 	public Page<CommunityDto> getCommunityList(Pageable pageable) {
-		return communityRepository.findAll(pageable).map(Community::toDto);
+	    return communityRepository.findAll(pageable).map(community -> community.toDto());
 	}
+
 
 	@Override
 	public Integer createCommunity(CommunityDto communityDto) {
@@ -62,6 +63,7 @@ public class CommunityServiceImpl implements CommunityService {
 				.orElseThrow(() -> new IllegalArgumentException("커뮤니티 조회에 실패했습니다.")).toDto();
 	}
 
+
 	@Override
 	public Page<CommunityDto> getFilteredCommunityList(CommunityFilterDto filterDto, Pageable pageable) {
 		Specification<Community> specification = CommunitySpecification.filterBy(filterDto);
@@ -70,7 +72,7 @@ public class CommunityServiceImpl implements CommunityService {
 
 	@Transactional
 	@Override
-	public void createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage,
+	public Integer createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage,
             String userId, String address1, String address2, String familyType,
             String interiorType, Integer money, Date periodStartDate, Date periodEndDate,Integer size, String style) {
 	    UUID userUUID;
@@ -104,7 +106,7 @@ public class CommunityServiceImpl implements CommunityService {
 	            .build();
 	    community = communityRepository.save(community);
 	    System.out.println("Community saved with ID: " + community.getCommunityNum());
-	    // 파일 저장 처리
+
 	    if (coverImage == null || coverImage.isEmpty()) {
 	        throw new IllegalArgumentException("파일이 비어 있거나 업로드되지 않았습니다.");
 	    }
@@ -128,6 +130,7 @@ public class CommunityServiceImpl implements CommunityService {
 	        System.err.println("파일 저장 중 오류 발생: " + e.getMessage());
 	        throw new RuntimeException("파일 저장에 실패했습니다. 경로를 확인하세요.");
 	    }
+	    return community.getCommunityNum();
 	}
 
 	@Override
@@ -183,6 +186,15 @@ public class CommunityServiceImpl implements CommunityService {
 			return false; // 북마크 비활성화
 		}
 	}
+	
+	@Transactional
+	@Override
+	public List<CommunityCommentDto> getCommentsByCommunityId(Integer communityNum) {
+	    // communityNum에 해당하는 댓글들을 조회합니다.
+	    return communityCommentRepository.findByCommunityCommunityNum(communityNum)
+	    		.stream().map(cc->cc.toDto()).collect(Collectors.toList());
+	}
+
 
 	@Transactional
 	@Override
