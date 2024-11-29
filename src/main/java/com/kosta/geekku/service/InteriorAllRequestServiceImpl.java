@@ -49,6 +49,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 		return interiorAll.getRequestAllNum();
 	}
 
+	@Transactional
 	@Override
 	public InteriorAllDto interiorDetail(Integer interiorNum) throws Exception {
 		InteriorAllRequest interiorAll = interiorAllRepository.findById(interiorNum).orElseThrow(() -> new Exception("글번호 오류"));
