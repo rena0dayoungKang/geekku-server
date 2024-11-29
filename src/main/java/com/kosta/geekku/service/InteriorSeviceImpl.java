@@ -191,9 +191,9 @@ public class InteriorSeviceImpl implements InteriorService {
 		return detailInfo;
 	}
 
-	public Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, String userId)
+	public Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, UUID userId)
 			throws Exception {
-		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+		Optional<User> user = userRepository.findById(userId);
 
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Page<InteriorRequestDto> pageInfo = interiorRequestRepository.findAllByUser(user, pageable)
@@ -203,8 +203,8 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public Page<ReviewDto> reviewListForUserMypage(int page, int size, String userId) throws Exception {
-		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+	public Page<ReviewDto> reviewListForUserMypage(int page, int size, UUID userId) throws Exception {
+		Optional<User> user = userRepository.findById(userId);
 
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Page<ReviewDto> pageInfo = interiorReviewRepository.findAllByUser(user, pageable).map(InteriorReview::toDto);
