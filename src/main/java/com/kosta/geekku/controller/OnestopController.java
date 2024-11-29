@@ -90,7 +90,7 @@ public class OnestopController {
 		}
 	}
 
-	@PostMapping("/onestopDelete/{num}")
+	@PostMapping("/user/onestopDelete/{num}")
 	public ResponseEntity<String> onestopDelete(@PathVariable Integer num) {
 		try {
 			onestopService.onestopDelete(num);

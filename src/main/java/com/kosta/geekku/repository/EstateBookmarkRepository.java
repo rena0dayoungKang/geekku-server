@@ -11,13 +11,8 @@ import com.kosta.geekku.entity.EstateBookmark;
 
 public interface EstateBookmarkRepository extends JpaRepository<EstateBookmark, Integer> {
 	EstateBookmark findByEstateNumAndUserId(Integer estateNum, UUID userId);
-
 	EstateBookmark findByEstateNum(Integer estateNum);
-
 	EstateBookmark findByUserId(UUID userId);
-
 	List<EstateBookmark> findAllByUserId(UUID userId);
-
-
 	Page<EstateBookmark> findAllByUserId(UUID userId, Pageable pageable);
 }
