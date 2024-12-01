@@ -3,7 +3,10 @@ package com.kosta.geekku.service;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kosta.geekku.config.jwt.JwtProperties;
+import com.kosta.geekku.config.jwt.JwtToken;
 import com.kosta.geekku.dto.CompanyDto;
 import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.Estate;
@@ -29,6 +35,8 @@ import com.kosta.geekku.repository.UFileRepository;
 public class CompanyServiceImpl implements CompanyService {
 
 	@Autowired
+	private JwtToken jwtToken;
+	@Autowired
 	private CompanyRepository companyRepository;
 	@Autowired
 	private EstateRepository estateRepository;
@@ -38,6 +46,8 @@ public class CompanyServiceImpl implements CompanyService {
 	private OnestopAnswerRepository onestopAnswerRepository;
 	@Autowired
 	private UFileRepository uFileRepository;
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Value("${upload.path}")
 	private String uploadPath;
@@ -58,12 +68,9 @@ public class CompanyServiceImpl implements CompanyService {
 		companyRepository.save(company);
 
 		// 사업자 등록증 이미지 첨부
+		Integer certificationImageNum = null;
 		if (file != null && !file.isEmpty()) {
-			UFile uFile = new UFile();
-			// 이미지 저장 경로
 			String companyUploadPath = uploadPath + "/company/";
-
-			// 디렉토리 확인
 			File uploadDir = new File(companyUploadPath);
 			if (!uploadDir.exists()) {
 				uploadDir.mkdir();
@@ -73,12 +80,16 @@ public class CompanyServiceImpl implements CompanyService {
 			File nFile = new File(companyUploadPath, fileName);
 			file.transferTo(nFile);
 
+			UFile uFile = new UFile();
 			uFile.setDirectory(uploadPath);
 			uFile.setName(file.getOriginalFilename());
 			uFile.setContentType(file.getContentType());
 			uFile.setSize(file.getSize());
 			uFile.setCompany(company);
+			uFile.setUsername(companyDto.getUsername());
 			uFileRepository.save(uFile);
+
+			certificationImageNum = uFile.getUserImageNum();
 		}
 	}
 
@@ -98,11 +109,23 @@ public class CompanyServiceImpl implements CompanyService {
 	@Override
 	public CompanyDto getCompany(String username) throws Exception {
 		Company company = companyRepository.findByUsername(username).orElseThrow(() -> new Exception("사용자 아이디 오류"));
-		return company.toDto();
+
+		Optional<UFile> uFileOpt = uFileRepository.findByCompany(company);
+		String certificationImagePath = null;
+		if (uFileOpt.isPresent()) {
+			UFile uFile = uFileOpt.get();
+			certificationImagePath = "/resources/company/" + company.getUsername() + "_" + uFile.getName();
+		}
+
+		CompanyDto companyDto = company.toDto();
+		companyDto.setCertificationImagePath(certificationImagePath);
+
+		return companyDto;
 	}
 
 	@Override
-	public void updateCompanyInfo(UUID companyId, CompanyDto companyDto) throws Exception {
+	public Map<String, Object> updateCompanyInfo(UUID companyId, CompanyDto companyDto, MultipartFile profile,
+			MultipartFile cerftFile) throws Exception {
 		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
 		if (companyDto.getCompanyAddress() != null)
 			company.setCompanyAddress(companyDto.getCompanyAddress());
@@ -110,9 +133,66 @@ public class CompanyServiceImpl implements CompanyService {
 			company.setPhone(companyDto.getPhone());
 		if (companyDto.getEmail() != null)
 			company.setEmail(companyDto.getEmail());
-		if (companyDto.getCompanyCertificationImage() != null)
-			company.setCompanyCertificationImage(companyDto.getCompanyCertificationImage());
+
+		if (profile != null && !profile.isEmpty()) {
+			company.setProfileImage(profile.getBytes());
+		}
+
+		if (cerftFile != null && !cerftFile.isEmpty()) {
+			String companyUploadPath = uploadPath + "/company/";
+
+			UFile oFile = uFileRepository.findByCompany(company).orElse(null);
+			if (oFile != null) {
+				File bfile = new File(companyUploadPath, company.getUsername() + "_" + oFile.getName());
+				if (bfile.exists()) {
+					bfile.delete();
+				}
+				uFileRepository.delete(oFile);
+			}
+
+			String newFileName = company.getUsername() + "_" + cerftFile.getOriginalFilename();
+			File newFile = new File(companyUploadPath, newFileName);
+
+			File uploadDir = new File(companyUploadPath);
+			if (!uploadDir.exists()) {
+				uploadDir.mkdir();
+			}
+
+			cerftFile.transferTo(newFile);
+
+			UFile newCertFile = new UFile();
+			newCertFile.setDirectory(uploadPath);
+			newCertFile.setName(cerftFile.getOriginalFilename());
+			newCertFile.setContentType(cerftFile.getContentType());
+			newCertFile.setSize(cerftFile.getSize());
+			newCertFile.setCompany(company);
+			newCertFile.setUsername(company.getUsername());
+			uFileRepository.save(newCertFile);
+		}
+
 		companyRepository.save(company);
+
+		CompanyDto resultDto = company.toDto();
+		UFile finalFile = uFileRepository.findByCompany(company).orElse(null);
+		if (finalFile != null) {
+			resultDto.setCertificationImagePath(
+					"/resources/company/" + company.getUsername() + "_" + finalFile.getName());
+		}
+
+		String newAccessToken = jwtToken.makeAccessToken(company.getUsername(), company.getRole().toString());
+		String newRefreshToken = jwtToken.makeRefreshToken(company.getUsername(), company.getRole().toString());
+
+		Map<String, String> tokens = new HashMap<>();
+		tokens.put("access_token", JwtProperties.TOKEN_PREFIX + newAccessToken);
+		tokens.put("refresh_token", JwtProperties.TOKEN_PREFIX + newRefreshToken);
+
+		Map<String, Object> res = new HashMap<>();
+		res.put("token", objectMapper.writeValueAsString(tokens));
+		res.put("company", resultDto);
+
+		// System.out.println("result Dto : " + resultDto);
+
+		return res;
 	}
 
 	@Override
@@ -143,6 +223,17 @@ public class CompanyServiceImpl implements CompanyService {
 	@Override
 	public Page<OnestopAnswer> getOnestopAnswersByCompanyId(UUID companyId, Pageable pageable) {
 		return onestopAnswerRepository.findByCompanyId(companyId, pageable);
+	}
+
+	@Override
+	public String getCompanyCertificationImagePath(Integer num) throws Exception {
+		UFile uFile = uFileRepository.findById(num).orElseThrow(() -> new Exception("파일을 찾을 수 없습니다."));
+		String filePath = uFile.getDirectory() + "/company/" + uFile.getName();
+		File file = new File(filePath);
+		if (!file.exists()) {
+			throw new Exception("파일이 존재하지 않습니다.");
+		}
+		return filePath;
 	}
 
 }

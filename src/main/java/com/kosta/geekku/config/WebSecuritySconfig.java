@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -43,8 +44,12 @@ public class WebSecuritySconfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().antMatchers("/resources/**");
+	}
+	
+	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-
 		http.addFilter(corsFilter)
 				.csrf().disable()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -68,6 +73,7 @@ public class WebSecuritySconfig extends WebSecurityConfigurerAdapter {
 
 		http.addFilter(new JwtAuthrizationFilter(authenticationManager(), userRepository,companyRepository))
 				.authorizeRequests()
+				.antMatchers("/resources/**").permitAll() //정적 리소스는 예외
 				.antMatchers("/user/**").access("hasRole('ROLE_USER')") //hasRole("ROLE_USER")
 				.antMatchers("/company/**").access("hasRole('ROLE_COMPANY')") //.hasRole("ROLE_COMPANY")
 				.antMatchers("/mypage/**").authenticated()

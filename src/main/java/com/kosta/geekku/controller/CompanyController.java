@@ -1,6 +1,7 @@
 package com.kosta.geekku.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -156,16 +155,29 @@ public class CompanyController {
 		}
 	}
 
-	@PutMapping("/company/updateCompanyInfo")
-	public ResponseEntity<String> updateCompanyInfo(Authentication authentication, @RequestBody CompanyDto companyDto) {
+	@GetMapping("/company/companyCertImg/{num}")
+	public ResponseEntity<String> getCompanyImg(Authentication authentication, @PathVariable Integer num) {
 		try {
-			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
-			companyService.updateCompanyInfo(companyId, companyDto);
-			return new ResponseEntity<String>("회원정보 수정 완료", HttpStatus.OK);
+			String filePath = companyService.getCompanyCertificationImagePath(num);
+			return new ResponseEntity<String>(filePath, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<String>("회원정보 수정 실패", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
+	}
 
+	@PostMapping("/company/updateCompanyInfo")
+	public ResponseEntity<Map<String, Object>> updateCompanyInfo(Authentication authentication, CompanyDto companyDto,
+			@RequestParam(name = "file", required = false) MultipartFile profile,
+			@RequestParam(name = "certificationFile", required = false) MultipartFile certFile) {
+		System.out.println("---------기업정보수정");
+		try {
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
+			Map<String, Object> result = companyService.updateCompanyInfo(companyId, companyDto, profile, certFile);
+			return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+		}
 	}
 }

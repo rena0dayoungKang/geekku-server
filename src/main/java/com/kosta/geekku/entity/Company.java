@@ -1,5 +1,7 @@
 package com.kosta.geekku.entity;
 
+import java.beans.Transient;
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -11,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -59,25 +62,27 @@ public class Company {
 	
 	private String fcmToken; // FcmToken 추가
 	
-	public CompanyDto toDto() {
+	public CompanyDto toDto() {		
 		CompanyDto companyDto = CompanyDto.builder()
 										.companyId(companyId.toString())
 										.username(username)
 										.type(type)
 										.phone(phone)
 										.email(email)
-										.profileImage(profileImage)
 										.ceoName(ceoName)
 										.companyNumber(companyNumber)
 										.companyName(companyName)
 										.companyAddress(companyAddress)
 										.estateNumber(estateNumber)
-										.companyCertificationImage(companyCertificationImage)
 										.role(role)
 										.build();
-		return companyDto;
-										
+		if (profileImage != null) {
+			try {
+				companyDto.setProfileImageStr(new String(Base64.encodeBase64(profileImage), "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+		return companyDto;								
 	}
-	
-
 }
