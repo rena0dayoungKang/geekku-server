@@ -16,26 +16,26 @@ import lombok.Data;
 
 @Data
 public class PrincipalDetails implements UserDetails, OAuth2User {
-	
+
 	private User user;
 	private Company company;
 	private String type;
 	private OAuth2UserInfo oAuth2UserInfo;
-	
+
 	public PrincipalDetails(User user) {
 		this.user = user;
 		this.type = "user";
 	}
-	
+
 	public PrincipalDetails(Company company) {
 		this.company = company;
 		this.type = "company";
 	}
-	
+
 	public String getType() {
 		return type;
 	}
-	
+
 	public PrincipalDetails(OAuth2UserInfo oAuth2UserInfo) {
 		this.oAuth2UserInfo = oAuth2UserInfo;
 	}
@@ -43,28 +43,33 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Collection<GrantedAuthority> collect = new ArrayList<>();
-		if(user!=null)	collect.add(() -> user.getRole().toString());
-		else if(company!=null) collect.add(() -> company.getRole().toString());
+		if (user != null)
+			collect.add(() -> user.getRole().toString());
+		else if (company != null)
+			collect.add(() -> company.getRole().toString());
 		return collect;
 	}
 
 	@Override
 	public String getPassword() {
-		if(user!=null) return user.getPassword();
-		else if(company!=null) return company.getPassword();
-		else return null;
+		if (user != null)
+			return user.getPassword();
+		else if (company != null)
+			return company.getPassword();
+		else
+			return null;
 	}
 
 	@Override
 	public String getUsername() {
 		if (user != null) {
 			return user.getUsername();
-		} else if(oAuth2UserInfo != null) {
+		} else if (oAuth2UserInfo != null) {
 			return oAuth2UserInfo.getUsername();
-		} else if(company!=null) {
-			return company.getUsername();
+		} else if (company != null) {
+			return company.getCompanyName();
 		}
-		return null;
+		return "username";
 	}
 
 	@Override
@@ -89,7 +94,14 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
 	@Override
 	public String getName() {
-		return user.getName() + "";
+		if (user != null) {
+			return user.getName(); 
+		} else if (oAuth2UserInfo != null) {
+			return oAuth2UserInfo.getName();
+		} else if (company != null) {
+			return company.getCompanyName(); 
+		}
+		return "name";
 	}
 
 	@Override

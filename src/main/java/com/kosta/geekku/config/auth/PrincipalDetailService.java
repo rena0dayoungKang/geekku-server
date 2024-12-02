@@ -35,7 +35,6 @@ public class PrincipalDetailService implements UserDetailsService {
 		Optional<Company> ocompany = companyRepository.findByUsername(username);
 		if(ocompany.isPresent()) return new PrincipalDetails(ocompany.get());
 		
-		//throw new UsernameNotFoundException("사용자 또는 회사를 찾을 수 없습니다: " + username);
 		return null;
 	}
 	
