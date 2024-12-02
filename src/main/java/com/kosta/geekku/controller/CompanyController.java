@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.CompanyDto;
+import com.kosta.geekku.dto.UserDto;
 import com.kosta.geekku.entity.Estate;
 import com.kosta.geekku.entity.HouseAnswer;
 import com.kosta.geekku.entity.OnestopAnswer;
@@ -79,6 +81,30 @@ public class CompanyController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("조회할 수 없습니다", HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping("/company/changePwd")
+	public ResponseEntity<String> changePwd(Authentication authentication, @RequestBody Map<String, String> param) {
+		try {
+			String currentPassword = param.get("currentPassword");
+			String newPassword = param.get("newPassword");
+
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
+
+			CompanyDto companyDto = companyService.getCompany(companyId);
+			if (!bCryptPasswordEncoder.matches(currentPassword, companyDto.getPassword())) {
+				return new ResponseEntity<>("현재 비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+			}
+
+			// 새 비밀번호
+			String encodedNewPassword = bCryptPasswordEncoder.encode(newPassword);
+			companyService.changePassword(companyId, encodedNewPassword);
+
+			return new ResponseEntity<>("비밀번호가 성공적으로 변경되었습니다.", HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("비밀번호 변경에 실패했습니다.", HttpStatus.BAD_REQUEST);
 		}
 	}
 

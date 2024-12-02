@@ -94,7 +94,7 @@ public class UserController {
 		}
 	}
 
-	@PutMapping("/user/changePwd")
+	@PostMapping("/user/changePwd")
 	public ResponseEntity<String> changePwd(Authentication authentication, @RequestBody Map<String, String> param) {
 		try {
 			String currentPassword = param.get("currentPassword");

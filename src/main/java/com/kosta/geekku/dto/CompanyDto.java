@@ -36,8 +36,7 @@ public class CompanyDto {
 	
 	private Role role;
 	
-	public Company toEntity() {
-		
+	public Company toEntity() {		
 		Company company = Company.builder()
 								.username(username)
 								.type(type)

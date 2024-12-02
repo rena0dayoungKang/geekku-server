@@ -114,10 +114,22 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void changePassword(UUID userId, String newPassword) throws Exception {
+	public Map<String, Object> changePassword(UUID userId, String newPassword) throws Exception {
 		User user = userRepository.findById(userId).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
 		user.setPassword(newPassword);
 		userRepository.save(user);
+		
+		String newAccessToken = jwtToken.makeAccessToken(user.getUsername(), user.getRole().toString());
+		String newRefreshToken = jwtToken.makeRefreshToken(user.getUsername(), user.getRole().toString());
+		Map<String, String> tokens = new HashMap<>();
+		tokens.put("access_token", JwtProperties.TOKEN_PREFIX+newAccessToken);
+		tokens.put("refresh_token", JwtProperties.TOKEN_PREFIX+newRefreshToken);
+		
+		Map<String, Object> res = new HashMap<>();
+		res.put("token", objectMapper.writeValueAsString(tokens));
+		res.put("user", user.toDto());
+		
+		return res;
 	}
 
 	@Override
