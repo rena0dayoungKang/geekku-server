@@ -179,21 +179,6 @@ public class InteriorController {
 		}
 	}
 
-	// 개인 마이페이지 - 방꾸 신청내역 리스트
-	@GetMapping("/mypageUserInteriorRequestList")
-	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(
-			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
-			@RequestParam(required = false, defaultValue = "10", value = "size") int size,
-			@RequestParam("userId") UUID userId) {
-		try {
-			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestListForUserMypage(page, size,
-					userId);
-			return new ResponseEntity<Page<InteriorRequestDto>>(interiorRequestList, HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<Page<InteriorRequestDto>>(HttpStatus.OK);
-		}
-	}
-
 	// 개인 마이페이지 - 1:1 인테리어 문의내역 리스트
 	@GetMapping("/user/mypageUserInteriorRequestList")
 	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(Authentication authentication,
