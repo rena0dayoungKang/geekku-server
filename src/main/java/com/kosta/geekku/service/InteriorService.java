@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequestDto;
 import com.kosta.geekku.dto.ReviewDto;
 import com.kosta.geekku.dto.SampleDto;
-import com.kosta.geekku.entity.InteriorSample;
 import com.kosta.geekku.util.PageInfo;
 
 public interface InteriorService {
@@ -23,13 +23,13 @@ public interface InteriorService {
 
 	boolean toggleBookmark(String userId, Integer interiorNum) throws Exception;
 
-	Integer interiorRegister(InteriorDto interiorDto) throws Exception;
+	Integer interiorRegister(InteriorDto interiorDto, MultipartFile cover) throws Exception;
 
 	InteriorDto interiorCompanyDetail(Integer num) throws Exception;
 
 	Integer sampleRegister(SampleDto sampleDto) throws Exception;
 
-	Integer reviewRegister(ReviewDto reviewDto) throws Exception;
+	Integer reviewRegister(ReviewDto reviewDto, List<MultipartFile> fileList) throws Exception;
 
 	SampleDto sampleDetail(Integer num) throws Exception;
 
@@ -37,7 +37,7 @@ public interface InteriorService {
 
 	InteriorRequestDto requestDetail(Integer num) throws Exception;
 
-	List<InteriorSample> sampleList(String date, String type, String style, Integer size, String location)
+	List<SampleDto> sampleList(String date, String type, String style, Integer size, String location)
 			throws Exception;
 
 	Map<String, Object> interiorDetail(Integer interiorNum) throws Exception;

@@ -7,13 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
-import com.kosta.geekku.dto.SampleDto;
 import com.kosta.geekku.entity.Interior;
-import com.kosta.geekku.entity.InteriorRequest;
 import com.kosta.geekku.entity.InteriorSample;
 import com.kosta.geekku.entity.QInterior;
 import com.kosta.geekku.entity.QInteriorBookmark;
-import com.kosta.geekku.entity.QInteriorRequest;
 import com.kosta.geekku.entity.QInteriorSample;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;

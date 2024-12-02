@@ -1,5 +1,6 @@
 package com.kosta.geekku.controller;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +15,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequestDto;
 import com.kosta.geekku.dto.ReviewDto;
 import com.kosta.geekku.dto.SampleDto;
-import com.kosta.geekku.entity.InteriorSample;
 import com.kosta.geekku.service.InteriorService;
 
 import lombok.RequiredArgsConstructor;
@@ -76,10 +77,12 @@ public class InteriorController {
 	}
 
 	@PostMapping("/interiorRegister")
-	public ResponseEntity<String> interiorRegister(InteriorDto interiorDto) {
+	public ResponseEntity<String> interiorRegister(InteriorDto interiorDto,
+			@RequestParam(name="file", required = false) MultipartFile file) {
 		System.out.println(interiorDto);
 		try {
-			Integer interiorNum = interiorService.interiorRegister(interiorDto);
+			Integer interiorNum = interiorService.interiorRegister(interiorDto, file);
+			System.out.println(file);
 			return new ResponseEntity<String>(String.valueOf(interiorNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -98,10 +101,14 @@ public class InteriorController {
 		}
 	}
 
-	@PostMapping("/interiorReviewRegister")
-	public ResponseEntity<String> interiorReviewRegister(ReviewDto reviewDto) {
+	@PostMapping("/interiorReviewWrite")
+	public ResponseEntity<String> interiorReviewRegister(ReviewDto reviewDto,
+			@RequestParam(name="file", required = false) MultipartFile[] files) {
+		System.out.println(reviewDto);
+		System.out.println(files);
 		try {
-			Integer reviewNum = interiorService.reviewRegister(reviewDto);
+			Integer reviewNum = interiorService.reviewRegister(reviewDto, files==null? null : Arrays.asList(files));
+			System.out.println(reviewNum);
 			return new ResponseEntity<String>(String.valueOf(reviewNum), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
@@ -149,7 +156,7 @@ public class InteriorController {
 			@RequestParam(required = false) String type, @RequestParam(required = false) String style,
 			@RequestParam(required = false) Integer size, @RequestParam(required = false) String location) {
 		try {
-			List<InteriorSample> sampleList = interiorService.sampleList(date, type, style, size, location);
+			List<SampleDto> sampleList = interiorService.sampleList(date, type, style, size, location);
 			System.out.println(sampleList);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("sampleList", sampleList);

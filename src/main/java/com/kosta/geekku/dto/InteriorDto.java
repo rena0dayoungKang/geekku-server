@@ -24,15 +24,17 @@ public class InteriorDto {
 	private Integer recentCount;
 	private Integer repairDate;
 	private String possibleLocation;
-	private Integer coverImage;
+	private byte[] coverImage;
+	private String coverImageStr;
 	private String intro;
 	private String content;
 	private Timestamp createdAt;
 
 	public Interior toEntity() {
 		Interior interior = Interior.builder().interiorNum(interiorNum)
-				.company(Company.builder().companyId(getCompanyId()).companyName(getCompanyName()).build())
-				.possiblePart(false)
+//				.company(Company.builder().companyId(getCompanyId()).companyName(getCompanyName()).build())
+				.company(Company.builder().companyName(getCompanyName()).build())
+				.possiblePart(possiblePart)
 				.period(period)
 				.recentCount(recentCount)
 				.repairDate(repairDate)

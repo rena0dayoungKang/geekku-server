@@ -36,13 +36,13 @@ public class InteriorSample {
 	@JoinColumn(name = "interiorNum")
 	private Interior interior;
 
-
+	private String title;
 	private String type; // 주거형태
 	private String style;
 	private Integer size;
 	private String location;
 	private Integer coverImage;// 한장이라서 Integer
-//	private String intro;
+	private String intro;
 	@Column(columnDefinition = "LONGTEXT")
 	@Lob
 	private String content;
@@ -58,14 +58,19 @@ public class InteriorSample {
 	
 	public SampleDto toDto() {
 		SampleDto sampleDto = SampleDto.builder().sampleNum(sampleNum)
-				.interiorNum(interior.getInteriorNum()).type(type)
+				.interiorNum(interior.getInteriorNum())
+				.title(title)
+				.type(type)
 				.style(style)
 				.size(size)
 				.location(location)
 				.coverImage(coverImage)
 				.intro(interior.getIntro())
 				.companyName(interior.getCompany().getCompanyName())
-				.content(content).createdAt(createdAt).build();
+				.companyId(interior.getCompany().getCompanyId())
+				.content(content)
+				.createdAt(createdAt)
+				.build();
 
 		return sampleDto;
 	}
