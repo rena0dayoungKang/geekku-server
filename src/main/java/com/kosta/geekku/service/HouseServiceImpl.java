@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,12 +38,12 @@ public class HouseServiceImpl implements HouseService {
 	private final CompanyRepository companyRepository;
 
 	@Override
-	public Integer houseWrite(HouseDto houseDto, String userId) throws Exception {
+	public Integer houseWrite(HouseDto houseDto, UUID userId) throws Exception {
 		House house = houseDto.toEntity();
-		User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new Exception("일반회원 찾기 오류"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new Exception("일반회원 찾기 오류"));
 		house.setUser(user);
 		houseRepository.save(house);
-		
+
 		return house.getHouseNum();
 	}
 
@@ -90,11 +89,15 @@ public class HouseServiceImpl implements HouseService {
 	}
 
 	@Override
-	public Integer houseAnswerWrite(HouseAnswerDto houseAnswerDto) throws Exception {
-		House house = houseRepository.findById(houseAnswerDto.getHouseNum()).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
+	public Integer houseAnswerWrite(HouseAnswerDto houseAnswerDto, UUID companyId) throws Exception {
+		House house = houseRepository.findById(houseAnswerDto.getHouseNum())
+				.orElseThrow(() -> new Exception("집꾸 글번호 오류"));
+		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
+
 		HouseAnswer houseAnswer = houseAnswerDto.toEntity();
+		houseAnswer.setCompany(company);
 		houseAnswerRepository.save(houseAnswer);
-		
+
 		return houseAnswer.getAnswerHouseNum();
 	}
 
@@ -104,8 +107,8 @@ public class HouseServiceImpl implements HouseService {
 		House house = houseRepository.findById(houseNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
 
-		List<HouseAnswerDto> houseAnswerDtoList = houseDslRepository.houseAnswerListByPaging(pageRequest, houseNum).stream()
-				.map(a -> a.toDto()).collect(Collectors.toList());
+		List<HouseAnswerDto> houseAnswerDtoList = houseDslRepository.houseAnswerListByPaging(pageRequest, houseNum)
+				.stream().map(a -> a.toDto()).collect(Collectors.toList());
 		Long cnt = houseDslRepository.houseAnswerCount(houseNum);
 
 		Integer allPage = (int) (Math.ceil(cnt.doubleValue() / pageRequest.getPageSize()));
@@ -116,7 +119,7 @@ public class HouseServiceImpl implements HouseService {
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
 		pageInfo.setTotalCount(cnt);
-		
+
 		return houseAnswerDtoList;
 	}
 
@@ -127,8 +130,8 @@ public class HouseServiceImpl implements HouseService {
 		houseAnswerRepository.deleteById(houseAnswerNum);
 	}
 
-	public Page<HouseAnswerDto> houseAnswerListForMypage(int page, int size, String companyId) {
-		Optional<Company> company = companyRepository.findById(UUID.fromString(companyId));
+	public Page<HouseAnswerDto> houseAnswerListForMypage(int page, int size, UUID companyId) {
+		Optional<Company> company = companyRepository.findById(companyId);
 
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Page<HouseAnswerDto> pageInfo = houseAnswerRepository.findAllByCompany(company, pageable)
@@ -139,8 +142,8 @@ public class HouseServiceImpl implements HouseService {
 	}
 
 	@Override
-	public Page<HouseDto> houseListForUserMypage(int page, int size, String userId) throws Exception {
-		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+	public Page<HouseDto> houseListForUserMypage(int page, int size, UUID userId) throws Exception {
+		Optional<User> user = userRepository.findById(userId);
 
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Page<HouseDto> pageInfo = houseRepository.findAllByUser(user, pageable).map(House::toDto);

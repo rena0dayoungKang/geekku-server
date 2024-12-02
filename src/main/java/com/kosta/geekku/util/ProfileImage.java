@@ -11,14 +11,13 @@ import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.UserRepository;
 
 @Component
 public class ProfileImage {
-	// 업로드 이미지를 byte[]로 변환해서 데이터베이스에 저장
+	// 업로드 이미지를 byte[]로 변환해서 데이터베이스에 저장 & 이미지를 압축하는 클래스
 
 	@Autowired
 	private UserRepository userRepository;

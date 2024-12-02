@@ -44,8 +44,7 @@ public class JwtAuthrizationFilter extends BasicAuthenticationFilter {
 		String uri = request.getRequestURI();
 		System.out.println("JwtAuthrizationFilter:" + uri);
 		// 1. 로그인 (인증) 이 필요없는 요청은 그대로 진행
-//		if (!(uri.contains("/user") || uri.contains("/admin") || uri.contains("/manager") || uri.contains("/company"))) {
-		if (!(uri.contains("/user") || uri.contains("/admin") || uri.contains("/manager"))) {
+		if (!(uri.contains("/user") || uri.contains("/company"))) {
 			chain.doFilter(request, response);
 			return;
 		}
@@ -146,11 +145,11 @@ public class JwtAuthrizationFilter extends BasicAuthenticationFilter {
 	
 	PrincipalDetails getPrincipayDetails(String username, String role) throws Exception {
 		PrincipalDetails principalDetails =null;
-		if(role.equals("user")) { //user
+		if(role.equals("ROLE_USER")) { //user
 			Optional<User> ouser = userRepository.findByUsername(username);
 			if (ouser.isEmpty()) throw new Exception(); // 사용자가 DB에 없을때
 			principalDetails = new PrincipalDetails(ouser.get());	
-		} else  { //company
+		} else if(role.equals("ROLE_COMPANY")) { //company
 			Optional<Company> ocompany = companyRepository.findByUsername(username);
 			if (ocompany.isEmpty()) throw new Exception(); // 사용자가 DB에 없을때
 			principalDetails = new PrincipalDetails(ocompany.get());

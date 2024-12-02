@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -178,6 +179,7 @@ public class InteriorController {
 		}
 	}
 
+
 	// 개인 마이페이지 - 방꾸 신청내역 리스트
 	@GetMapping("/mypageUserInteriorRequestList")
 	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(
@@ -187,6 +189,18 @@ public class InteriorController {
 		try {
 			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestListForUserMypage(page, size,
 					userId);
+
+	
+	// 개인 마이페이지 - 1:1 인테리어 문의내역 리스트
+	@GetMapping("/user/mypageUserInteriorRequestList")
+	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(
+			Authentication authentication,
+			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size) {
+		try {
+			UUID userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId();
+			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestListForUserMypage(page, size, userId);
+
 			return new ResponseEntity<Page<InteriorRequestDto>>(interiorRequestList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -200,7 +214,9 @@ public class InteriorController {
 			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
 			@RequestParam(required = false, defaultValue = "10", value = "size") int size) {
 		try {
-			String userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString();
+
+			UUID userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId();
+
 			Page<ReviewDto> reviewList = interiorService.reviewListForUserMypage(page, size, userId);
 			return new ResponseEntity<Page<ReviewDto>>(reviewList, HttpStatus.OK);
 		} catch (Exception e) {
@@ -210,8 +226,8 @@ public class InteriorController {
 	}
 
 	// 개인 마이페이지 - 인테리어 업체 후기 수정
-	@PostMapping("/mypageUserReviewUpdate/{num}")
-	public ResponseEntity<String> mypageUserReviewUpdate(ReviewDto reviewDto, @PathVariable Integer num) {
+	@PostMapping("/user/mypageUserReviewUpdate/{num}")
+	public ResponseEntity<String> mypageUserReviewUpdate(Authentication authentication, ReviewDto reviewDto, @PathVariable Integer num) {
 		try {
 			interiorService.updateReview(reviewDto, num);
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
@@ -222,10 +238,10 @@ public class InteriorController {
 	}
 
 	// 개인 마이페이지 - 인테리어 업체 후기 삭제
-	@PostMapping("/mypageUserReviewDelete/{num}")
-	public ResponseEntity<String> mypageUserReviewDelete(@PathVariable Integer num) {
+	@PostMapping("/user/mypageUserReviewDelete/{reviewNum}")
+	public ResponseEntity<String> mypageUserReviewDelete(@PathVariable Integer reviewNum) {
 		try {
-			interiorService.deleteReview(num);
+			interiorService.deleteReview(reviewNum);
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

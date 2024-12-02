@@ -8,16 +8,15 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kosta.geekku.config.jwt.JwtProperties;
 import com.kosta.geekku.config.jwt.JwtToken;
 import com.kosta.geekku.dto.UserDto;
 import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.UserRepository;
-import com.kosta.geekku.util.ProfileImage;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -33,9 +32,6 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private ObjectMapper objectMapper;
-	
-	@Autowired
-	private ProfileImage profileImage;
 	
 	
 
@@ -101,13 +97,15 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		userRepository.save(user);
+		
+		System.out.println(user);
 
-		String newAccessToken = jwtToken.makeAccessToken(userDto.getUsername(), userDto.getType());
-		String newRefreshToken = jwtToken.makeRefreshToken(userDto.getUsername(), userDto.getType());
+		String newAccessToken = jwtToken.makeAccessToken(user.getUsername(), user.getRole().toString());
+		String newRefreshToken = jwtToken.makeRefreshToken(user.getUsername(), user.getRole().toString());
 
 		Map<String, String> tokens = new HashMap<>();
-		tokens.put("accessToken", newAccessToken);
-		tokens.put("refreshToken", newRefreshToken);
+		tokens.put("access_token", JwtProperties.TOKEN_PREFIX+newAccessToken);
+		tokens.put("refresh_token", JwtProperties.TOKEN_PREFIX+newRefreshToken);
 
 		Map<String, Object> res = new HashMap<>();
 		res.put("token", objectMapper.writeValueAsString(tokens));

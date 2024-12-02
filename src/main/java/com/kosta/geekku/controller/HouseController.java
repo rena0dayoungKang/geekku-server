@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -29,8 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.HouseAnswerDto;
 import com.kosta.geekku.dto.HouseDto;
-import com.kosta.geekku.service.FcmMessageService;
-import com.kosta.geekku.entity.EstateImage;
+//import com.kosta.geekku.service.FcmMessageService;
 import com.kosta.geekku.service.HouseService;
 import com.kosta.geekku.util.PageInfo;
 
@@ -41,7 +39,7 @@ import lombok.RequiredArgsConstructor;
 public class HouseController {
 
 	private final HouseService houseService;
-	private final FcmMessageService fcmMessageService;
+//private final FcmMessageService fcmMessageService;
 
 	@Value("${upload.path}")
 	private String uploadPath;
@@ -49,7 +47,7 @@ public class HouseController {
 	@PostMapping("/user/houseWrite")
 	public ResponseEntity<String> houseWrite(Authentication authentication, HouseDto houseDto) {
 		try {
-			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
+			UUID userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId();
 			Integer houseNum = houseService.houseWrite(houseDto, userId);
 			return new ResponseEntity<String>(String.valueOf(houseNum), HttpStatus.OK);
 		} catch (Exception e) {
@@ -101,12 +99,14 @@ public class HouseController {
 	}
 
 	// 집꾸 답변
-	@PostMapping("/company/houseAnswerWrite")  //dto{title,content,companyId,userId,houseNum,userName,name,companyName}
-	public ResponseEntity<String> houseAnswerWrite(HouseAnswerDto houseAnswerDto) {
+	@PostMapping("/company/houseAnswerWrite")
+	public ResponseEntity<String> houseAnswerWrite(Authentication authentication, HouseAnswerDto houseAnswerDto) {
 		try {
-			Integer houseAnswerNum = houseService.houseAnswerWrite(houseAnswerDto);
+			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId();
+			System.out.println(companyId);
+			Integer houseAnswerNum = houseService.houseAnswerWrite(houseAnswerDto, companyId);
 			houseAnswerDto.setAnswerHouseNum(houseAnswerNum);
-			fcmMessageService.sendHouseAnswer(houseAnswerDto);
+		//	fcmMessageService.sendHouseAnswer(houseAnswerDto);
 			return new ResponseEntity<String>(String.valueOf(houseAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -141,7 +141,7 @@ public class HouseController {
 	@GetMapping("/editorImage/{filename}")
 	public void image(@PathVariable String filename, HttpServletResponse response) {
 		try {
-		       // 파일이 존재하지 않는 경우 처리
+		    // 파일이 존재하지 않는 경우 처리
 			File file = new File(uploadPath, filename);
             if (!file.exists()) {
                 System.out.println("파일 존재하지 않음");
@@ -174,7 +174,7 @@ public class HouseController {
 		}
 	}
 
-	@PostMapping("/houseAnswerDelete")
+	@PostMapping("/company/houseAnswerDelete")
 	public ResponseEntity<String> houseAnswerDelete(@RequestBody Map<String, Object> params) {
 		try {
 			Integer houseAnswerNum = (Integer)params.get("houseAnswerNum");
@@ -187,12 +187,13 @@ public class HouseController {
 		}
 	}
 	
-	@GetMapping("/mypageHouseAnswerList")
+	@GetMapping("/company/mypageHouseAnswerList")
 	public ResponseEntity<Page<HouseAnswerDto>> houseAnswerListForMypage(
+			 Authentication authentication,
 			 @RequestParam(required = false, defaultValue = "1", value = "page") int page,  
-			 @RequestParam(required = false, defaultValue = "10", value = "size") int size, 
-			 @RequestParam("companyId") String companyId) {
+			 @RequestParam(required = false, defaultValue = "10", value = "size") int size) {
 		try {
+			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId();
 			Page<HouseAnswerDto> houseAnswerList = houseService.houseAnswerListForMypage(page, size, companyId);
 			return new ResponseEntity<Page<HouseAnswerDto>>(houseAnswerList, HttpStatus.OK);
 		} catch (Exception e) {
@@ -207,10 +208,7 @@ public class HouseController {
 			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
 			@RequestParam(required = false, defaultValue = "10", value = "size") int size) {		
 		try {
-			System.out.println("Principal: " + authentication.getPrincipal());
-			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
-			System.out.println("=====");
-			System.out.println(userId);
+			UUID userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId();
 			Page<HouseDto> houseList = houseService.houseListForUserMypage(page, size, userId);
 			return new ResponseEntity<Page<HouseDto>>(houseList, HttpStatus.OK);
 		} catch (Exception e) {

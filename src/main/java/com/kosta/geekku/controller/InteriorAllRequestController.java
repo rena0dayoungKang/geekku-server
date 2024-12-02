@@ -1,9 +1,9 @@
 package com.kosta.geekku.controller;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
@@ -59,7 +59,6 @@ public class InteriorAllRequestController {
 	@GetMapping("/interiorAllDetail/{num}")
 	public ResponseEntity<InteriorAllDto> interiorAllDetail(@PathVariable Integer num) {
 		try {
-			
 			InteriorAllDto interiorAllDto = interiorAllService.interiorDetail(num);
 			return new ResponseEntity<InteriorAllDto>(interiorAllDto, HttpStatus.OK);
 		} catch (Exception e) {
@@ -79,7 +78,7 @@ public class InteriorAllRequestController {
 			List<InteriorAllDto> interiorAllList = interiorAllService.interiorAllList(pageInfo, type, word);
 
 			// 리스트를 내림차순으로 정렬
-			//interiorAllList.sort(Comparator.comparing(InteriorAllDto::getCreatedAt).reversed());
+			// interiorAllList.sort(Comparator.comparing(InteriorAllDto::getCreatedAt).reversed());
 
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("interiorAllList", interiorAllList);
@@ -103,11 +102,13 @@ public class InteriorAllRequestController {
 	}
 
 	// 방꾸 답변
-	@PostMapping("/interiorAnswerWrite")
-	public ResponseEntity<String> interiorAnswerWrite(InteriorAnswerDto interiorAnswerDto,
-			@RequestParam Integer requestAllNum) {
+	@PostMapping("/company/interiorAnswerWrite")
+	public ResponseEntity<String> interiorAnswerWrite(Authentication authentication,
+			InteriorAnswerDto interiorAnswerDto) {
 		try {
-			Integer interiorAnswerNum = interiorAllService.interiorAnswerWrite(interiorAnswerDto, requestAllNum);
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
+			Integer interiorAnswerNum = interiorAllService.interiorAnswerWrite(interiorAnswerDto, companyId);
+			interiorAnswerDto.setAnswerAllNum(interiorAnswerNum);
 			return new ResponseEntity<String>(String.valueOf(interiorAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -115,7 +116,7 @@ public class InteriorAllRequestController {
 		}
 	}
 
-	@GetMapping("/interiorAnswerList")
+	@GetMapping("/interiorAnswerList/{requestAllNum}")
 	public ResponseEntity<Map<String, Object>> interiorAnswerList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 			@RequestParam("requestAllNum") Integer requestAllNum) {
@@ -135,7 +136,7 @@ public class InteriorAllRequestController {
 		}
 	}
 
-	@PostMapping("/interiorAnswerDelete")
+	@PostMapping("/company/interiorAnswerDelete")
 	public ResponseEntity<String> interiorAnswerDelete(@RequestParam("answerAllNum") Integer answerAllNum,
 			@RequestParam("requestAllNum") Integer requestAllNum) {
 		try {
@@ -149,13 +150,11 @@ public class InteriorAllRequestController {
 	}
 
 	@GetMapping("/user/mypageUserInteriorAllList")
-	public ResponseEntity<Page<InteriorAllDto>> interiorAllRequestListForUserMypage(
-			Authentication authentication,
+	public ResponseEntity<Page<InteriorAllDto>> interiorAllRequestListForUserMypage(Authentication authentication,
 			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
-			@RequestParam(required = false, defaultValue = "10", value = "size") int size
-			) {
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size) {
 		try {
-			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
+			String userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString();
 			Page<InteriorAllDto> interiorAllList = interiorAllService.interiorAllListForUserMypage(page, size, userId);
 			return new ResponseEntity<Page<InteriorAllDto>>(interiorAllList, HttpStatus.OK);
 		} catch (Exception e) {

@@ -1,5 +1,6 @@
 package com.kosta.geekku.service;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -37,15 +38,14 @@ public class CompanyServiceImpl implements CompanyService {
 	private OnestopAnswerRepository onestopAnswerRepository;
 	@Autowired
 	private UFileRepository uFileRepository;
-	
+
 	@Value("${upload.path}")
 	private String uploadPath;
 
 	@Override
 	public void joinCompany(CompanyDto companyDto, MultipartFile file) throws Exception {
-
 		// type이 "부동산" 인 경우 estateNumber가 null이면 예외처리
-		if ("부동산".equals(companyDto.getType()) && isNullOrEmpty(companyDto.getEstateNumber())) {
+		if ("estate".equals(companyDto.getType()) && isNullOrEmpty(companyDto.getEstateNumber())) {
 			throw new IllegalArgumentException("부동산타입은 중개등록번호 입력해야함");
 		}
 
@@ -55,9 +55,24 @@ public class CompanyServiceImpl implements CompanyService {
 		byte[] defaultProfileImage = Files.readAllBytes(Paths.get("src/main/resources/static/img/profileImg.png"));
 		company.setProfileImage(defaultProfileImage);
 
+		companyRepository.save(company);
+
 		// 사업자 등록증 이미지 첨부
-		if (file != null) {
+		if (file != null && !file.isEmpty()) {
 			UFile uFile = new UFile();
+			// 이미지 저장 경로
+			String companyUploadPath = uploadPath + "/company/";
+
+			// 디렉토리 확인
+			File uploadDir = new File(companyUploadPath);
+			if (!uploadDir.exists()) {
+				uploadDir.mkdir();
+			}
+
+			String fileName = companyDto.getUsername() + "_" + file.getOriginalFilename();
+			File nFile = new File(companyUploadPath, fileName);
+			file.transferTo(nFile);
+
 			uFile.setDirectory(uploadPath);
 			uFile.setName(file.getOriginalFilename());
 			uFile.setContentType(file.getContentType());
@@ -65,8 +80,6 @@ public class CompanyServiceImpl implements CompanyService {
 			uFile.setCompany(company);
 			uFileRepository.save(uFile);
 		}
-
-		companyRepository.save(company);
 	}
 
 	private boolean isNullOrEmpty(String str) {
@@ -91,23 +104,23 @@ public class CompanyServiceImpl implements CompanyService {
 	@Override
 	public void updateCompanyInfo(UUID companyId, CompanyDto companyDto) throws Exception {
 		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
-		if(companyDto.getCompanyAddress() != null) company.setCompanyAddress(companyDto.getCompanyAddress());
-		if(companyDto.getPhone() != null) company.setPhone(companyDto.getPhone());
-		if(companyDto.getEmail() != null) company.setEmail(companyDto.getEmail());
-		if(companyDto.getCompanyCertificationImage() != null) company.setCompanyCertificationImage(companyDto.getCompanyCertificationImage());
+		if (companyDto.getCompanyAddress() != null)
+			company.setCompanyAddress(companyDto.getCompanyAddress());
+		if (companyDto.getPhone() != null)
+			company.setPhone(companyDto.getPhone());
+		if (companyDto.getEmail() != null)
+			company.setEmail(companyDto.getEmail());
+		if (companyDto.getCompanyCertificationImage() != null)
+			company.setCompanyCertificationImage(companyDto.getCompanyCertificationImage());
 		companyRepository.save(company);
 	}
 
-	@Override 
+	@Override
 	public CompanyDto getCompanyProfile(String companyId) {
 
-	    Company company = companyRepository.findById(UUID.fromString(companyId))
-	            .orElseThrow();
-	    return CompanyDto.builder()
-	            .companyName(company.getCompanyName())
-	            .email(company.getEmail()) // email로 수정
-	            .username(company.getUsername())
-	            .build();
+		Company company = companyRepository.findById(UUID.fromString(companyId)).orElseThrow();
+		return CompanyDto.builder().companyName(company.getCompanyName()).email(company.getEmail()) // email로 수정
+				.username(company.getUsername()).build();
 
 	}
 
@@ -118,19 +131,18 @@ public class CompanyServiceImpl implements CompanyService {
 
 	@Override
 	public void deleteEstateCommunity(Integer estateId) throws Exception {
-			Estate estate = estateRepository.findById(estateId).orElseThrow(()-> new Exception("해당 게시글을 찾을 수 없습니다."));
-			estateRepository.delete(estate);
+		Estate estate = estateRepository.findById(estateId).orElseThrow(() -> new Exception("해당 게시글을 찾을 수 없습니다."));
+		estateRepository.delete(estate);
 	}
-	
+
 	@Override
 	public Page<HouseAnswer> getAnswersByCompanyId(UUID companyId, Pageable pageable) {
-	    return houseAnswerRepository.findByCompanyId(companyId, pageable);
+		return houseAnswerRepository.findByCompanyId(companyId, pageable);
 	}
 
 	@Override
 	public Page<OnestopAnswer> getOnestopAnswersByCompanyId(UUID companyId, Pageable pageable) {
-        return onestopAnswerRepository.findByCompanyId(companyId, pageable);
-    }
-
+		return onestopAnswerRepository.findByCompanyId(companyId, pageable);
+	}
 
 }

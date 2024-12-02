@@ -128,11 +128,10 @@ public class EstateServiceImpl implements EstateService {
 				UUID.fromString(userId));
 
 		if (estateBookmark == null) {
-			estateBookmarkRepository
-					.save(EstateBookmark.builder().userId(UUID.fromString(userId)).estateNum(estateNum).build());
+			estateBookmarkRepository.save(EstateBookmark.builder().userId(UUID.fromString(userId)).estateNum(estateNum).build());
 			return true;
 		} else {
-			estateBookmarkRepository.deleteById(estateBookmark.getBookmarkEstateNum());
+			estateBookmarkRepository.delete(estateBookmark);
 			return false;
 		}
 	}

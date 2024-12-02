@@ -28,6 +28,7 @@ import lombok.NoArgsConstructor;
 @DynamicInsert
 @Entity
 public class UFile {
+	//사업자 등록증 이미지를 저장하기 위한 엔티티
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer userImageNum;

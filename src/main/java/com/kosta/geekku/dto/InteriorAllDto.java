@@ -31,6 +31,7 @@ public class InteriorAllDto {
 	private boolean allowPhone; // 연락처 공개 0:비공개 1:공개
 	private String title;
 	private String addContent;
+	private Integer viewCount;
 	private Timestamp createAt;
 
 	public InteriorAllRequest toEntity() {

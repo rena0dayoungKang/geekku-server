@@ -43,16 +43,18 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 
 	@Override
 	public Integer interiorAllWrite(InteriorAllDto interiorAllDto) throws Exception {
-		
+
 		InteriorAllRequest interiorAll = interiorAllDto.toEntity();
 		interiorAllRepository.save(interiorAll);
 		return interiorAll.getRequestAllNum();
 	}
 
+	@Transactional
 	@Override
 	public InteriorAllDto interiorDetail(Integer interiorNum) throws Exception {
-		InteriorAllRequest interiorAll = interiorAllRepository.findById(interiorNum).orElseThrow(() -> new Exception("글번호 오류"));
-
+		InteriorAllRequest interiorAll = interiorAllRepository.findById(interiorNum)
+				.orElseThrow(() -> new Exception("글번호 오류"));
+		interiorAllRequestDslRepository.updateOnestopViewCount(interiorNum, interiorAll.getViewCount() + 1);
 		return interiorAll.toDto();
 	}
 
@@ -96,9 +98,9 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	}
 
 	@Override
-	public Integer interiorAnswerWrite(InteriorAnswerDto interiorAnswerDto, Integer requestAllNum) throws Exception {
-		InteriorAllRequest interiorAllRequest = interiorAllRepository.findById(requestAllNum)
-				.orElseThrow(() -> new Exception("諛⑷씀 湲�踰덊샇 �삤瑜�"));
+	public Integer interiorAnswerWrite(InteriorAnswerDto interiorAnswerDto, UUID companyId) throws Exception {
+		InteriorAllRequest interiorAllRequest = interiorAllRepository.findById(interiorAnswerDto.getRequestAllNum())
+				.orElseThrow(() -> new Exception("방꾸하기 글 번호 오류"));
 		InteriorAllAnswer interiorAllAnswer = interiorAnswerDto.toEntity();
 		interiorAllAnswerRepository.save(interiorAllAnswer);
 		return interiorAllAnswer.getAnswerAllNum();
@@ -160,10 +162,11 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	@Override
 	public Page<InteriorAllDto> interiorAllListForUserMypage(int page, int size, String userId) throws Exception {
 		Optional<User> user = userRepository.findById(UUID.fromString(userId));
-		
+
 		Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createAt"));
-		Page<InteriorAllDto> pageInfo = interiorAllRepository.findAllByUser(user, pageable).map(InteriorAllRequest::toDto);
-		
+		Page<InteriorAllDto> pageInfo = interiorAllRepository.findAllByUser(user, pageable)
+				.map(InteriorAllRequest::toDto);
+
 		return pageInfo;
 	}
 

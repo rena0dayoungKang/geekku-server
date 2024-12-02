@@ -2,6 +2,7 @@ package com.kosta.geekku.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,16 +43,16 @@ public interface InteriorService {
 
 	Map<String, Object> interiorDetail(Integer interiorNum) throws Exception;
 
-	// 留덉씠�럹�씠吏� - 媛쒖씤�쉶�썝 �씤�뀒由ъ뼱 臾몄쓽 �궡�뿭
-	Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, String userId) throws Exception;
+	// 개인 마이페이지 - 인테리어 문의 내역
+	Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, UUID userId) throws Exception;
 
-	// 留덉씠�럹�씠吏� - 媛쒖씤�쉶�썝 �씤�뀒由ъ뼱 �썑湲� �옉�꽦 �궡�뿭
-	Page<ReviewDto> reviewListForUserMypage(int page, int size, String userId) throws Exception;
+	// 개인 마이페이지 - 인테리어 후기 작성내역
+	Page<ReviewDto> reviewListForUserMypage(int page, int size, UUID userId) throws Exception;
 
-	// 留덉씠�럹�씠吏� - 媛쒖씤�쉶�썝 �씤�뀒由ъ뼱 �썑湲� �닔�젙
+	// 개인 마이페이지 - 인테리어 후기 수정
 	void updateReview(ReviewDto reviewDto, Integer num) throws Exception;
 
-	// 留덉씠�럹�씠吏� - 媛쒖씤�쉶�썝 �씤�뀒由ъ뼱 �썑湲� �궘�젣
+	// 개인 마이페이지 - 인테리어 후기 삭제
 	void deleteReview(Integer num) throws Exception;
 
 	List<ReviewDto> interiorReviewList(PageInfo pageInfo, String companyId) throws Exception;

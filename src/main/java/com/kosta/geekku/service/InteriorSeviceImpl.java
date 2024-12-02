@@ -215,9 +215,9 @@ public class InteriorSeviceImpl implements InteriorService {
 		return detailInfo;
 	}
 
-	public Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, String userId)
+	public Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, UUID userId)
 			throws Exception {
-		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+		Optional<User> user = userRepository.findById(userId);
 
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Page<InteriorRequestDto> pageInfo = interiorRequestRepository.findAllByUser(user, pageable)
@@ -227,8 +227,8 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public Page<ReviewDto> reviewListForUserMypage(int page, int size, String userId) throws Exception {
-		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+	public Page<ReviewDto> reviewListForUserMypage(int page, int size, UUID userId) throws Exception {
+		Optional<User> user = userRepository.findById(userId);
 
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Page<ReviewDto> pageInfo = interiorReviewRepository.findAllByUser(user, pageable).map(InteriorReview::toDto);
@@ -239,7 +239,7 @@ public class InteriorSeviceImpl implements InteriorService {
 	@Override
 	public void updateReview(ReviewDto reviewDto, Integer num) throws Exception {
 		InteriorReview review = interiorReviewRepository.findById(num)
-				.orElseThrow(() -> new Exception("由щ럭 湲�踰덊샇 �삤瑜�"));
+				.orElseThrow(() -> new Exception("인테리어 후기 글번호 오류"));
 
 		review.setContent(reviewDto.getContent());
 		// �씠誘몄� �닔�젙 �븘�슂�븿
@@ -249,7 +249,7 @@ public class InteriorSeviceImpl implements InteriorService {
 	@Override
 	public void deleteReview(Integer num) throws Exception {
 		InteriorReview review = interiorReviewRepository.findById(num)
-				.orElseThrow(() -> new Exception("由щ럭 湲�踰덊샇 �삤瑜�"));
+				.orElseThrow(() -> new Exception("인테리어 후기 글번호 오류"));
 		interiorReviewRepository.deleteById(num);
 	}
 
@@ -282,6 +282,8 @@ public class InteriorSeviceImpl implements InteriorService {
 		pageInfo.setAllPage(allPage);
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
+		pageInfo.setTotalCount(cnt);
+		
 		return null;
 
 		/* return interiorRequestDtoList; */

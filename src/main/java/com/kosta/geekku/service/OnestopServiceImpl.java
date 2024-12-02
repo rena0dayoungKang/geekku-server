@@ -78,7 +78,7 @@ public class OnestopServiceImpl implements OnestopService {
 	@Override
 	public OnestopDto onestopDetail(Integer onestopNum) throws Exception {
 		Onestop onestop = onestopRepository.findById(onestopNum).orElseThrow(() -> new Exception("글번호 오류"));
-		//onestopDslRepository.updateOnestopViewCount(onestopNum, onestop.getViewCount() + 1);
+		onestopDslRepository.updateOnestopViewCount(onestopNum, onestop.getViewCount() + 1);
 		return onestop.toDto();
 	}
 
@@ -102,14 +102,19 @@ public class OnestopServiceImpl implements OnestopService {
 	}
 
 	@Override
-	public Integer onestopAnswerWrite(OnestopAnswerDto onestopAnswerDto, Integer onestopNum) throws Exception {
-		Onestop onestop = onestopRepository.findById(onestopNum).orElseThrow(() -> new Exception("한번에꾸하기 글 번호 오류"));
+	public Integer onestopAnswerWrite(OnestopAnswerDto onestopAnswerDto, UUID companyId) throws Exception {
+		Onestop onestop = onestopRepository.findById(onestopAnswerDto.getOnestopNum())
+				.orElseThrow(() -> new Exception("한번에꾸하기 글 번호 오류"));
+		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
 		OnestopAnswer onestopAnswer = onestopAnswerDto.toEntity();
+		onestopAnswer.setCompany(company);
 		onestopAnswerRepository.save(onestopAnswer);
+		
 		return onestopAnswer.getAnswerOnestopNum();
 
 	}
 
+	@Transactional
 	@Override
 	public List<OnestopAnswerDto> onestopAnswerList(PageInfo pageInfo, Integer onestopNum) throws Exception {
 		Onestop onestop = onestopRepository.findById(onestopNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
@@ -151,8 +156,8 @@ public class OnestopServiceImpl implements OnestopService {
 	}
 
 	@Override
-	public Page<OnestopDto> onestopListForUserMypage(int page, int size, String userId) throws Exception {
-		Optional<User> user = userRepository.findById(UUID.fromString(userId));
+	public Page<OnestopDto> onestopListForUserMypage(int page, int size, UUID userId) throws Exception {
+		Optional<User> user = userRepository.findById(userId);
 
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Page<OnestopDto> pageInfo = onestopRepository.findAllByUser(user, pageable).map(Onestop::toDto);
