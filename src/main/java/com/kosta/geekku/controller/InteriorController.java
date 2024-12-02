@@ -102,13 +102,14 @@ public class InteriorController {
 		}
 	}
 
-	@PostMapping("/interiorReviewWrite")
-	public ResponseEntity<String> interiorReviewRegister(ReviewDto reviewDto,
+	@PostMapping("/user/interiorReviewWrite")
+	public ResponseEntity<String> interiorReviewRegister(Authentication authentication,ReviewDto reviewDto,
 			@RequestParam(name="file", required = false) MultipartFile[] files) {
 		System.out.println(reviewDto);
 		System.out.println(files);
 		try {
-			Integer reviewNum = interiorService.reviewRegister(reviewDto, files==null? null : Arrays.asList(files));
+			String id = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();	//재확인
+			Integer reviewNum = interiorService.reviewRegister(id ,reviewDto, files==null? null : Arrays.asList(files));
 			System.out.println(reviewNum);
 			return new ResponseEntity<String>(String.valueOf(reviewNum), HttpStatus.OK);
 		} catch (Exception e) {
@@ -180,15 +181,16 @@ public class InteriorController {
 	}
 
 
-	// 개인 마이페이지 - 방꾸 신청내역 리스트
-	@GetMapping("/mypageUserInteriorRequestList")
-	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(
-			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
-			@RequestParam(required = false, defaultValue = "10", value = "size") int size,
-			@RequestParam("userId") String userId) {
-		try {
-			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestListForUserMypage(page, size,
-					userId);
+//	// 개인 마이페이지 - 방꾸 신청내역 리스트
+//	@GetMapping("/mypageUserInteriorRequestList")
+//	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(
+//			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
+//			@RequestParam(required = false, defaultValue = "10", value = "size") int size,
+//			@RequestParam("userId") String userId) {
+//		try {
+//			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestListForUserMypage(page, size,
+//					userId);
+//		} 
 
 	
 	// 개인 마이페이지 - 1:1 인테리어 문의내역 리스트

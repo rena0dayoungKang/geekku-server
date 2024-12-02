@@ -1,6 +1,5 @@
 package com.kosta.geekku.entity;
 
-import java.beans.Transient;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.UUID;
