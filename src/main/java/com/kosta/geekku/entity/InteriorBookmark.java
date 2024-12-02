@@ -32,7 +32,7 @@ public class InteriorBookmark {
 	 * @JoinColumn(name = "userId") private User user;
 	 */
 
-	@Column
+	@Column(unique = false)
 	private UUID userId;
 	// private UUID userId; // join column User - userID
 

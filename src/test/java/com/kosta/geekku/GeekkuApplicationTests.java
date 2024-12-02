@@ -1,20 +1,19 @@
 package com.kosta.geekku;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.kosta.geekku.entity.Company;
-import com.kosta.geekku.entity.Estate;
-import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.dto.EstateDto;
 import com.kosta.geekku.entity.Community;
+import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.CommunityRepository;
+import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.UserRepository;
 import com.kosta.geekku.service.EstateService;
 import com.kosta.geekku.util.PageInfo;

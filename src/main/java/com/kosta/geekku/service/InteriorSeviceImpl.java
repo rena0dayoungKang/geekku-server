@@ -1,5 +1,6 @@
 package com.kosta.geekku.service;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequestDto;
@@ -24,6 +26,7 @@ import com.kosta.geekku.entity.Interior;
 import com.kosta.geekku.entity.InteriorBookmark;
 import com.kosta.geekku.entity.InteriorRequest;
 import com.kosta.geekku.entity.InteriorReview;
+import com.kosta.geekku.entity.InteriorReviewImage;
 import com.kosta.geekku.entity.InteriorSample;
 import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.InteriorBookmarkRepository;
@@ -31,6 +34,7 @@ import com.kosta.geekku.repository.InteriorDslRepository;
 import com.kosta.geekku.repository.InteriorRepository;
 import com.kosta.geekku.repository.InteriorRequestDslRepository;
 import com.kosta.geekku.repository.InteriorRequestRepository;
+import com.kosta.geekku.repository.InteriorReviewImageRepository;
 import com.kosta.geekku.repository.InteriorReviewRepository;
 import com.kosta.geekku.repository.InteriorSampleDslRepository;
 import com.kosta.geekku.repository.InteriorSampleRepository;
@@ -52,6 +56,7 @@ public class InteriorSeviceImpl implements InteriorService {
 	private final InteriorReviewRepository interiorReviewRepository;
 	private final InteriorRequestRepository interiorRequestRepository;
 	private final InteriorRequestDslRepository interiorRequestDslRepository;
+	private final InteriorReviewImageRepository interiorReviewImageRepository;
 
 	@Value("${upload.path}")
 	private String uploadPath;
@@ -111,11 +116,15 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public Integer interiorRegister(InteriorDto interiorDto) throws Exception {
+	public Integer interiorRegister(InteriorDto interiorDto, MultipartFile cover) throws Exception {
 		Interior interior = interiorDto.toEntity();
-		String company = interior.getCompany().getCompanyName();
-		if(company == null) {
-			
+//		String company = interior.getCompany().getCompanyName();
+//		if(company == null) {
+//			
+//		}
+		
+		if(cover!=null && cover.isEmpty()) {
+			interior.setCoverImage(cover.getBytes());
 		}
 		interiorRepository.save(interior);
 		return interior.getInteriorNum();
@@ -131,15 +140,30 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	public Integer sampleRegister(SampleDto sampleDto) throws Exception {
 		InteriorSample sample = sampleDto.toEntity();
+		System.out.println(sample);
 		interiorSampleRepository.save(sample);
 //		if(sampleDto.getInteriorNum() ==  )	//�궗濡� �씤�뀒由ъ뼱踰덊샇�� �옉�꽦�옄 �씤�뀒由ъ뼱踰덊샇媛� 媛숈쓣寃쎌슦留� �옉�꽦
 		return sample.getSampleNum();
 	}
 
 	@Override
-	public Integer reviewRegister(ReviewDto reviewDto) throws Exception {
+	public Integer reviewRegister(ReviewDto reviewDto, List<MultipartFile> fileList) throws Exception {
 		InteriorReview review = reviewDto.toEntity();
 		interiorReviewRepository.save(review);
+		if(fileList!=null && fileList.size()>0) {
+			for(MultipartFile file : fileList) {
+				InteriorReviewImage reImage = new InteriorReviewImage();
+				reImage.setDierctory(uploadPath);
+				reImage.setName(file.getOriginalFilename());
+				reImage.setContentType(file.getContentType());
+				reImage.setSize(file.getSize());
+				reImage.setInteriorReview(review);
+				interiorReviewImageRepository.save(reImage);
+				
+				File upFile = new File(uploadPath, reImage.getInteriorReviewImageNum()+"");
+				file.transferTo(upFile);
+			}
+		}
 		return review.getReviewNum();
 	}
 
@@ -164,11 +188,11 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public List<InteriorSample> sampleList(String date, String type, String style, Integer size, String location)
+	public List<SampleDto> sampleList(String date, String type, String style, Integer size, String location)
 			throws Exception {
-		List<InteriorSample> sampleDtoList = null;
+		List<SampleDto> sampleDtoList = null;
 		Long allCnt = 0L;
-		sampleDtoList = interiorDslRepository.sampleListByFilter(date, type, style, size, location);
+		sampleDtoList = interiorDslRepository.sampleListByFilter(date, type, style, size, location).stream().map(s->s.toDto()).collect(Collectors.toList());
 		allCnt = interiorDslRepository.sampleCountByFilter(date, type, style, size, location);
 		return sampleDtoList;
 	}
