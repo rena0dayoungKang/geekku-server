@@ -21,12 +21,15 @@ public class CompanyDto {
 	private String phone;
 	private String email;
 	
+	private byte[] profileImage;
+	private String profileImageStr;
+	
 	private String companyNumber;
 	private String ceoName;
 	private String companyName;
 	private String companyAddress;
-	private byte[] profileImage;
-	private byte[] companyCertificationImage;
+	private Integer certificationImageNum;
+	private String certificationImagePath;
 	
 	//부동산일경우
 	private String estateNumber; 
@@ -49,7 +52,6 @@ public class CompanyDto {
 								.ceoName(ceoName)
 								.companyName(companyName)
 								.companyAddress(companyAddress)
-								.companyCertificationImage(companyCertificationImage)
 								.estateNumber(estateNumber)
 								.build();
 		return company;

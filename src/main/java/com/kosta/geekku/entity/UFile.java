@@ -39,9 +39,10 @@ public class UFile {
 	@Column
 	@CreationTimestamp
 	private Date uploadDate;
+	private String username;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "username")
+	@JoinColumn(name = "companyId")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Company company;
 }
