@@ -27,7 +27,7 @@ public class OnestopAnswerDto {
 	private String companyPhone;
 	private String companyAddress;
 	private Integer onestopNum;
-//	private UUID userId;
+	private UUID userId;
 	private String title;
 
 	public OnestopAnswer toEntity() {

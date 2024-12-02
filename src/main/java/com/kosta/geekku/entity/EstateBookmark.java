@@ -25,7 +25,7 @@ public class EstateBookmark {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer bookmarkEstateNum;
-	@Column
+	@Column(unique = false)
 	private UUID userId;
 	@Column
 	private Integer estateNum;
