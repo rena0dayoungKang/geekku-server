@@ -287,6 +287,11 @@ public class InteriorSeviceImpl implements InteriorService {
 				.orElseThrow(() -> new Exception("인테리어 후기 글번호 오류"));
 
 		review.setContent(reviewDto.getContent());
+		review.setSize(reviewDto.getSize());
+		review.setLocation(reviewDto.getLocation());
+		review.setStyle(reviewDto.getStyle());
+		review.setType(reviewDto.getType());
+		
 		interiorReviewRepository.save(review);
 		
 		// 기존 이미지파일 삭제하는 경우
@@ -384,6 +389,12 @@ public class InteriorSeviceImpl implements InteriorService {
 		InteriorRequest InteriorRequest = interiorRequestRepository.findById(requestNum)
 				.orElseThrow(() -> new Exception("인테리어 문의 글번호 오류"));
 		interiorRequestRepository.deleteById(requestNum);
+	}
+
+	@Override
+	public ReviewDto getReview(Integer reviewNum) throws Exception {
+		InteriorReview review = interiorReviewRepository.findById(reviewNum).orElseThrow(() -> new Exception("인테리어 후기 글번호 오류"));
+		return review.toDto();
 	}
 
 }

@@ -62,5 +62,7 @@ public interface InteriorService {
 	List<InteriorRequestDto> interiorRequestList(PageInfo pageInfo, String companyId) throws Exception;
 
 	List<SampleDto> interiorSampleList(PageInfo pageInfo, String companyId) throws Exception;
+	
+	ReviewDto getReview(Integer reviewNum) throws Exception;
 
 }

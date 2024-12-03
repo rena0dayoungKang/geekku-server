@@ -139,6 +139,16 @@ public class InteriorController {
 			e.printStackTrace();
 		}
 	}
+	
+	@GetMapping("/user/interiorReview/{reviewNum}")
+	public ResponseEntity<ReviewDto> interiorReviewRegister(@PathVariable Integer reviewNum) {
+		try {
+			ReviewDto reviewDto = interiorService.getReview(reviewNum);
+			return new ResponseEntity<ReviewDto>(reviewDto, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<ReviewDto>(HttpStatus.BAD_REQUEST);
+		}
+	}
 
 	@GetMapping("/sampleDetail")
 	public ResponseEntity<Map<String, Object>> sampleDetail(Integer num) {
