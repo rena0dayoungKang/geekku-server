@@ -38,13 +38,13 @@ public class InteriorRequest {
 	@JoinColumn(name = "interiorNum")
 	private Interior interior;
 
-	private Integer period; // 희망시공일정 1.(2주~1달) 2. 3. 4. 5. (상담이후결정)
-	private Integer type;
-	private Integer status; // 인테리어 공간상황
-	private Integer size;
+	private String period; // 희망시공일정 1.(2주~1달) 2. 3. 4. 5. (상담이후결정)
+	private String type;
+	private String status; // 인테리어 공간상황
+	private String size;
 	private String name;		//integer 형식으로 저장 후, 프론트에서 integer에 해당하는 값 문자열출력
 	private String phone;
-	private Integer allowTime;
+	private String allowTime;
 	private String content;
 	@CreationTimestamp
 	private Timestamp createdAt;

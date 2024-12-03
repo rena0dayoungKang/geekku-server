@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -54,6 +55,7 @@ public class InteriorReview {
 	@OneToMany(mappedBy = "interiorReview", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<InteriorReviewImage> imagesList = new ArrayList<>();
 	
+	@Column(length = 500)
 	private String content;
 	@CreationTimestamp
 	private Timestamp createdAt;

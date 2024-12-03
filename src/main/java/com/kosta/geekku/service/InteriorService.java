@@ -34,7 +34,7 @@ public interface InteriorService {
 
 	SampleDto sampleDetail(Integer num) throws Exception;
 
-	Integer interiorRequest(InteriorRequestDto requestDto) throws Exception;
+	Integer interiorRequest(String userId ,InteriorRequestDto requestDto) throws Exception;
 
 	InteriorRequestDto requestDetail(Integer num) throws Exception;
 
@@ -44,7 +44,7 @@ public interface InteriorService {
 
 	// 개인 마이페이지 - 인테리어 문의 내역
 	Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, UUID userId) throws Exception;
-	
+
 	// 개인 마이페이지 - 인테리어 문의 내역 삭제
 	void deleteRequest(Integer requestNum) throws Exception;
 

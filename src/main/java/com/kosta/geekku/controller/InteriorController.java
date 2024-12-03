@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -102,15 +103,15 @@ public class InteriorController {
 		}
 	}
 
-
 	@PostMapping("/user/interiorReviewWrite")
-	public ResponseEntity<String> interiorReviewRegister(Authentication authentication,ReviewDto reviewDto,
-			@RequestParam(name="file", required = false) MultipartFile[] files) {
+	public ResponseEntity<String> interiorReviewRegister(Authentication authentication, ReviewDto reviewDto,
+			@RequestParam(name = "file", required = false) MultipartFile[] files) {
 		System.out.println(reviewDto);
 		System.out.println(files);
 		try {
-			String id = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();	//재확인
-			Integer reviewNum = interiorService.reviewRegister(id ,reviewDto, files==null? null : Arrays.asList(files));
+			String id = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString(); // 재확인
+			Integer reviewNum = interiorService.reviewRegister(id, reviewDto,
+					files == null ? null : Arrays.asList(files));
 			System.out.println(reviewNum);
 			return new ResponseEntity<String>(String.valueOf(reviewNum), HttpStatus.OK);
 		} catch (Exception e) {
@@ -118,12 +119,14 @@ public class InteriorController {
 		}
 	}
 
-	@GetMapping("/sampleDetail")
-	public ResponseEntity<Map<String, Object>> sampleDetail(Integer num) {
+	@PostMapping("/sampleDetail")
+	public ResponseEntity<Map<String, Object>> sampleDetail(@RequestBody Map<String,String> param) {
 		try {
+			System.out.println("good");
+			System.out.println(param);
 			Map<String, Object> res = new HashMap<>();
-			SampleDto sampleDto = interiorService.sampleDetail(num);
-			res.put("sample", sampleDto);
+			SampleDto sampleDto = interiorService.sampleDetail(Integer.parseInt(param.get("num")));
+			res.put("sampleInfo", sampleDto);
 			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -131,25 +134,32 @@ public class InteriorController {
 		}
 	}
 
-	@PostMapping("/interiorRequest")
-	public ResponseEntity<String> interiorRequest(InteriorRequestDto requestDto) {
+	@PostMapping("/user/interiorRequest")
+	public ResponseEntity<String> interiorRequest(Authentication authentication,@RequestBody InteriorRequestDto requestDto) {
 		try {
-			Integer requestNum = interiorService.interiorRequest(requestDto);
+			System.out.println(requestDto);
+			String id = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString(); // 재확인
+			System.out.println(id);
+			Integer requestNum = interiorService.interiorRequest(id,requestDto);
+			System.out.println(requestNum);
 			return new ResponseEntity<String>(String.valueOf(requestNum), HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
-	@GetMapping("/requestDetail")
-	public ResponseEntity<Map<String, Object>> requestDetail(Integer num) {
+	@PostMapping("/requestDetail")
+	public ResponseEntity<Map<String, Object>> requestDetail(@RequestBody Map<String, String> param) {
 		try {
+			System.out.println("test");
+			System.out.println(param);
 			Map<String, Object> res = new HashMap<>();
-			InteriorRequestDto requestDto = interiorService.requestDetail(num);
-
-			res.put("requestDetail", requestDto);
+			InteriorRequestDto requestDto = interiorService.requestDetail(Integer.parseInt(param.get("num")));
+			res.put("requestInfo", requestDto);
 			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -181,8 +191,6 @@ public class InteriorController {
 		}
 	}
 
-
-
 //	// 개인 마이페이지 - 방꾸 신청내역 리스트
 //	@GetMapping("/mypageUserInteriorRequestList")
 //	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(
@@ -193,8 +201,6 @@ public class InteriorController {
 //			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestListForUserMypage(page, size,
 //					userId);
 //		} 
-
-	
 
 	// 개인 마이페이지 - 1:1 인테리어 문의내역 리스트
 	@GetMapping("/user/mypageUserInteriorRequestList")
@@ -212,7 +218,7 @@ public class InteriorController {
 			return new ResponseEntity<Page<InteriorRequestDto>>(HttpStatus.OK);
 		}
 	}
-	
+
 	// 개인 마이페이지 - 1:1 인테리어 문의내역 삭제
 	@PostMapping("/user/mypageUserRequestInteriorDelete/{requestNum}")
 	public ResponseEntity<String> interiorRequestListForUserMypage(@PathVariable Integer requestNum) {

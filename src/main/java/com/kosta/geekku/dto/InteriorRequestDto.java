@@ -20,12 +20,13 @@ public class InteriorRequestDto {
 	private Integer requestNum;
 	private UUID userId;
 	private Integer interiorNum;
-	private Integer period; 
-	private Integer type;
-	private Integer status; 
-	private Integer size;
+	private String period; 
+	private String type;
+	private String status;
+	private String phone;
+	private String size;
 	private String name;	
-	private Integer allowTime;
+	private String allowTime;
 	private String content;
 	private Timestamp createdAt;
 	private UUID companyId;
@@ -38,6 +39,7 @@ public class InteriorRequestDto {
 				.period(period)
 				.type(type)
 				.status(status)
+				.phone(phone)
 				.size(size)
 				.name(name)
 				.allowTime(allowTime)
