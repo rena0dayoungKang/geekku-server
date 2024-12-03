@@ -32,19 +32,17 @@ public class NaverUserInfo implements OAuth2UserInfo {
 
 	@Override
 	public String getUsername() {
-		return (String)attributes.get("name");
+		return (String)attributes.get("id");
 	}
 
 	@Override
 	public String getNickname() {
-		// TODO Auto-generated method stub
-		return null;
+		return (String)attributes.get("nickname");
 	}
 
 	@Override
 	public String getProfileImage() {
-		// TODO Auto-generated method stub
-		return null;
+		return (String)attributes.get("profile_image");
 	}
 
 }

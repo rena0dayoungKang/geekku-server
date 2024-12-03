@@ -63,6 +63,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 				user.setProfileImage(profileImageBytes);
 			}
 			userRepository.save(user);
+			System.out.println(user);
 		} else {
 			String profileImageUrl = oAuth2UserInfo.getProfileImage();
 			byte[] profileImageBytes = null;
@@ -81,6 +82,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 								.profileImage(profileImageBytes)
 								.build();
 			userRepository.save(nUser);
+			System.out.println(user);
 		}
 //		return new PrincipalDetails(user, oAuth2User.getAttributes());
 		return new PrincipalDetails(oAuth2UserInfo);
