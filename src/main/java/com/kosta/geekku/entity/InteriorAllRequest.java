@@ -66,7 +66,7 @@ public class InteriorAllRequest {
 
 	public InteriorAllDto toDto() {
 		InteriorAllDto interiorAllDto = InteriorAllDto.builder().requestAllNum(requestAllNum).user(user).name(name)
-				.phone(phone).type(interiorType).size(size).address1(address1).address2(address2).money(money)
+				.phone(phone).type(type).size(size).address1(address1).address2(address2).money(money)
 				.workType(workType).interiorType(interiorType).allowPhone(allowPhone).title(title)
 				.addContent(addContent).viewCount(viewCount).createAt(createAt).build();
 		return interiorAllDto;

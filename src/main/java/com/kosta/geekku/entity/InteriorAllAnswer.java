@@ -3,6 +3,7 @@ package com.kosta.geekku.entity;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -44,21 +45,16 @@ public class InteriorAllAnswer {
 	// private UUID companyId; //join column Company - companyId
 
 	private String content;
+	@Column(length = 40)
+	private String title;
 	@CreationTimestamp
 	private Timestamp createdAt;
 
 	public InteriorAnswerDto toDto() {
-		InteriorAnswerDto interiorAnswerDto = InteriorAnswerDto.builder()
-				.answerAllNum(answerAllNum)
-				.content(content)
-				.createdAt(createdAt)
-				.requestAllNum(interiorAllRequest.getRequestAllNum())
+		InteriorAnswerDto interiorAnswerDto = InteriorAnswerDto.builder().answerAllNum(answerAllNum).title(title).content(content)
+				.createdAt(createdAt).requestAllNum(interiorAllRequest.getRequestAllNum())
 				.companyId(company.getCompanyId()).companyName(company.getCompanyName())
-				.companyPhone(company.getPhone())
-				.userId(interiorAllRequest.getUser().getUserId())
-				.username(interiorAllRequest.getUser().getUsername())
-				.name(interiorAllRequest.getUser().getName())
-				.build();
+				.companyPhone(company.getPhone()).build();
 
 		if (company.getProfileImage() != null) {
 			try {

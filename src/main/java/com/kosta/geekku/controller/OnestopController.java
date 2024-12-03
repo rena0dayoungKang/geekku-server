@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -137,7 +138,7 @@ public class OnestopController {
 	@GetMapping("/onestopAnswerList/{onestopNum}")
 	public ResponseEntity<Map<String, Object>> onestopAnswerList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam("onestopNum") Integer onestopNum) {
+			@PathVariable Integer onestopNum) {
 		try {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
@@ -155,15 +156,16 @@ public class OnestopController {
 	}
 
 	@PostMapping("/company/onestopAnswerDelete")
-	public ResponseEntity<String> interiorAnswerDelete(@RequestParam("onestopAnswerNum") Integer onestopAnswerNum,
-			@RequestParam("onestopNum") Integer onestopNum) {
+	public ResponseEntity<String> onestopAnswerDelete(@RequestBody Map<String, Object> params) {
 		try {
+			Integer onestopAnswerNum = (Integer) params.get("onestopAnswerNum");
+			Integer onestopNum = (Integer) params.get("onestopNum");
 			onestopService.onestopAnswerDelete(onestopAnswerNum, onestopNum);
 			System.out.println(onestopAnswerNum);
 			return new ResponseEntity<String>("true", HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<String>("吏묎씀�떟蹂� �궘�젣 �삤瑜�", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("한번에꾸미기 답변 삭제 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
 }
