@@ -28,7 +28,7 @@ public interface InteriorService {
 
 	InteriorDto interiorCompanyDetail(Integer num) throws Exception;
 
-	Integer sampleRegister(SampleDto sampleDto) throws Exception;
+	Integer sampleRegister(SampleDto sampleDto, MultipartFile coverImage, UUID companyId) throws Exception;
 
 	Integer reviewRegister(String userId, ReviewDto reviewDto, List<MultipartFile> fileList) throws Exception;
 
@@ -52,7 +52,7 @@ public interface InteriorService {
 	Page<ReviewDto> reviewListForUserMypage(int page, int size, UUID userId) throws Exception;
 
 	// 개인 마이페이지 - 인테리어 후기 수정
-	void updateReview(ReviewDto reviewDto, Integer num) throws Exception;
+	Integer updateReview(ReviewDto reviewDto, Integer num,  List<Integer> delFileNum, List<MultipartFile> fileList) throws Exception;
 
 	// 개인 마이페이지 - 인테리어 후기 삭제
 	void deleteReview(Integer num) throws Exception;
@@ -62,5 +62,7 @@ public interface InteriorService {
 	List<InteriorRequestDto> interiorRequestList(PageInfo pageInfo, String companyId) throws Exception;
 
 	List<SampleDto> interiorSampleList(PageInfo pageInfo, String companyId) throws Exception;
+	
+	ReviewDto getReview(Integer reviewNum) throws Exception;
 
 }
