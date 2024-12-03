@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -97,10 +98,13 @@ public class InteriorController {
 		}
 	}
 
-	@PostMapping("/interiorSampleRegister")
-	public ResponseEntity<String> interiorSampleRegister(SampleDto sampleDto) {
+	@PostMapping("/company/interiorSampleRegister")
+	public ResponseEntity<String> interiorSampleRegister(Authentication authentication, SampleDto sampleDto, 
+			@RequestPart(name = "coverImg", required = false) MultipartFile coverImage) {
 		try {
-			Integer sampleNum = interiorService.sampleRegister(sampleDto);
+			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId();
+			Integer sampleNum = interiorService.sampleRegister(sampleDto, coverImage, companyId);
+
 			return new ResponseEntity<String>(String.valueOf(sampleNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -109,7 +113,7 @@ public class InteriorController {
 	}
 
 	@PostMapping("/user/interiorReviewWrite")
-	public ResponseEntity<String> interiorReviewRegister(Authentication authentication,ReviewDto reviewDto,
+	public ResponseEntity<String> interiorReviewRegister(Authentication authentication, ReviewDto reviewDto,
 			@RequestParam(name="file", required = false) MultipartFile[] files) {
 		System.out.println(reviewDto);
 		System.out.println(files);
