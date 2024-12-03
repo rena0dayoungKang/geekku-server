@@ -62,8 +62,19 @@ public class User {
 	private byte[] socialProfileImage; // 소셜로그인 프로필이미지
 
 	public UserDto toDto() {
-		UserDto userDto = UserDto.builder().userId(userId.toString()).username(username).name(name).phone(phone)
-				.email(email).nickname(nickname).password(password).type(type).role(role).createdAt(createdAt).build();
+		UserDto userDto = UserDto.builder()
+								 .userId(userId.toString())
+								 .username(username)
+								 .name(name)
+								 .phone(phone)
+								 .email(email)
+								 .nickname(nickname)
+								 .password(password)
+								 .type(type)
+								 .role(role)
+								 .createdAt(createdAt)
+								 .provider(provider)
+								 .build();
 
 		if (profileImage != null) {
 			try {

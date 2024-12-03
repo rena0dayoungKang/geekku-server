@@ -1,21 +1,28 @@
 package com.kosta.geekku.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -92,10 +99,34 @@ public class InteriorController {
 		}
 	}
 
-	@PostMapping("/interiorSampleRegister")
-	public ResponseEntity<String> interiorSampleRegister(SampleDto sampleDto) {
+	// 인테리어 업체 정보 수정
+	@PostMapping("/company/interiorModify")
+	public ResponseEntity<Integer> interiorModify(Authentication authentication, InteriorDto interiorDto,
+			@RequestParam(name = "file", required = false) MultipartFile file) {
+		System.out.println(interiorDto);
 		try {
-			Integer sampleNum = interiorService.sampleRegister(sampleDto);
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서 UUID를 추출
+
+			System.out.println(companyId);
+
+			Map<String, Object> res = interiorService.updateInteriorCompany(companyId, interiorDto, file);
+			System.out.println(file);
+			return new ResponseEntity<Integer>(interiorDto.getInteriorNum(), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Integer>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+
+	@PostMapping("/company/interiorSampleRegister")
+	public ResponseEntity<String> interiorSampleRegister(Authentication authentication, SampleDto sampleDto, 
+			@RequestPart(name = "coverImg", required = false) MultipartFile coverImage) {
+
+		try {
+			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId();
+			Integer sampleNum = interiorService.sampleRegister(sampleDto, coverImage, companyId);
+
 			return new ResponseEntity<String>(String.valueOf(sampleNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -116,6 +147,33 @@ public class InteriorController {
 			return new ResponseEntity<String>(String.valueOf(reviewNum), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/reviewImage/{num}")
+	public void image(@PathVariable String num, HttpServletResponse response) {
+		try {
+			// 파일이 존재하지 않는 경우 처리
+			File file = new File(uploadPath, num);
+			if (!file.exists()) {
+				System.out.println("파일 존재하지 않음");
+				return;
+			}
+			InputStream ins = new FileInputStream(file);
+			FileCopyUtils.copy(ins, response.getOutputStream());
+			ins.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@GetMapping("/user/interiorReview/{reviewNum}")
+	public ResponseEntity<ReviewDto> interiorReviewRegister(@PathVariable Integer reviewNum) {
+		try {
+			ReviewDto reviewDto = interiorService.getReview(reviewNum);
+			return new ResponseEntity<ReviewDto>(reviewDto, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<ReviewDto>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -191,17 +249,6 @@ public class InteriorController {
 		}
 	}
 
-//	// 개인 마이페이지 - 방꾸 신청내역 리스트
-//	@GetMapping("/mypageUserInteriorRequestList")
-//	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(
-//			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
-//			@RequestParam(required = false, defaultValue = "10", value = "size") int size,
-//			@RequestParam("userId") String userId) {
-//		try {
-//			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestListForUserMypage(page, size,
-//					userId);
-//		} 
-
 	// 개인 마이페이지 - 1:1 인테리어 문의내역 리스트
 	@GetMapping("/user/mypageUserInteriorRequestList")
 	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(Authentication authentication,
@@ -251,9 +298,13 @@ public class InteriorController {
 	// 개인 마이페이지 - 인테리어 업체 후기 수정
 	@PostMapping("/user/mypageUserReviewUpdate/{num}")
 	public ResponseEntity<String> mypageUserReviewUpdate(Authentication authentication, ReviewDto reviewDto,
-			@PathVariable Integer num) {
+			@PathVariable Integer num, 
+			@RequestParam(name="delFile", required=false) Integer[] delFileNum,
+			@RequestParam(name="file", required=false) MultipartFile[] fileList) {
 		try {
-			interiorService.updateReview(reviewDto, num);
+			interiorService.updateReview(reviewDto, num, 
+					delFileNum == null ? null : Arrays.asList(delFileNum), 
+					fileList == null ? null : Arrays.asList(fileList));
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -3,17 +3,21 @@ package com.kosta.geekku.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kosta.geekku.config.auth.PrincipalDetails;
+import com.kosta.geekku.dto.HouseDto;
 import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequestDto;
@@ -34,18 +38,19 @@ public class InteriorUserController {
 	private final InteriorService interiorService;
 	private final InteriorAllRequestService interiorAllRequestService;
 	private final OnestopService onestopService;
-	private final HttpSession session;
 
-	@GetMapping("/interiorCompanyDetail/{num}")
-	public ResponseEntity<Map<String, Object>> onestopDetail(@PathVariable Integer num) {
+	@GetMapping("/company/interiorCompanyDetail")
+	public ResponseEntity<Map<String, Object>> interiorDetail(Authentication authentication) {
 		try {
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서
+			System.out.println("controller" + companyId);
+			// UUID를
+			// 추출
+
+			InteriorDto interiorDto = interiorService.interiorCompanyDetail(companyId);
 			Map<String, Object> res = new HashMap<>();
-			System.out.println("controller" + num);
-			InteriorDto interiorDto = interiorService.interiorCompanyDetail(num);
-			System.out.println(num);
-			// boolean heart = onestopService.checkHeart(boardDto.getWriter(), num) != null;
 			res.put("interior", interiorDto);
-			// res.put("heart", heart);
+			System.out.println("res: " + res);
 
 			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
 		} catch (Exception e) {
@@ -106,7 +111,7 @@ public class InteriorUserController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	// 인테리어업자 내가 작성한 인테리어 시공사례 모아보기
 	@GetMapping("/myInteriorSampleList")
 	public ResponseEntity<Map<String, Object>> mypageEstateList(

@@ -3,16 +3,16 @@ package com.kosta.geekku.config.oauth;
 import java.util.Map;
 
 public class GoogleUserInfo implements OAuth2UserInfo {
-	
+
 	private Map<String, Object> attributes;
-	
+
 	public GoogleUserInfo(Map<String, Object> attributes) {
 		this.attributes = attributes;
 	}
 
 	@Override
 	public String getProviderId() {
-		return String.valueOf(attributes.get("id"));
+		return String.valueOf(attributes.get("sub"));
 	}
 
 	@Override
@@ -22,30 +22,27 @@ public class GoogleUserInfo implements OAuth2UserInfo {
 
 	@Override
 	public String getEmail() {
-		Map<String, Object> google_account = (Map<String, Object>)attributes.get("google_account");
-		return (String)google_account.get("profile");
+		return (String) attributes.get("email");
 	}
 
 	@Override
 	public String getName() {
-		return (String)attributes.get("profile");
+		return (String) attributes.get("name");
 	}
 
 	@Override
 	public String getUsername() {
-		return (String)attributes.get("profile");
+		return String.valueOf(attributes.get("sub"));
 	}
 
 	@Override
 	public String getNickname() {
-		// TODO Auto-generated method stub
-		return null;
+		return (String) attributes.get("given_name");
 	}
 
 	@Override
 	public String getProfileImage() {
-		// TODO Auto-generated method stub
-		return null;
+		return (String) attributes.get("picture");
 	}
 
 }

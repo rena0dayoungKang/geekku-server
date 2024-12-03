@@ -13,7 +13,7 @@ import com.kosta.geekku.util.PageInfo;
 
 public interface InteriorAllRequestService {
 
-	Integer interiorAllWrite(InteriorAllDto interiorAllDto) throws Exception;
+	Integer interiorAllWrite(InteriorAllDto interiorAllDto,  UUID userId) throws Exception;
 
 	InteriorAllDto interiorDetail(Integer interiorNum) throws Exception;
 
