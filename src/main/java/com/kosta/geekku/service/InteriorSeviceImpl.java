@@ -1,6 +1,7 @@
 package com.kosta.geekku.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequestDto;
 import com.kosta.geekku.dto.ReviewDto;
 import com.kosta.geekku.dto.SampleDto;
+import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.Interior;
 import com.kosta.geekku.entity.InteriorBookmark;
 import com.kosta.geekku.entity.InteriorRequest;
@@ -29,6 +31,7 @@ import com.kosta.geekku.entity.InteriorReview;
 import com.kosta.geekku.entity.InteriorReviewImage;
 import com.kosta.geekku.entity.InteriorSample;
 import com.kosta.geekku.entity.User;
+import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.InteriorBookmarkRepository;
 import com.kosta.geekku.repository.InteriorDslRepository;
 import com.kosta.geekku.repository.InteriorRepository;
@@ -57,7 +60,8 @@ public class InteriorSeviceImpl implements InteriorService {
 	private final InteriorRequestRepository interiorRequestRepository;
 	private final InteriorRequestDslRepository interiorRequestDslRepository;
 	private final InteriorReviewImageRepository interiorReviewImageRepository;
-
+	private final CompanyRepository companyRepository;
+	
 	@Value("${upload.path}")
 	private String uploadPath;
 
@@ -115,6 +119,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		}
 	}
 
+	@Transactional
 	@Override
 	public Integer interiorRegister(InteriorDto interiorDto, MultipartFile cover) throws Exception {
 		Interior interior = interiorDto.toEntity();
@@ -146,10 +151,43 @@ public class InteriorSeviceImpl implements InteriorService {
 		return sample.getSampleNum();
 	}
 
+	@Transactional
 	@Override
-	public Integer reviewRegister(ReviewDto reviewDto, List<MultipartFile> fileList) throws Exception {
+	public Integer reviewRegister(String userId ,ReviewDto reviewDto, List<MultipartFile> fileList) throws Exception {
+
+
 		InteriorReview review = reviewDto.toEntity();
+		
+		Company company = companyRepository.findByCompanyNameContaining(reviewDto.getCompanyName());	//리뷰 등록할 때 회사이름 일부만 작성했을수도 있기때문에 포함된 회사 조회
+		
+		UUID findCompany = company.getCompanyId();
+		
+		System.out.println(findCompany);
+		
+		Interior findInteriorNum = interiorRepository.findByCompany_companyId(findCompany); 
+		
+		Integer num = findInteriorNum.getInteriorNum();
+		
+		System.out.println(num);
+		
+		review.setInterior(findInteriorNum);
+		
+//		Interior interior = interiorRepository.findByCompany_companyNameContaining(findCompany);
+//		
+//		Integer findInteriorNum = interior.getInteriorNum();
+		
+		
+//		System.out.println(findCompany);
+		
+//		Integer collectComNum = interior.getInteriorNum();
+		
+		
+		User user = User.builder().userId(UUID.fromString(userId)).build();
+		
+		review.setUser(user);
 		interiorReviewRepository.save(review);
+		
+		
 		if(fileList!=null && fileList.size()>0) {
 			for(MultipartFile file : fileList) {
 				InteriorReviewImage reImage = new InteriorReviewImage();
@@ -158,12 +196,19 @@ public class InteriorSeviceImpl implements InteriorService {
 				reImage.setContentType(file.getContentType());
 				reImage.setSize(file.getSize());
 				reImage.setInteriorReview(review);
+				
+				System.out.println(reImage);
 				interiorReviewImageRepository.save(reImage);
 				
 				File upFile = new File(uploadPath, reImage.getInteriorReviewImageNum()+"");
+				try {
 				file.transferTo(upFile);
+				} catch(IOException e) {
+					throw new Exception("파일 업로드 실패:"+e.getMessage(),e);
+				}
 			}
 		}
+		System.out.println(review.getReviewNum());
 		return review.getReviewNum();
 	}
 

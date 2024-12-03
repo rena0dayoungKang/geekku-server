@@ -3,7 +3,6 @@ package com.kosta.geekku.entity;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,7 +34,7 @@ public class Interior {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer interiorNum;
 
-	@OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "companyId")
 	private Company company;
 	// private UUID companyId; //join column company - companyId

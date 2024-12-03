@@ -30,7 +30,7 @@ public interface InteriorService {
 
 	Integer sampleRegister(SampleDto sampleDto) throws Exception;
 
-	Integer reviewRegister(ReviewDto reviewDto, List<MultipartFile> fileList) throws Exception;
+	Integer reviewRegister(String userId, ReviewDto reviewDto, List<MultipartFile> fileList) throws Exception;
 
 	SampleDto sampleDetail(Integer num) throws Exception;
 
