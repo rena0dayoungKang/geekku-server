@@ -225,6 +225,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		
 		User user = User.builder().userId(UUID.fromString(userId)).build();
 		request.setUser(user);
+		
 		interiorRequestRepository.save(request);
 		return request.getRequestNum();
 	}
