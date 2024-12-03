@@ -212,6 +212,18 @@ public class InteriorController {
 			return new ResponseEntity<Page<InteriorRequestDto>>(HttpStatus.OK);
 		}
 	}
+	
+	// 개인 마이페이지 - 1:1 인테리어 문의내역 삭제
+	@PostMapping("/user/mypageUserRequestInteriorDelete/{requestNum}")
+	public ResponseEntity<String> interiorRequestListForUserMypage(@PathVariable Integer requestNum) {
+		try {
+			interiorService.deleteRequest(requestNum);
+			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>(HttpStatus.OK);
+		}
+	}
 
 	// 개인 마이페이지 - 인테리어 업체 후기 리스트
 	@GetMapping("/user/mypageUserReviewList")
