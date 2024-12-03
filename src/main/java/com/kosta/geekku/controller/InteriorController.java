@@ -130,10 +130,11 @@ public class InteriorController {
 		}
 	}
 
-	@PostMapping("/interiorRequest")
-	public ResponseEntity<String> interiorRequest(InteriorRequestDto requestDto) {
+	@PostMapping("/user/interiorRequest")
+	public ResponseEntity<String> interiorRequest(Authentication authentication ,InteriorRequestDto requestDto) {
 		try {
-			Integer requestNum = interiorService.interiorRequest(requestDto);
+			String id = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();	//재확인s
+			Integer requestNum = interiorService.interiorRequest(id,requestDto);
 			return new ResponseEntity<String>(String.valueOf(requestNum), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);

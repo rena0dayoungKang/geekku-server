@@ -219,8 +219,12 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public Integer interiorRequest(InteriorRequestDto requestDto) throws Exception {
+	public Integer interiorRequest(String userId, InteriorRequestDto requestDto) throws Exception {
 		InteriorRequest request = requestDto.toEntity();
+		interiorRequestRepository.save(request);
+		
+		User user = User.builder().userId(UUID.fromString(userId)).build();
+		request.setUser(user);
 		interiorRequestRepository.save(request);
 		return request.getRequestNum();
 	}

@@ -34,7 +34,7 @@ public interface InteriorService {
 
 	SampleDto sampleDetail(Integer num) throws Exception;
 
-	Integer interiorRequest(InteriorRequestDto requestDto) throws Exception;
+	Integer interiorRequest(String userId ,InteriorRequestDto requestDto) throws Exception;
 
 	InteriorRequestDto requestDetail(Integer num) throws Exception;
 
