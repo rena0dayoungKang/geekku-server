@@ -109,7 +109,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	@Override
 	public List<InteriorAnswerDto> interiorAnswerList(PageInfo pageInfo, Integer requestAllNum) throws Exception {
 		InteriorAllRequest interiorAll = interiorAllRepository.findById(requestAllNum)
-				.orElseThrow(() -> new Exception("諛⑷씀 湲�踰덊샇 �삤瑜�"));
+				.orElseThrow(() -> new Exception("방꾸 글번호 오류"));
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
 
 		List<InteriorAnswerDto> interiorAnswerDtoList = interiorAllRequestDslRepository

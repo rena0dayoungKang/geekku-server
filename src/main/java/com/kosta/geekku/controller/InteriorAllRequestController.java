@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -119,7 +120,7 @@ public class InteriorAllRequestController {
 	@GetMapping("/interiorAnswerList/{requestAllNum}")
 	public ResponseEntity<Map<String, Object>> interiorAnswerList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam("requestAllNum") Integer requestAllNum) {
+			@PathVariable Integer requestAllNum) {
 		try {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
@@ -137,15 +138,29 @@ public class InteriorAllRequestController {
 	}
 
 	@PostMapping("/company/interiorAnswerDelete")
-	public ResponseEntity<String> interiorAnswerDelete(@RequestParam("answerAllNum") Integer answerAllNum,
-			@RequestParam("requestAllNum") Integer requestAllNum) {
+	public ResponseEntity<String> interiorAnswerDelete(@RequestBody Map<String, Object> params) {
 		try {
-			interiorAllService.interiorAnswerDelete(answerAllNum, requestAllNum);
-			System.out.println(answerAllNum);
-			return new ResponseEntity<String>("true", HttpStatus.OK);
+			// 안전하게 값을 추출
+			Object rawAnswerNum = params.get("requestAllAnswerNum");
+			Object rawAllNum = params.get("requestAllNum");
+
+			Integer requestAllAnswerNum = rawAnswerNum != null ? Integer.parseInt(rawAnswerNum.toString()) : null;
+			Integer requestAllNum = rawAllNum != null ? Integer.parseInt(rawAllNum.toString()) : null;
+
+			// 값 검증
+			if (requestAllAnswerNum == null || requestAllNum == null) {
+				return new ResponseEntity<>("유효하지 않은 요청 값입니다.", HttpStatus.BAD_REQUEST);
+			}
+
+			// 서비스 호출
+			interiorAllService.interiorAnswerDelete(requestAllAnswerNum, requestAllNum);
+			return new ResponseEntity<>("true", HttpStatus.OK);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			return new ResponseEntity<>("숫자 형식 오류", HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<String>("집꾸답변 삭제 오류", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("방꾸답변 삭제 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
 

@@ -65,7 +65,7 @@ public class InteriorUserController {
 	 * ResponseEntity<CompanyDto>(HttpStatus.BAD_REQUEST); } }
 	 */
 
-	// �씤�뀒由ъ뼱�뾽�옄 �궡媛� �븳 onestop �떟蹂� 由ъ뒪�듃 議고쉶
+	// 인테리어업자 내가 한 onestop 답변 리스트 조회
 	@GetMapping("/myOnestopAnswerList")
 	public ResponseEntity<Map<String, Object>> myOnestopAnswerList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
@@ -85,7 +85,7 @@ public class InteriorUserController {
 		}
 	}
 
-	// �씤�뀒由ъ뼱�뾽�옄 �궡媛� �븳 諛⑷씀�븯湲� �떟蹂� 由ъ뒪�듃 議고쉶
+	// 인테리어업자 내가 한 방꾸하기 답변 리스트 조회
 
 	@GetMapping("/myInteriorAnswerList")
 	public ResponseEntity<Map<String, Object>> myInteriorAnswerList(
@@ -106,8 +106,8 @@ public class InteriorUserController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-
-	// �씤�뀒由ъ뼱�뾽�옄 �궡媛� �옉�꽦�븳 �씤�뀒由ъ뼱 �떆怨듭궗濡� 紐⑥븘蹂닿린
+	
+	// 인테리어업자 내가 작성한 인테리어 시공사례 모아보기
 	@GetMapping("/myInteriorSampleList")
 	public ResponseEntity<Map<String, Object>> mypageEstateList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
@@ -127,7 +127,7 @@ public class InteriorUserController {
 		}
 	}
 
-	// �씤�뀒由ъ뼱�뾽�옄 諛쏆� �씤�뀒由ъ뼱 由щ럭 紐⑥븘蹂닿린
+	// 인테리어업자 받은 인테리어 리뷰 모아보기
 	@GetMapping("/myInteriorReviewList")
 	public ResponseEntity<Map<String, Object>> interiorReviewList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
@@ -146,7 +146,7 @@ public class InteriorUserController {
 		}
 	}
 
-	// �씤�뀒由ъ뼱�뾽�옄 �궡媛� �옉�꽦�븳 �씤�뀒由ъ뼱 �떊泥� 紐⑥븘蹂닿린
+	// 인테리어업자 나한테 들어온 인테리어 신청 모아보기
 	@GetMapping("/myInteriorRequestList")
 	public ResponseEntity<Map<String, Object>> interiorRequestList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,

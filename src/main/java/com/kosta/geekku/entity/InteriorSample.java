@@ -49,28 +49,11 @@ public class InteriorSample {
 	@CreationTimestamp
 	private Timestamp createdAt;
 
-//	public SampleDto toDto() {
-//		SampleDto sampleDto = SampleDto.builder().sampleNum(sampleNum).interiorNum(interiorNum).type(type)
-//				.style(style).size(size).location(location).coverImage(coverImage).intro(intro).companyName(Interior.builder().company(Company.builder().companyName(content)))
-//				.content(content).createdAt(createdAt).build();
-//		return sampleDto;
-//	}
-	
 	public SampleDto toDto() {
-		SampleDto sampleDto = SampleDto.builder().sampleNum(sampleNum)
-				.interiorNum(interior.getInteriorNum())
-				.title(title)
-				.type(type)
-				.style(style)
-				.size(size)
-				.location(location)
-				.coverImage(coverImage)
-				.intro(interior.getIntro())
-				.companyName(interior.getCompany().getCompanyName())
-				.companyId(interior.getCompany().getCompanyId())
-				.content(content)
-				.createdAt(createdAt)
-				.build();
+		SampleDto sampleDto = SampleDto.builder().sampleNum(sampleNum).interiorNum(interior.getInteriorNum())
+				.title(title).type(type).style(style).size(size).location(location).coverImage(coverImage)
+				.intro(interior.getIntro()).companyName(interior.getCompany().getCompanyName())
+				.companyId(interior.getCompany().getCompanyId()).content(content).createdAt(createdAt).build();
 
 		return sampleDto;
 	}

@@ -55,7 +55,7 @@ public class OnestopAnswer {
 
 	public OnestopAnswerDto toDto() {
 		OnestopAnswerDto onestopAnswerDto = OnestopAnswerDto.builder().answerOnestopNum(answerOnestopNum)
-				.content(content).createdAt(createdAt).onestopNum(onestop.getOnestopNum())
+				.title(title).content(content).createdAt(createdAt).onestopNum(onestop.getOnestopNum())
 				.companyId(company.getCompanyId()).companyName(company.getCompanyName())
 				.companyPhone(company.getPhone()).build();
 
