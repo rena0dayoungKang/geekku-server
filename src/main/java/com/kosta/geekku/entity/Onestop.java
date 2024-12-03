@@ -1,5 +1,6 @@
 package com.kosta.geekku.entity;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import com.kosta.geekku.dto.OnestopDto;
 
 import lombok.AllArgsConstructor;
@@ -30,7 +32,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@DynamicInsert //조회수
+@DynamicInsert // 조회수
 @Entity
 public class Onestop {
 	@Id
@@ -64,16 +66,20 @@ public class Onestop {
 	private List<OnestopAnswer> onestopAnswerList = new ArrayList<>();
 
 	public OnestopDto toDto() {
-		OnestopDto onestopDto = OnestopDto.builder().onestopNum(onestopNum).user(user).type(type).address1(address1)
+		OnestopDto onestopDto = OnestopDto.builder().onestopNum(onestopNum).type(type).address1(address1)
 				.address2(address2).rentType(rentType).size(size).money(money).workType(workType)
 				.interiorType(interiorType).movePersons(movePersons).allowPhone(allowPhone).title(title)
+				.nickname(user.getNickname()).userId(user.getUserId()).userPhone(allowPhone ? user.getPhone() : null)
 				.content(content).viewCount(viewCount).createdAt(createdAt).build();
-		/*
-		 * if (user.getProfileImage() != null) { try {
-		 * onestopDto.setUserProfileImage(new
-		 * String(Base64.encodeBase64(user.getProfileImage()), "UTF-8")); } catch
-		 * (UnsupportedEncodingException e) { e.printStackTrace(); } }
-		 */
+
+		if (user.getProfileImage() != null) {
+			try {
+				onestopDto.setUserProfileImage(new String(Base64.encodeBase64(user.getProfileImage()), "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+
 		return onestopDto;
 	}
 }
