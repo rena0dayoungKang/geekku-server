@@ -96,7 +96,7 @@ public class CompanyController {
 
 	// 중개업자 쓴 글 보기(수정해야할 수도 있음)
 	@GetMapping("/estateCommunities/{companyId}") // 예시:
-													// http://localhost:8080/brokerCommunities/7e7506d5-b944-40c8-a269-c3c58d2067bb
+													// http://localhost:8080/estateCommunities/7e7506d5-b944-40c8-a269-c3c58d2067bb
 	public ResponseEntity<?> getEstateCommunities(@PathVariable String companyId) {
 		try {
 			List<Estate> estate = companyService.getEstateCommunities(companyId);

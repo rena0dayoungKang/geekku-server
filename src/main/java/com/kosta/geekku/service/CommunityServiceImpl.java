@@ -103,6 +103,7 @@ public class CommunityServiceImpl implements CommunityService {
 	            .periodEndDate(periodEndDate)     // 종료 날짜
 	            .size(size)						  // 평수
 	            .style(style)                     // 스타일
+	            .viewCount(0)  
 	            .build();
 	    community = communityRepository.save(community);
 	    System.out.println("Community saved with ID: " + community.getCommunityNum());
@@ -227,10 +228,12 @@ public class CommunityServiceImpl implements CommunityService {
 	}
 
 	@Override
-	public List<Community> getUserCommunities(String userId) throws Exception {
-		List<Community> communities = communityRepository.findAllByUser_UserId(UUID.fromString(userId));
-		return communities.stream().map(community -> Community.builder().title(community.getTitle())
-				.viewCount(community.getViewCount()).build()).collect(Collectors.toList());
+	public List<CommunityDto> getUserCommunities(String userId) throws Exception {
+	    List<Community> communities = communityRepository.findAllByUser_UserId(UUID.fromString(userId));
+
+	    return communities.stream()
+	        .map(Community::toDto) // Community 엔티티의 toDto 메서드를 사용
+	        .collect(Collectors.toList()); // 반환 타입은 List<CommunityDto>
 	}
 
 
@@ -239,4 +242,12 @@ public class CommunityServiceImpl implements CommunityService {
 		Page<Community> page = communityRepository.findAll(PageRequest.of(0, 3, Sort.by(Sort.Order.desc("viewCount"))));
         return page.getContent().stream().map(c -> c.toDto()).collect(Collectors.toList());
 	}
+	
+	@Override
+	public void increaseViewCount(Integer communityNum) {
+        Community community = communityRepository.findById(communityNum)
+                .orElseThrow(() -> new IllegalArgumentException("해당 커뮤니티 게시글이 없습니다."));
+        community.setViewCount(community.getViewCount() + 1); // 조회수 증가
+        communityRepository.save(community); // 변경된 값 저장
+    }
 }
