@@ -55,7 +55,7 @@ public class InteriorReview {
 	@OneToMany(mappedBy = "interiorReview", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<InteriorReviewImage> imagesList = new ArrayList<>();
 	
-	@Column(length = 1000)
+	@Column(length = 500)
 	private String content;
 	@CreationTimestamp
 	private Timestamp createdAt;

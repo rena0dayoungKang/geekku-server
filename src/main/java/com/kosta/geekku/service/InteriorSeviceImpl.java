@@ -239,9 +239,16 @@ public class InteriorSeviceImpl implements InteriorService {
 		return sample.toDto();
 	}
 
+	@Transactional
 	@Override
-	public Integer interiorRequest(InteriorRequestDto requestDto) throws Exception {
+	public Integer interiorRequest(String userId,InteriorRequestDto requestDto) throws Exception {
 		InteriorRequest request = requestDto.toEntity();
+		User user = User.builder().userId(UUID.fromString(userId)).build();
+		Interior interior = Interior.builder().interiorNum(1).build();	//test용 interiorNum 1 대입
+		
+		
+		request.setUser(user);
+		request.setInterior(interior);
 		interiorRequestRepository.save(request);
 		return request.getRequestNum();
 	}
