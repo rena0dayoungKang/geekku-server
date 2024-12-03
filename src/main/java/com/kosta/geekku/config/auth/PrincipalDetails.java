@@ -67,7 +67,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 		} else if (oAuth2UserInfo != null) {
 			return oAuth2UserInfo.getUsername();
 		} else if (company != null) {
-			return company.getCompanyName();
+			return company.getUsername();
 		}
 		return "username";
 	}
