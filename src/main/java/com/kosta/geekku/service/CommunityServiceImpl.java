@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -49,7 +50,6 @@ public class CommunityServiceImpl implements CommunityService {
 	    return communityRepository.findAll(pageable).map(community -> community.toDto());
 	}
 
-
 	@Override
 	public Integer createCommunity(CommunityDto communityDto) {
 		Community community = communityDto.toEntity();
@@ -59,8 +59,12 @@ public class CommunityServiceImpl implements CommunityService {
 
 	@Override
 	public CommunityDto getCommunityDetail(Integer communityNum) {
-		return communityRepository.findById(communityNum)
-				.orElseThrow(() -> new IllegalArgumentException("커뮤니티 조회에 실패했습니다.")).toDto();
+		Community community =
+		  communityRepository.findById(communityNum)
+				.orElseThrow(() -> new IllegalArgumentException("커뮤니티 조회에 실패했습니다."));
+		community.setViewCount(community.getViewCount()+1);
+		communityRepository.save(community);
+		return community.toDto();
 	}
 
 
@@ -165,7 +169,17 @@ public class CommunityServiceImpl implements CommunityService {
 		// 변경 내용 저장
 		communityRepository.save(community);
 	}
-
+	
+	@Override
+	@Transactional
+	public Boolean getCommunityBookmark(String userId, Integer communityNum) throws Exception {
+		System.out.println(userId);
+		CommunityBookmark existingBookmark = communityBookmarkRepository
+				.findByUserUserIdAndCommunityCommunityNum(UUID.fromString(userId), communityNum);
+		if(existingBookmark == null) return false;
+		return true;
+ 	}
+	
 	@Override
 	@Transactional
 	public boolean toggleCommunityBookmark(String userId, Integer communityNum) throws Exception {
@@ -250,4 +264,15 @@ public class CommunityServiceImpl implements CommunityService {
         community.setViewCount(community.getViewCount() + 1); // 조회수 증가
         communityRepository.save(community); // 변경된 값 저장
     }
+	
+	@Override
+	@Transactional
+	public void deleteCommunity(Integer communityNum) {
+	    // 1. 댓글 데이터 삭제
+	    communityCommentRepository.deleteByCommunity_CommunityNum(communityNum);
+
+	    // 2. 커뮤니티 데이터 삭제
+	    communityRepository.deleteById(communityNum);
+	}
+
 }

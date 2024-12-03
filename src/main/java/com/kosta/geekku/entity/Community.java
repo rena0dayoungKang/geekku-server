@@ -85,6 +85,7 @@ public class Community {
 	        .viewCount(viewCount)      // 조회수
 	        .username(user != null ? user.getUsername() : null) // 작성자 이름 
 	        .isOwner(isOwner)
+	        .userId(user.getUserId().toString())
 	        .build();
 	}
 
