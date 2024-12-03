@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -18,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.InteriorDto;
@@ -139,14 +139,37 @@ public class InteriorSeviceImpl implements InteriorService {
 	@Override
 	public InteriorDto interiorCompanyDetail(UUID companyId) throws Exception {
 		Interior interior = interiorRepository.findByCompany_companyId(companyId);
+
 		return interior.toDto();
 	}
 
-	public Integer sampleRegister(SampleDto sampleDto) throws Exception {
+	@Transactional
+	@Override
+	public Integer sampleRegister(SampleDto sampleDto, MultipartFile coverImage, UUID companyId) throws Exception {
 		InteriorSample sample = sampleDto.toEntity();
-		System.out.println(sample);
+		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
+		Interior interior = interiorRepository.findByCompany_companyId(companyId);
+		sample.setCompany(company);
+		sample.setInterior(interior);
+		
+        if (coverImage != null && !coverImage.isEmpty()) {
+        	// 파일 저장 경로 확인 및 디렉토리 생성
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();  // 디렉토리 생성
+            }
+            
+            String fileName = coverImage.getOriginalFilename();
+            String filePath = uploadPath + "sampleImage/" + fileName;
+                        
+            File file = new File(filePath);
+            coverImage.transferTo(file);
+            sample.setCoverImage(file.getName()); 
+            interiorSampleRepository.save(sample);
+        }
+		
 		interiorSampleRepository.save(sample);
-//		if(sampleDto.getInteriorNum() ==  )	//�궗濡� �씤�뀒由ъ뼱踰덊샇�� �옉�꽦�옄 �씤�뀒由ъ뼱踰덊샇媛� 媛숈쓣寃쎌슦留� �옉�꽦
+		
 		return sample.getSampleNum();
 	}
 
@@ -280,13 +303,44 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public void updateReview(ReviewDto reviewDto, Integer num) throws Exception {
+	public Integer updateReview(ReviewDto reviewDto, Integer num, List<Integer> delFileNum, List<MultipartFile> fileList) throws Exception {
 		InteriorReview review = interiorReviewRepository.findById(num)
 				.orElseThrow(() -> new Exception("인테리어 후기 글번호 오류"));
 
 		review.setContent(reviewDto.getContent());
-		// �씠誘몄� �닔�젙 �븘�슂�븿
+		review.setSize(reviewDto.getSize());
+		review.setLocation(reviewDto.getLocation());
+		review.setStyle(reviewDto.getStyle());
+		review.setType(reviewDto.getType());
+		
 		interiorReviewRepository.save(review);
+		
+		// 기존 이미지파일 삭제하는 경우
+		if (delFileNum != null) {			
+			for (Integer fn: delFileNum) {				
+				File oldFile = new File(uploadPath, fn + "");
+				if (oldFile != null) oldFile.delete();
+				interiorReviewImageRepository.deleteById(fn);
+			}
+		}
+				
+		// 이미지파일 추가
+		if (fileList != null && fileList.size() > 0) {
+			for (MultipartFile file: fileList) {
+				InteriorReviewImage bFile = new InteriorReviewImage();
+				bFile.setDierctory(uploadPath);
+				bFile.setName(file.getOriginalFilename());
+				bFile.setSize(file.getSize());
+				bFile.setContentType(file.getContentType());
+				bFile.setInteriorReview(review);
+				interiorReviewImageRepository.save(bFile);
+						
+				File nFile = new File(uploadPath, bFile.getInteriorReviewImageNum() + "");
+				file.transferTo(nFile);
+			}
+		}
+				
+		return review.getReviewNum();
 	}
 
 	@Override
@@ -386,6 +440,11 @@ public class InteriorSeviceImpl implements InteriorService {
 
 		interiorRepository.save(interior);
 		return new HashMap<String, Object>(interiorDto.getInteriorNum());
+
+
+	public ReviewDto getReview(Integer reviewNum) throws Exception {
+		InteriorReview review = interiorReviewRepository.findById(reviewNum).orElseThrow(() -> new Exception("인테리어 후기 글번호 오류"));
+		return review.toDto();
 
 	}
 
