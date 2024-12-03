@@ -308,4 +308,11 @@ public class InteriorSeviceImpl implements InteriorService {
 		return interiorSampleDtoList;
 	}
 
+	@Override
+	public void deleteRequest(Integer requestNum) throws Exception {
+		InteriorRequest InteriorRequest = interiorRequestRepository.findById(requestNum)
+				.orElseThrow(() -> new Exception("인테리어 문의 글번호 오류"));
+		interiorRequestRepository.deleteById(requestNum);
+	}
+
 }
