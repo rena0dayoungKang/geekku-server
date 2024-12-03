@@ -30,6 +30,7 @@ public class UserDto {
 	private String profileImageStr;
 
 	private Role role;
+	private String provider;
 	
 	public User toEntity() {		
 		User user = User.builder()
@@ -44,6 +45,7 @@ public class UserDto {
 						.status(false)
 						.type("user")
 						.role(role)
+						.provider(provider)
 						.build();
 
 		if(userId!=null) {
