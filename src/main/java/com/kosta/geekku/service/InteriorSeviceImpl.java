@@ -282,13 +282,39 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public void updateReview(ReviewDto reviewDto, Integer num) throws Exception {
+	public Integer updateReview(ReviewDto reviewDto, Integer num, List<Integer> delFileNum, List<MultipartFile> fileList) throws Exception {
 		InteriorReview review = interiorReviewRepository.findById(num)
 				.orElseThrow(() -> new Exception("인테리어 후기 글번호 오류"));
 
 		review.setContent(reviewDto.getContent());
-		// �씠誘몄� �닔�젙 �븘�슂�븿
 		interiorReviewRepository.save(review);
+		
+		// 기존 이미지파일 삭제하는 경우
+		if (delFileNum != null) {			
+			for (Integer fn: delFileNum) {				
+				File oldFile = new File(uploadPath, fn + "");
+				if (oldFile != null) oldFile.delete();
+				interiorReviewImageRepository.deleteById(fn);
+			}
+		}
+				
+		// 이미지파일 추가
+		if (fileList != null && fileList.size() > 0) {
+			for (MultipartFile file: fileList) {
+				InteriorReviewImage bFile = new InteriorReviewImage();
+				bFile.setDierctory(uploadPath);
+				bFile.setName(file.getOriginalFilename());
+				bFile.setSize(file.getSize());
+				bFile.setContentType(file.getContentType());
+				bFile.setInteriorReview(review);
+				interiorReviewImageRepository.save(bFile);
+						
+				File nFile = new File(uploadPath, bFile.getInteriorReviewImageNum() + "");
+				file.transferTo(nFile);
+			}
+		}
+				
+		return review.getReviewNum();
 	}
 
 	@Override
