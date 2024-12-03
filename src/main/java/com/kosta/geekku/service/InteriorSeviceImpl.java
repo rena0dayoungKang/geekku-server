@@ -447,6 +447,7 @@ public class InteriorSeviceImpl implements InteriorService {
 
 		interiorRepository.save(interior);
 		return new HashMap<String, Object>(interiorDto.getInteriorNum());
+	}
 
 
 	public ReviewDto getReview(Integer reviewNum) throws Exception {
