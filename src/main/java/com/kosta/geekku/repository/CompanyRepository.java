@@ -9,4 +9,7 @@ import com.kosta.geekku.entity.Company;
 
 public interface CompanyRepository extends JpaRepository<Company, UUID> {
 	Optional<Company> findByUsername(String username);
+	
+	Company findByCompanyNameContaining(String companyName);
+	
 }

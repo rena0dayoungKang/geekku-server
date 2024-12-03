@@ -45,9 +45,12 @@ public interface CommunityService {
     
     User getUserProfile(String user) throws Exception;
     
-    List<Community> getUserCommunities(String userId) throws Exception;
+    List<CommunityDto> getUserCommunities(String userId) throws Exception;
 
     // 메인화면 - 집들이 조회수 순 3개
     List<CommunityDto> getCommunityListForMain() throws Exception;
+    
+    //커뮤니티 조회수 증가
+    void increaseViewCount(Integer communityNum) throws Exception;
     
 }

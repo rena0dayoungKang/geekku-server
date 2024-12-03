@@ -35,7 +35,7 @@ public class InteriorReview {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer reviewNum;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)	//나중에 cascade 확인
 	@JoinColumn(name = "userId")
 	private User user;
 	// private UUID userId; //join column User - userId
@@ -46,7 +46,7 @@ public class InteriorReview {
 	private Integer size;
 	private String location;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)	//나중에 cascade 확인
 	@JoinColumn(name = "interiorNum")
 	private Interior interior;
 	// private UUID companyId; //join column Company -companyId
