@@ -20,6 +20,8 @@ public interface CompanyService {
 	CompanyDto login(String username, String password) throws Exception;
 
 	CompanyDto getCompany(String username) throws Exception;
+	
+	CompanyDto getCompany(UUID companyId) throws Exception;
 
 	Map<String, Object> updateCompanyInfo(UUID companyId, CompanyDto companyDto, MultipartFile file, MultipartFile certificationFile) throws Exception;
 
@@ -34,4 +36,6 @@ public interface CompanyService {
 	Page<OnestopAnswer> getOnestopAnswersByCompanyId(UUID companyId, Pageable pageable) throws Exception;
 
 	String getCompanyCertificationImagePath(Integer num) throws Exception;
+	
+	Map<String, Object> changePassword(UUID companyId, String newPassword) throws Exception;
 }

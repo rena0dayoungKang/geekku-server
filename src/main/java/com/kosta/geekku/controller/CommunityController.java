@@ -145,7 +145,7 @@ public class CommunityController {
 	}
 
 	// 커뮤니티 북마크
-	@PostMapping("/user/test7") // 예시
+	@PostMapping("/test7") // 예시
 								// http://localhost:8080/test7?userId=7e7506d5-b944-40c8-a269-c3c58d2067bb&communityNum=3
 	public ResponseEntity<String> toggleCommunityBookmark(@RequestParam String userId,
 			@RequestParam Integer communityNum) {
@@ -203,7 +203,7 @@ public class CommunityController {
 	}
 
 	// 커뮤니티 프로필 조회를 위한 개인 정보 조회(아이디 닉네임 이메일)
-	@GetMapping("/test10/{userId}") // 예시 http://localhost:8080/test10/7e7506d5-b944-40c8-a269-c3c58d2067bb
+	@GetMapping("/personProfile/{userId}") // 예시 http://localhost:8080/test10/7e7506d5-b944-40c8-a269-c3c58d2067bb
 	public ResponseEntity<?> getUserProfile(@PathVariable String userId) {
 		try {
 			User user = communityService.getUserProfile(userId);
@@ -215,16 +215,17 @@ public class CommunityController {
 	}
 
 	// 해당 유저가 작성한 커뮤니티 게시글을 가져오는 API
-	@GetMapping("/test11/{userId}") // 예시 http://localhost:8080/test11/7e7506d5-b944-40c8-a269-c3c58d2067bb
+	@GetMapping("/personCommunities/{userId}")
 	public ResponseEntity<?> getUserCommunities(@PathVariable String userId) {
-		try {
-			List<Community> communities = communityService.getUserCommunities(userId);
-			return ResponseEntity.ok(communities);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("커뮤니티 게시글을 찾을 수 없습니다.");
-		}
+	    try {
+	        List<CommunityDto> communities = communityService.getUserCommunities(userId);
+	        return ResponseEntity.ok(communities); // DTO 반환
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("커뮤니티 게시글을 찾을 수 없습니다.");
+	    }
 	}
+
 
 	// 내가 쓴 커뮤니티 글 조회
 //	@GetMapping("/test12/{userId}")
@@ -261,6 +262,16 @@ public class CommunityController {
 	    }
 	}
 
-
+	// 커뮤니티 조회수 증가
+	@PostMapping("/increaseViewCount/{communityNum}")
+    public ResponseEntity<?> increaseViewCount(@PathVariable Integer communityNum) {
+        try {
+            communityService.increaseViewCount(communityNum);
+            return ResponseEntity.ok("조회수가 증가되었습니다.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("조회수 증가 중 오류가 발생했습니다.");
+        }
+    }
 	
 }

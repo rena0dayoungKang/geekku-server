@@ -38,13 +38,15 @@ public interface InteriorService {
 
 	InteriorRequestDto requestDetail(Integer num) throws Exception;
 
-	List<SampleDto> sampleList(String date, String type, String style, Integer size, String location)
-			throws Exception;
+	List<SampleDto> sampleList(String date, String type, String style, Integer size, String location) throws Exception;
 
 	Map<String, Object> interiorDetail(Integer interiorNum) throws Exception;
 
 	// 개인 마이페이지 - 인테리어 문의 내역
 	Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, UUID userId) throws Exception;
+	
+	// 개인 마이페이지 - 인테리어 문의 내역 삭제
+	void deleteRequest(Integer requestNum) throws Exception;
 
 	// 개인 마이페이지 - 인테리어 후기 작성내역
 	Page<ReviewDto> reviewListForUserMypage(int page, int size, UUID userId) throws Exception;

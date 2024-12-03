@@ -114,7 +114,7 @@ public class FcmMessageService {
 		}			
 	}
 	
-	public Boolean sendOnstopAnswer(OnestopAnswerDto onestopAnswerDto) throws Exception {
+	public Boolean sendOnestopAnswer(OnestopAnswerDto onestopAnswerDto) throws Exception {
 		//1. 수신자 fcmToken 가져오기
 		User user = userRepository.findById(onestopAnswerDto.getUserId()).orElseThrow(()->new Exception("User 오류"));
 		String fcmToken = user.getFcmToken();

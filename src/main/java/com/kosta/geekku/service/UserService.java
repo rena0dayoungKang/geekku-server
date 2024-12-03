@@ -22,7 +22,7 @@ public interface UserService {
 
 	Map<String, Object> updateUserInfo(UUID userId, UserDto userDto, MultipartFile file) throws Exception;
 
-	void changePassword(UUID userId, String newPassword) throws Exception;
+	Map<String, Object> changePassword(UUID userId, String newPassword) throws Exception;
 
 	UserDto findIdByPhone(String phone) throws Exception;
 

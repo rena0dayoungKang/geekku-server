@@ -60,14 +60,11 @@ public class WebSecuritySconfig extends WebSecurityConfigurerAdapter {
 
 		// OAuth2 Login
 		http.oauth2Login()
-				.authorizationEndpoint()
-				.baseUri("/oauth2/authorization")
+				.authorizationEndpoint().baseUri("/oauth2/authorization")
 				.and()
-				.redirectionEndpoint()
-				.baseUri("/login/oauth2/code/*")
+				.redirectionEndpoint().baseUri("/login/oauth2/code/*")
 				.and()
-				.userInfoEndpoint()
-				.userService(principalOAuth2UserService)
+				.userInfoEndpoint().userService(principalOAuth2UserService)
 				.and()
 				.successHandler(oAuth2SuccessHandler);
 
@@ -79,8 +76,6 @@ public class WebSecuritySconfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/mypage/**").authenticated()
 //			.antMatchers("/estate/**").hasRole("COMPANY")
 //			.antMatchers("/interior/**").hasRole("COMPANY")
-				.anyRequest().permitAll()
-				.and()
-				.logout().logoutSuccessUrl("/");
+				.anyRequest().permitAll();
 	}
 }

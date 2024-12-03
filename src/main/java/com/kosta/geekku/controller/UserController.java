@@ -42,7 +42,7 @@ public class UserController {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	@PostMapping("/login") // Login.js
+	@PostMapping("/login")
 	public ResponseEntity<UserDto> login(@RequestBody Map<String, String> param) {
 		try {
 			UserDto userDto = userService.login(param.get("username"), param.get("password"));
@@ -53,7 +53,7 @@ public class UserController {
 		}
 	}
 
-	@PostMapping("/joinPerson") // JoinPerson.js
+	@PostMapping("/joinPerson")
 	public ResponseEntity<String> joinPeron(@ModelAttribute UserDto userDto) {
 		try {
 			userDto.setRole(Role.ROLE_USER);
@@ -94,7 +94,7 @@ public class UserController {
 		}
 	}
 
-	@PutMapping("/user/changePwd")
+	@PostMapping("/user/changePwd")
 	public ResponseEntity<String> changePwd(Authentication authentication, @RequestBody Map<String, String> param) {
 		try {
 			String currentPassword = param.get("currentPassword");

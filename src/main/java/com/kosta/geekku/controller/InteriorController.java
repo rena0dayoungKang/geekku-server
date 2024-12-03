@@ -79,7 +79,7 @@ public class InteriorController {
 
 	@PostMapping("/interiorRegister")
 	public ResponseEntity<String> interiorRegister(InteriorDto interiorDto,
-			@RequestParam(name="file", required = false) MultipartFile file) {
+			@RequestParam(name = "file", required = false) MultipartFile file) {
 		System.out.println(interiorDto);
 		try {
 			Integer interiorNum = interiorService.interiorRegister(interiorDto, file);
@@ -101,6 +101,7 @@ public class InteriorController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
+
 
 	@PostMapping("/user/interiorReviewWrite")
 	public ResponseEntity<String> interiorReviewRegister(Authentication authentication,ReviewDto reviewDto,
@@ -182,6 +183,7 @@ public class InteriorController {
 	}
 
 
+
 //	// 개인 마이페이지 - 방꾸 신청내역 리스트
 //	@GetMapping("/mypageUserInteriorRequestList")
 //	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(
@@ -194,20 +196,33 @@ public class InteriorController {
 //		} 
 
 	
+
 	// 개인 마이페이지 - 1:1 인테리어 문의내역 리스트
 	@GetMapping("/user/mypageUserInteriorRequestList")
-	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(
-			Authentication authentication,
-			@RequestParam(required = false, defaultValue = "1", value = "page") int page, 
+	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(Authentication authentication,
+			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
 			@RequestParam(required = false, defaultValue = "10", value = "size") int size) {
 		try {
-			UUID userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId();
-			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestListForUserMypage(page, size, userId);
+			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
+			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestListForUserMypage(page, size,
+					userId);
 
 			return new ResponseEntity<Page<InteriorRequestDto>>(interiorRequestList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Page<InteriorRequestDto>>(HttpStatus.OK);
+		}
+	}
+	
+	// 개인 마이페이지 - 1:1 인테리어 문의내역 삭제
+	@PostMapping("/user/mypageUserRequestInteriorDelete/{requestNum}")
+	public ResponseEntity<String> interiorRequestListForUserMypage(@PathVariable Integer requestNum) {
+		try {
+			interiorService.deleteRequest(requestNum);
+			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>(HttpStatus.OK);
 		}
 	}
 
@@ -218,7 +233,7 @@ public class InteriorController {
 			@RequestParam(required = false, defaultValue = "10", value = "size") int size) {
 		try {
 
-			UUID userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId();
+			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
 
 			Page<ReviewDto> reviewList = interiorService.reviewListForUserMypage(page, size, userId);
 			return new ResponseEntity<Page<ReviewDto>>(reviewList, HttpStatus.OK);
@@ -230,7 +245,8 @@ public class InteriorController {
 
 	// 개인 마이페이지 - 인테리어 업체 후기 수정
 	@PostMapping("/user/mypageUserReviewUpdate/{num}")
-	public ResponseEntity<String> mypageUserReviewUpdate(Authentication authentication, ReviewDto reviewDto, @PathVariable Integer num) {
+	public ResponseEntity<String> mypageUserReviewUpdate(Authentication authentication, ReviewDto reviewDto,
+			@PathVariable Integer num) {
 		try {
 			interiorService.updateReview(reviewDto, num);
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);

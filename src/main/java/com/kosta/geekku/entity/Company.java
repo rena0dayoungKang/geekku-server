@@ -65,6 +65,7 @@ public class Company {
 		CompanyDto companyDto = CompanyDto.builder()
 										.companyId(companyId.toString())
 										.username(username)
+										.password(password)
 										.type(type)
 										.phone(phone)
 										.email(email)
