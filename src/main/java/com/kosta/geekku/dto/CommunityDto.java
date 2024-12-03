@@ -2,8 +2,9 @@ package com.kosta.geekku.dto;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-
+import java.util.UUID;
 import com.kosta.geekku.entity.Community;
+import com.kosta.geekku.entity.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +35,7 @@ public class CommunityDto {
 	private String username;
 	private String name;
 	private String nickname;
+	private String userId;
 	private boolean isOwner;
 		
 	public Community toEntity() {
@@ -50,6 +52,7 @@ public class CommunityDto {
 	            .style(this.style)
 	            .title(this.title)
 	            .content(this.content)
+	            .user(User.builder().userId(UUID.fromString(userId)).build())
 	            .build();
 	}
 }

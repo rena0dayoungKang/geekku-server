@@ -2,6 +2,7 @@ package com.kosta.geekku.service;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,8 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kosta.geekku.dto.CommunityCommentDto;
 import com.kosta.geekku.dto.CommunityDto;
 import com.kosta.geekku.dto.CommunityFilterDto;
-import com.kosta.geekku.entity.Community;
-import com.kosta.geekku.entity.CommunityComment;
 import com.kosta.geekku.entity.User;
 
 public interface CommunityService {
@@ -53,4 +52,8 @@ public interface CommunityService {
     //커뮤니티 조회수 증가
     void increaseViewCount(Integer communityNum) throws Exception;
     
+    //커뮤니티 글 삭제
+    void deleteCommunity(Integer communityNum) throws Exception;
+    Boolean getCommunityBookmark(String userId, Integer communityNum) throws Exception;
+
 }
