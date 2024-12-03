@@ -41,11 +41,15 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	private final UserRepository userRepository;
 	private final CompanyRepository companyRepository;
 
+	@Transactional
 	@Override
-	public Integer interiorAllWrite(InteriorAllDto interiorAllDto) throws Exception {
+	public Integer interiorAllWrite(InteriorAllDto interiorAllDto, UUID userId) throws Exception {
 
 		InteriorAllRequest interiorAll = interiorAllDto.toEntity();
+		User user = userRepository.findById(userId).orElseThrow(() -> new Exception("일반회원 찾기 오류"));
+		interiorAll.setUser(user);
 		interiorAllRepository.save(interiorAll);
+
 		return interiorAll.getRequestAllNum();
 	}
 

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -61,7 +62,7 @@ public class InteriorSeviceImpl implements InteriorService {
 	private final InteriorRequestDslRepository interiorRequestDslRepository;
 	private final InteriorReviewImageRepository interiorReviewImageRepository;
 	private final CompanyRepository companyRepository;
-	
+
 	@Value("${upload.path}")
 	private String uploadPath;
 
@@ -127,8 +128,8 @@ public class InteriorSeviceImpl implements InteriorService {
 //		if(company == null) {
 //			
 //		}
-		
-		if(cover!=null && cover.isEmpty()) {
+
+		if (cover != null && cover.isEmpty()) {
 			interior.setCoverImage(cover.getBytes());
 		}
 		interiorRepository.save(interior);
@@ -136,10 +137,8 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public InteriorDto interiorCompanyDetail(Integer num) throws Exception {
-		Interior interior = interiorRepository.findById(num).orElseThrow(() -> new Exception("湲�踰덊샇 �삤瑜�"));
-		System.out.println("service" + num);
-		// onestopDslRepository.updateOnestopViewCount(num, onestop.getViewCount() + 1);
+	public InteriorDto interiorCompanyDetail(UUID companyId) throws Exception {
+		Interior interior = interiorRepository.findByCompany_companyId(companyId);
 		return interior.toDto();
 	}
 
@@ -153,58 +152,57 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	@Transactional
 	@Override
-	public Integer reviewRegister(String userId ,ReviewDto reviewDto, List<MultipartFile> fileList) throws Exception {
-
+	public Integer reviewRegister(String userId, ReviewDto reviewDto, List<MultipartFile> fileList) throws Exception {
 
 		InteriorReview review = reviewDto.toEntity();
-		
-		Company company = companyRepository.findByCompanyNameContaining(reviewDto.getCompanyName());	//리뷰 등록할 때 회사이름 일부만 작성했을수도 있기때문에 포함된 회사 조회
-		
+
+		Company company = companyRepository.findByCompanyNameContaining(reviewDto.getCompanyName()); // 리뷰 등록할 때 회사이름
+																										// 일부만 작성했을수도
+																										// 있기때문에 포함된 회사
+																										// 조회
+
 		UUID findCompany = company.getCompanyId();
-		
+
 		System.out.println(findCompany);
-		
-		Interior findInteriorNum = interiorRepository.findByCompany_companyId(findCompany); 
-		
+
+		Interior findInteriorNum = interiorRepository.findByCompany_companyId(findCompany);
+
 		Integer num = findInteriorNum.getInteriorNum();
-		
+
 		System.out.println(num);
-		
+
 		review.setInterior(findInteriorNum);
-		
+
 //		Interior interior = interiorRepository.findByCompany_companyNameContaining(findCompany);
 //		
 //		Integer findInteriorNum = interior.getInteriorNum();
-		
-		
+
 //		System.out.println(findCompany);
-		
+
 //		Integer collectComNum = interior.getInteriorNum();
-		
-		
+
 		User user = User.builder().userId(UUID.fromString(userId)).build();
-		
+
 		review.setUser(user);
 		interiorReviewRepository.save(review);
-		
-		
-		if(fileList!=null && fileList.size()>0) {
-			for(MultipartFile file : fileList) {
+
+		if (fileList != null && fileList.size() > 0) {
+			for (MultipartFile file : fileList) {
 				InteriorReviewImage reImage = new InteriorReviewImage();
 				reImage.setDierctory(uploadPath);
 				reImage.setName(file.getOriginalFilename());
 				reImage.setContentType(file.getContentType());
 				reImage.setSize(file.getSize());
 				reImage.setInteriorReview(review);
-				
+
 				System.out.println(reImage);
 				interiorReviewImageRepository.save(reImage);
-				
-				File upFile = new File(uploadPath, reImage.getInteriorReviewImageNum()+"");
+
+				File upFile = new File(uploadPath, reImage.getInteriorReviewImageNum() + "");
 				try {
-				file.transferTo(upFile);
-				} catch(IOException e) {
-					throw new Exception("파일 업로드 실패:"+e.getMessage(),e);
+					file.transferTo(upFile);
+				} catch (IOException e) {
+					throw new Exception("파일 업로드 실패:" + e.getMessage(), e);
 				}
 			}
 		}
@@ -237,7 +235,8 @@ public class InteriorSeviceImpl implements InteriorService {
 			throws Exception {
 		List<SampleDto> sampleDtoList = null;
 		Long allCnt = 0L;
-		sampleDtoList = interiorDslRepository.sampleListByFilter(date, type, style, size, location).stream().map(s->s.toDto()).collect(Collectors.toList());
+		sampleDtoList = interiorDslRepository.sampleListByFilter(date, type, style, size, location).stream()
+				.map(s -> s.toDto()).collect(Collectors.toList());
 		allCnt = interiorDslRepository.sampleCountByFilter(date, type, style, size, location);
 		return sampleDtoList;
 	}
@@ -260,8 +259,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		return detailInfo;
 	}
 
-	public Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, UUID userId)
-			throws Exception {
+	public Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, UUID userId) throws Exception {
 		Optional<User> user = userRepository.findById(userId);
 
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
@@ -328,7 +326,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
 		pageInfo.setTotalCount(cnt);
-		
+
 		return null;
 
 		/* return interiorRequestDtoList; */
@@ -358,6 +356,37 @@ public class InteriorSeviceImpl implements InteriorService {
 		InteriorRequest InteriorRequest = interiorRequestRepository.findById(requestNum)
 				.orElseThrow(() -> new Exception("인테리어 문의 글번호 오류"));
 		interiorRequestRepository.deleteById(requestNum);
+	}
+
+	@Override
+	public Map<String, Object> updateInteriorCompany(UUID companyId, InteriorDto interiorDto, MultipartFile file) {
+		Interior interior = interiorRepository.findByCompany_companyId(companyId);
+
+		// User user = userRepository.findById(userId).orElseThrow(() -> new
+		// Exception("사용자를 찾을 수 없습니다"));
+		// Interior interior = interiorDto.toEntity();
+
+		if (interiorDto.getIntro() != null)
+			interior.setIntro(interiorDto.getIntro());
+
+		if (interiorDto.getContent() != null)
+			interior.setContent(interiorDto.getContent());
+		if (interiorDto.getPossibleLocation() != null)
+			interior.setPossibleLocation(interiorDto.getPossibleLocation());
+
+		if (interiorDto.getPeriod() != null)
+			interior.setPeriod(interiorDto.getPeriod());
+
+		if (interiorDto.getRecentCount() != null)
+			interior.setRecentCount(interiorDto.getRecentCount());
+
+		if (file != null && !file.isEmpty()) {
+			interior.setCoverImage(interiorDto.getCoverImage());
+		}
+
+		interiorRepository.save(interior);
+		return new HashMap<String, Object>(interiorDto.getInteriorNum());
+
 	}
 
 }

@@ -91,6 +91,25 @@ public class InteriorController {
 		}
 	}
 
+	// 인테리어 업체 정보 수정
+	@PostMapping("/company/interiorModify")
+	public ResponseEntity<Integer> interiorModify(Authentication authentication, InteriorDto interiorDto,
+			@RequestParam(name = "file", required = false) MultipartFile file) {
+		System.out.println(interiorDto);
+		try {
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서 UUID를 추출
+
+			System.out.println(companyId);
+
+			Map<String, Object> res = interiorService.updateInteriorCompany(companyId, interiorDto, file);
+			System.out.println(file);
+			return new ResponseEntity<Integer>(interiorDto.getInteriorNum(), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Integer>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
 	@PostMapping("/interiorSampleRegister")
 	public ResponseEntity<String> interiorSampleRegister(SampleDto sampleDto) {
 		try {
@@ -102,15 +121,15 @@ public class InteriorController {
 		}
 	}
 
-
 	@PostMapping("/user/interiorReviewWrite")
-	public ResponseEntity<String> interiorReviewRegister(Authentication authentication,ReviewDto reviewDto,
-			@RequestParam(name="file", required = false) MultipartFile[] files) {
+	public ResponseEntity<String> interiorReviewRegister(Authentication authentication, ReviewDto reviewDto,
+			@RequestParam(name = "file", required = false) MultipartFile[] files) {
 		System.out.println(reviewDto);
 		System.out.println(files);
 		try {
-			String id = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();	//재확인
-			Integer reviewNum = interiorService.reviewRegister(id ,reviewDto, files==null? null : Arrays.asList(files));
+			String id = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString(); // 재확인
+			Integer reviewNum = interiorService.reviewRegister(id, reviewDto,
+					files == null ? null : Arrays.asList(files));
 			System.out.println(reviewNum);
 			return new ResponseEntity<String>(String.valueOf(reviewNum), HttpStatus.OK);
 		} catch (Exception e) {
@@ -181,8 +200,6 @@ public class InteriorController {
 		}
 	}
 
-
-
 //	// 개인 마이페이지 - 방꾸 신청내역 리스트
 //	@GetMapping("/mypageUserInteriorRequestList")
 //	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(
@@ -193,8 +210,6 @@ public class InteriorController {
 //			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestListForUserMypage(page, size,
 //					userId);
 //		} 
-
-	
 
 	// 개인 마이페이지 - 1:1 인테리어 문의내역 리스트
 	@GetMapping("/user/mypageUserInteriorRequestList")
@@ -212,7 +227,7 @@ public class InteriorController {
 			return new ResponseEntity<Page<InteriorRequestDto>>(HttpStatus.OK);
 		}
 	}
-	
+
 	// 개인 마이페이지 - 1:1 인테리어 문의내역 삭제
 	@PostMapping("/user/mypageUserRequestInteriorDelete/{requestNum}")
 	public ResponseEntity<String> interiorRequestListForUserMypage(@PathVariable Integer requestNum) {

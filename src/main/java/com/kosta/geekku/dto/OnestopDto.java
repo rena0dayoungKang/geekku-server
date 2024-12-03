@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class OnestopDto {
-	// �븳踰덉뿉 袁명븯湲�
+	//
 
 	private Integer onestopNum;
 	private User user;

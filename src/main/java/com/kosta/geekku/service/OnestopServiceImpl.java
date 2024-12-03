@@ -66,9 +66,10 @@ public class OnestopServiceImpl implements OnestopService {
 
 	@Transactional
 	@Override
-	public Integer onestopWrite(OnestopDto onestopDto) throws Exception {
+	public Integer onestopWrite(OnestopDto onestopDto, UUID userId) throws Exception {
 		Onestop onestop = onestopDto.toEntity();
-		System.out.println(onestop);
+		User user = userRepository.findById(userId).orElseThrow(() -> new Exception("일반회원 찾기 오류"));
+		onestop.setUser(user);
 		onestopRepository.save(onestop);
 
 		return onestop.getOnestopNum();
@@ -109,7 +110,7 @@ public class OnestopServiceImpl implements OnestopService {
 		OnestopAnswer onestopAnswer = onestopAnswerDto.toEntity();
 		onestopAnswer.setCompany(company);
 		onestopAnswerRepository.save(onestopAnswer);
-		
+
 		return onestopAnswer.getAnswerOnestopNum();
 
 	}
