@@ -29,8 +29,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			Authentication authentication) throws IOException, ServletException {
 
 		PrincipalDetails principalDetails =(PrincipalDetails)authentication.getPrincipal();
-		String accessToken = jwtToken.makeAccessToken(principalDetails.getUsername(), "user");
-		String refreshToken = jwtToken.makeRefreshToken(principalDetails.getUsername(), "user");
+		String accessToken = jwtToken.makeAccessToken(principalDetails.getUsername(), "ROLE_USER");
+		String refreshToken = jwtToken.makeRefreshToken(principalDetails.getUsername(), "ROLE_USER");
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		Map<String, String> map = new HashMap<>();
@@ -38,11 +38,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		map.put("refresh_token", JwtProperties.TOKEN_PREFIX + refreshToken);
 
 		String token = objectMapper.writeValueAsString(map);
-		System.out.println("OAuth2SuccessHandler:"+token);
+		//System.out.println("OAuth2SuccessHandler:"+token);
 		 
 		String redirectUrl = UriComponentsBuilder.fromUriString(URI)
 												.queryParam("token", token)
 												.build().toUriString();
+		//System.out.println("OAuth2SuccessHandler - Redirect URL: " + redirectUrl);
 		response.sendRedirect(redirectUrl);
 	}
 

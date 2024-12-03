@@ -8,8 +8,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.kosta.geekku.config.auth.PrincipalDetails;
+import com.kosta.geekku.entity.Role;
 import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.UserRepository;
+import com.kosta.geekku.util.ImageUtil;
 
 
 @Service
@@ -52,13 +54,31 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 
 		if (user != null) {
 			user.setEmail(oAuth2UserInfo.getEmail());
+			user.setName(oAuth2UserInfo.getName());
+			user.setNickname(oAuth2UserInfo.getNickname());
+			
+			String profileImageUrl = oAuth2UserInfo.getProfileImage();
+			if (profileImageUrl != null) {
+				byte[] profileImageBytes = ImageUtil.downloadImageAsBytes(profileImageUrl);
+				user.setProfileImage(profileImageBytes);
+			}
 			userRepository.save(user);
 		} else {
+			String profileImageUrl = oAuth2UserInfo.getProfileImage();
+			byte[] profileImageBytes = null;
+			if (profileImageUrl != null) {
+				profileImageBytes = ImageUtil.downloadImageAsBytes(profileImageUrl);
+			}
 			User nUser = User.builder()
 								.username(oAuth2UserInfo.getProviderId())
 								.email(oAuth2UserInfo.getEmail())
+								.name(oAuth2UserInfo.getName())
+								.nickname(oAuth2UserInfo.getNickname())
+								.role(Role.ROLE_USER)
+								.type("user")
 								.provider(oAuth2UserInfo.getProvider())
 								.providerId(oAuth2UserInfo.getProviderId())
+								.profileImage(profileImageBytes)
 								.build();
 			userRepository.save(nUser);
 		}

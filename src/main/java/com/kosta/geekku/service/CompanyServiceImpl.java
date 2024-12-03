@@ -105,6 +105,7 @@ public class CompanyServiceImpl implements CompanyService {
 		}
 		return company.toDto();
 	}
+	
 
 	@Override
 	public CompanyDto getCompany(String username) throws Exception {
@@ -121,6 +122,12 @@ public class CompanyServiceImpl implements CompanyService {
 		companyDto.setCertificationImagePath(certificationImagePath);
 
 		return companyDto;
+	}
+	
+	@Override
+	public CompanyDto getCompany(UUID companyId) throws Exception {
+		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
+		return company.toDto();
 	}
 
 	@Override
@@ -194,6 +201,25 @@ public class CompanyServiceImpl implements CompanyService {
 
 		return res;
 	}
+	
+	@Override
+	public Map<String, Object> changePassword(UUID companyId, String newPassword) throws Exception {
+		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
+		company.setPassword(newPassword);
+		companyRepository.save(company);
+		
+		String newAccessToken = jwtToken.makeAccessToken(company.getUsername(), company.getRole().toString());
+		String newRefreshToken = jwtToken.makeRefreshToken(company.getUsername(), company.getRole().toString());
+		Map<String, String> tokens = new HashMap<>();
+		tokens.put("access_token", JwtProperties.TOKEN_PREFIX + newAccessToken);
+		tokens.put("refresh_token", JwtProperties.TOKEN_PREFIX + newRefreshToken);
+
+		Map<String, Object> res = new HashMap<>();
+		res.put("token", objectMapper.writeValueAsString(tokens));
+		res.put("company", company.toDto());
+		
+		return res;
+	}
 
 	@Override
 	public CompanyDto getCompanyProfile(String companyId) {
@@ -235,5 +261,4 @@ public class CompanyServiceImpl implements CompanyService {
 		}
 		return filePath;
 	}
-
 }

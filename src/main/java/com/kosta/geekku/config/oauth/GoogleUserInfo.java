@@ -36,4 +36,16 @@ public class GoogleUserInfo implements OAuth2UserInfo {
 		return (String)attributes.get("profile");
 	}
 
+	@Override
+	public String getNickname() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getProfileImage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

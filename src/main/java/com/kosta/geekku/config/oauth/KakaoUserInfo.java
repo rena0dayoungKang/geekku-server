@@ -12,7 +12,7 @@ public class KakaoUserInfo implements OAuth2UserInfo {
 	
 	@Override
 	public String getProviderId() {
-		return String.valueOf(attributes.get("id"));
+		return attributes.get("id").toString();
 	}
 
 	@Override
@@ -22,18 +22,33 @@ public class KakaoUserInfo implements OAuth2UserInfo {
 
 	@Override
 	public String getEmail() {
-		Map<String, Object> kakao_account = (Map<String, Object>)attributes.get("kakao_account");
-		return (String)kakao_account.get("email");
+		Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+        return kakaoAccount.get("email") != null ? kakaoAccount.get("email").toString() : null;
 	}
 
 	@Override
 	public String getName() {
-		return (String)attributes.get("profile_nickname");
+		Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
+	    return properties != null ? (String) properties.get("nickname") : null;
 	}
 
 	@Override
 	public String getUsername() {
-		return (String)attributes.get("profile_nickname");
+		return (String)attributes.get("id").toString();
 	}
+
+	@Override
+	public String getNickname() {
+		Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
+	    return properties != null ? (String) properties.get("nickname") : null;
+	}
+
+	@Override
+	public String getProfileImage() {
+		Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
+	    return properties != null ? (String) properties.get("profile_image") : null;
+	}
+	
+	
 
 }
