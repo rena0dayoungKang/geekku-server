@@ -2,7 +2,9 @@ package com.kosta.geekku.controller;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -15,7 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -80,12 +81,11 @@ public class UserController {
 	}
 
 	@PostMapping("/user/updateUserInfo")
-	public ResponseEntity<Map<String, Object>> updateUserInfo(Authentication authentication,
-			UserDto userDto,
+	public ResponseEntity<Map<String, Object>> updateUserInfo(Authentication authentication, UserDto userDto,
 			@RequestParam(name = "file", required = false) MultipartFile profile) {
 		System.out.println("-----------개인정보수정");
 		try {
-			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId(); // 토큰에서 UUID를 추출			
+			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId(); // 토큰에서 UUID를 추출
 			Map<String, Object> res = userService.updateUserInfo(userId, userDto, profile);
 			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
 		} catch (Exception e) {
@@ -136,21 +136,15 @@ public class UserController {
 		}
 	}
 
-	@PostMapping("/findIdByEmail")
-	public ResponseEntity<Map<String, String>> findIdByEmail(@RequestBody Map<String, String> param) {
+	@PostMapping("/findUserByEmail")
+	public ResponseEntity<List<UserDto>> findIdByEmail(@RequestBody Map<String, String> param) {
 		try {
 			String email = param.get("email");
-			UserDto userDto = userService.findIdByEmail(email);
-
-			String formatDate = formattedDate(userDto);
-
-			Map<String, String> result = new HashMap<>();
-			result.put("username", userDto.getUsername());
-			result.put("createdAt", formatDate);
-			return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
+			List<UserDto> userDtoList = userService.findIdByEmail(email);
+			return new ResponseEntity<List<UserDto>>(userDtoList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String, String>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<List<UserDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -165,9 +159,9 @@ public class UserController {
 			return new ResponseEntity<Boolean>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/checkDoubleId")
-	public ResponseEntity<Boolean> checkDoubleId(@RequestParam String username){
+	public ResponseEntity<Boolean> checkDoubleId(@RequestParam String username) {
 		try {
 			boolean checkDoubleId = userService.checkDoubleId(username);
 			System.out.println(checkDoubleId);

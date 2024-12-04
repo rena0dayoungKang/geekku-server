@@ -150,22 +150,22 @@ public class InteriorSeviceImpl implements InteriorService {
 		Interior interior = interiorRepository.findByCompany_companyId(companyId);
 		sample.setCompany(company);
 		sample.setInterior(interior);
-
-		if (coverImage != null && !coverImage.isEmpty()) {
-			// 파일 저장 경로 확인 및 디렉토리 생성
-			File uploadDir = new File(uploadPath);
-			if (!uploadDir.exists()) {
-				uploadDir.mkdirs(); // 디렉토리 생성
-			}
-
-			String fileName = coverImage.getOriginalFilename();
-			String filePath = uploadPath + "sampleImage/" + fileName;
-
-			File file = new File(filePath);
-			coverImage.transferTo(file);
-			sample.setCoverImage(file.getName());
-			interiorSampleRepository.save(sample);
-		}
+		
+    if (coverImage != null && !coverImage.isEmpty()) {
+       String fileName = coverImage.getOriginalFilename();
+       String filePath = uploadPath + "sampleImage/";
+            
+       // 파일 저장 경로 확인 및 디렉토리 생성
+       File uploadDir = new File(filePath);
+         if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+         }
+                        
+            File file = new File(filePath + fileName);
+            coverImage.transferTo(file);
+            sample.setCoverImage(file.getName()); 
+            interiorSampleRepository.save(sample);
+    }
 
 		interiorSampleRepository.save(sample);
 

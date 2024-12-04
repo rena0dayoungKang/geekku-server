@@ -58,7 +58,10 @@ dependencies {
 	// java-jwt
 	implementation 'com.auth0:java-jwt:3.19.2'
 	
-//쿼리DSL  추가
+	// JavaMailSender
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	
+	//쿼리DSL  추가
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 	annotationProcessor 'jakarta.annotation:jakarta.annotation-api'

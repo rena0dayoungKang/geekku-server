@@ -1,5 +1,6 @@
 package com.kosta.geekku.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,5 +12,11 @@ public interface CompanyRepository extends JpaRepository<Company, UUID> {
 	Optional<Company> findByUsername(String username);
 	
 	Company findByCompanyNameContaining(String companyName);
+	
+	Optional<Company> findByEmail(String email);
+	
+	List<Company> findAllByEmail(String email);
+	
+	List<Company> findAllByPhone(String phone);
 	
 }

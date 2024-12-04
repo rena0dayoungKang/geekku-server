@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 
@@ -66,7 +68,8 @@ public class WebSecuritySconfig extends WebSecurityConfigurerAdapter {
 				.and()
 				.userInfoEndpoint().userService(principalOAuth2UserService)
 				.and()
-				.successHandler(oAuth2SuccessHandler);
+				.successHandler(oAuth2SuccessHandler)
+				.failureHandler(oAuth2AuthenticationFailureHandler());
 
 		http.addFilter(new JwtAuthrizationFilter(authenticationManager(), userRepository,companyRepository))
 				.authorizeRequests()
@@ -77,5 +80,9 @@ public class WebSecuritySconfig extends WebSecurityConfigurerAdapter {
 //			.antMatchers("/estate/**").hasRole("COMPANY")
 //			.antMatchers("/interior/**").hasRole("COMPANY")
 				.anyRequest().permitAll();
+	}
+	
+	private AuthenticationFailureHandler oAuth2AuthenticationFailureHandler() {
+		return new SimpleUrlAuthenticationFailureHandler("http://localhost:3000/");
 	}
 }
