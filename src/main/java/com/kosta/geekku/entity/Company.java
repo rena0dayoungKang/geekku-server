@@ -74,6 +74,7 @@ public class Company {
 										.companyName(companyName)
 										.companyAddress(companyAddress)
 										.estateNumber(estateNumber)
+										.createdAt(createdAt)
 										.role(role)
 										.build();
 		if (profileImage != null) {
@@ -83,6 +84,6 @@ public class Company {
 				e.printStackTrace();
 			}
 		}
-		return companyDto;								
+		return companyDto;							
 	}
 }
