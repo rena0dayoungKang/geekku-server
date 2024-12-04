@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.EstateDto;
+import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.Estate;
 import com.kosta.geekku.entity.EstateBookmark;
 import com.kosta.geekku.entity.EstateImage;
+import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.EstateBookmarkRepository;
 import com.kosta.geekku.repository.EstateDslRepository;
 import com.kosta.geekku.repository.EstateImageRepository;
@@ -30,13 +32,16 @@ public class EstateServiceImpl implements EstateService {
 	private final EstateImageRepository estateImageRepository;
 	private final EstateBookmarkRepository estateBookmarkRepository;
 	private final EstateDslRepository estateDslRepository;
+	private final CompanyRepository companyRepository;
 
 	@Value("${upload.path}")
 	private String uploadPath;
 
 	@Override
-	public Integer estateWrite(EstateDto estateDto, List<MultipartFile> estateImageList) throws Exception {
+	public Integer estateWrite(EstateDto estateDto, List<MultipartFile> estateImageList, UUID companyId) throws Exception {
 		Estate estate = estateDto.toEntity();
+		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
+		estate.setCompany(company);
 		estateRepository.save(estate);
 
 		if (estateImageList != null && estateImageList.size() > 0) {
