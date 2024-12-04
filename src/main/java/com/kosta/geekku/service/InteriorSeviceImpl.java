@@ -153,14 +153,14 @@ public class InteriorSeviceImpl implements InteriorService {
 		sample.setInterior(interior);
 		
         if (coverImage != null && !coverImage.isEmpty()) {
-        	// 파일 저장 경로 확인 및 디렉토리 생성
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();  // 디렉토리 생성
-            }
-            
-            String fileName = coverImage.getOriginalFilename();
+        	String fileName = coverImage.getOriginalFilename();
             String filePath = uploadPath + "sampleImage/" + fileName;
+            
+        	// 파일 저장 경로 확인 및 디렉토리 생성
+            File uploadDir = new File(filePath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
                         
             File file = new File(filePath);
             coverImage.transferTo(file);
@@ -447,7 +447,7 @@ public class InteriorSeviceImpl implements InteriorService {
 
 		interiorRepository.save(interior);
 		return new HashMap<String, Object>(interiorDto.getInteriorNum());
-
+	}
 
 	public ReviewDto getReview(Integer reviewNum) throws Exception {
 		InteriorReview review = interiorReviewRepository.findById(reviewNum).orElseThrow(() -> new Exception("인테리어 후기 글번호 오류"));
