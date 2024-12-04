@@ -154,7 +154,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		
         if (coverImage != null && !coverImage.isEmpty()) {
         	String fileName = coverImage.getOriginalFilename();
-            String filePath = uploadPath + "sampleImage/" + fileName;
+            String filePath = uploadPath + "sampleImage/";
             
         	// 파일 저장 경로 확인 및 디렉토리 생성
             File uploadDir = new File(filePath);
@@ -162,7 +162,7 @@ public class InteriorSeviceImpl implements InteriorService {
                 uploadDir.mkdirs();
             }
                         
-            File file = new File(filePath);
+            File file = new File(filePath + fileName);
             coverImage.transferTo(file);
             sample.setCoverImage(file.getName()); 
             interiorSampleRepository.save(sample);
