@@ -8,6 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.kosta.geekku.dto.CommunityBookmarkDto;
+import com.kosta.geekku.dto.EstateBookMarkDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,5 +40,14 @@ public class CommunityBookmark {
 	public CommunityBookmark(Integer bookmarkCommunityNum, User userId) {
 		this.bookmarkCommunityNum = bookmarkCommunityNum;
 		this.user = userId;
+	}
+	
+	public CommunityBookmarkDto toDto() {
+		CommunityBookmarkDto communityBookmarkDto = CommunityBookmarkDto.builder().bookmarkCommunityNum(bookmarkCommunityNum)
+				.user(user)
+				.community(community)
+				.build();
+		
+		return communityBookmarkDto;
 	}
 }

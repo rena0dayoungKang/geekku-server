@@ -74,9 +74,9 @@ public class InteriorController {
 	}
 
 	@GetMapping("/user/interiorBookmark/{num}")
-	public ResponseEntity<String> interiorBookmark(String userId, @PathVariable Integer num) {
+	public ResponseEntity<String> interiorBookmark(Authentication authentication, @PathVariable Integer num) {
 		try {
-//			String id = ((PrincipalDetails)authentication.getPrincipal()).getUser().getId(); 
+			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
 			boolean bookmark = interiorService.toggleBookmark(userId, num);
 			return new ResponseEntity<String>(String.valueOf(bookmark), HttpStatus.OK);
 		} catch (Exception e) {

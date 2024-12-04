@@ -17,10 +17,14 @@ public class InteriorBookMarkDto {
 	private Integer bookmarkInteriorNum;
 	private UUID userId;
 	private Integer interiorNum;
+	
+	private String interiorImageStr;
+	private String companyName;
+	private String possibleLocation;
+	private boolean possiblePart;
 
-	public InteriorBookmark toEntity() {
-		return InteriorBookmark.builder().bookmarkInteriorNum(bookmarkInteriorNum).userId(userId)
-				.interiorNum(bookmarkInteriorNum).build();
-	}
-
+//	public InteriorBookmark toEntity() {
+//		return InteriorBookmark.builder().bookmarkInteriorNum(bookmarkInteriorNum).userId(userId)
+//				.interiorNum(bookmarkInteriorNum).build();
+//	}
 }

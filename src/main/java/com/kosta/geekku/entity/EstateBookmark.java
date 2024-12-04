@@ -32,7 +32,7 @@ public class EstateBookmark {
 	private UUID userId;
 	
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "estate_num", insertable = false, updatable = false)
+    @JoinColumn(name = "estate_num")
     private Estate estate;
 
 	public EstateBookMarkDto toDto() {

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.kosta.geekku.entity.InteriorBookmark;
 
 public interface InteriorBookmarkRepository extends JpaRepository<InteriorBookmark, Integer> {
-	InteriorBookmark findByInteriorNumAndUserId(Integer interiorNum, UUID userId);
+	InteriorBookmark findByInterior_InteriorNumAndUserId(Integer interiorNum, UUID userId);
 
 	Page<InteriorBookmark> findAllByUserId(UUID userId, Pageable pageable);
 }

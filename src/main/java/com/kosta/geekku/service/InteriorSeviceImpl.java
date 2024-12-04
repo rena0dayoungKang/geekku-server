@@ -105,13 +105,13 @@ public class InteriorSeviceImpl implements InteriorService {
 	@Override
 	@Transactional
 	public boolean toggleBookmark(String userId, Integer interiorNum) throws Exception {
-		InteriorBookmark interiorBookmark = interiorBookmarkRepository.findByInteriorNumAndUserId(interiorNum,
+		InteriorBookmark interiorBookmark = interiorBookmarkRepository.findByInterior_InteriorNumAndUserId(interiorNum,
 				UUID.fromString(userId));
-		System.out.println(interiorBookmark);
+		Interior interior = interiorRepository.findById(interiorNum).orElseThrow(() -> new Exception("인테리어 번호 오류"));
 
 		if (interiorBookmark == null) {
 			interiorBookmarkRepository
-					.save(InteriorBookmark.builder().userId(UUID.fromString(userId)).interiorNum(interiorNum).build());
+					.save(InteriorBookmark.builder().userId(UUID.fromString(userId)).interior(interior).build());
 			return true;
 		} else {
 			interiorBookmarkRepository.deleteById(interiorBookmark.getBookmarkInteriorNum());

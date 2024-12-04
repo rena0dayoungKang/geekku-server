@@ -180,7 +180,7 @@ public class UserController {
 	}
 
 	// 개인회원 마이페이지 - 매물 북마크 내역
-	@GetMapping("/user/mypagebookmark")
+	@GetMapping("/user/mypagebookmarkEstate")
 	public ResponseEntity<Slice<EstateBookMarkDto>> myEstateBookmarkList(Authentication authentication,
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
 		try {
