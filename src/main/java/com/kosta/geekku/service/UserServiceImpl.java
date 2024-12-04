@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.geekku.config.jwt.JwtProperties;
 import com.kosta.geekku.config.jwt.JwtToken;
 import com.kosta.geekku.dto.UserDto;
-import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.UserRepository;
@@ -133,15 +132,22 @@ public class UserServiceImpl implements UserService {
 		return res;
 	}
 
-	@Override
-	public UserDto findIdByPhone(String phone) throws Exception {
-		User user = userRepository.findByPhone(phone).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
-		return user.toDto();
-	}
+//	@Override
+//	public UserDto findIdByPhone(String phone) throws Exception {
+//		User user = userRepository.findByPhone(phone).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
+//		return user.toDto();
+//	}
 
 	@Override
 	public List<UserDto> findIdByEmail(String email) throws Exception {
 		List<UserDto> userList = userRepository.findAllByEmail(email).stream().map(e -> e.toDto())
+				.collect(Collectors.toList());
+		return userList;
+	}
+
+	@Override
+	public List<UserDto> findIdByPhone(String phone) throws Exception {
+		List<UserDto> userList = userRepository.findAllByPhone(phone).stream().map(e -> e.toDto())
 				.collect(Collectors.toList());
 		return userList;
 	}

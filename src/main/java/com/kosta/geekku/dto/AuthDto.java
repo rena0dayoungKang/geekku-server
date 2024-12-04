@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class AuthDto {
 	private String username;
 	private String email;
+	private String phone;
 	private int certificationCode;
 	private String newPassword;
 

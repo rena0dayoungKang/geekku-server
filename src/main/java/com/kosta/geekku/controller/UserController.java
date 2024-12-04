@@ -117,24 +117,6 @@ public class UserController {
 		}
 	}
 
-	@PostMapping("/findIdByPhone")
-	public ResponseEntity<Map<String, String>> findIdByPhone(@RequestBody Map<String, String> param) {
-		try {
-			String phone = param.get("phone");
-			UserDto userDto = userService.findIdByPhone(phone);
-
-			String formatDate = formattedDate(userDto);
-
-			Map<String, String> result = new HashMap<>();
-			result.put("username", userDto.getUsername());
-			result.put("createdAt", formatDate);
-			return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Map<String, String>>(HttpStatus.BAD_REQUEST);
-		}
-	}
-
 	@PostMapping("/findUserByEmail")
 	public ResponseEntity<List<UserDto>> findIdByEmail(@RequestBody Map<String, String> param) {
 		try {
@@ -146,6 +128,18 @@ public class UserController {
 			return new ResponseEntity<List<UserDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+    @PostMapping("/findUserByPhone")
+    public ResponseEntity<List<UserDto>> findUserByPhone(@RequestBody Map<String, String> param) {
+        try {
+            String phone = param.get("phone");
+            List<UserDto> userDtoList = userService.findIdByPhone(phone);
+            return new ResponseEntity<List<UserDto>>(userDtoList, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<List<UserDto>>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
 	@GetMapping("/checkNickname")
 	public ResponseEntity<Boolean> checkNickname(@RequestParam String nickname) {

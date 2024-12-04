@@ -1,5 +1,7 @@
 package com.kosta.geekku.entity;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,7 +22,8 @@ public class Auth {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer authNum;
-	private String phone;
 	private String email;
 	private Integer certificationNum;
+	private String phone;
+	private LocalDateTime expiresTime;
 }
