@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,7 +106,6 @@ public class CompanyServiceImpl implements CompanyService {
 		}
 		return company.toDto();
 	}
-	
 
 	@Override
 	public CompanyDto getCompany(String username) throws Exception {
@@ -123,7 +123,7 @@ public class CompanyServiceImpl implements CompanyService {
 
 		return companyDto;
 	}
-	
+
 	@Override
 	public CompanyDto getCompany(UUID companyId) throws Exception {
 		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
@@ -201,13 +201,13 @@ public class CompanyServiceImpl implements CompanyService {
 
 		return res;
 	}
-	
+
 	@Override
 	public Map<String, Object> changePassword(UUID companyId, String newPassword) throws Exception {
 		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
 		company.setPassword(newPassword);
 		companyRepository.save(company);
-		
+
 		String newAccessToken = jwtToken.makeAccessToken(company.getUsername(), company.getRole().toString());
 		String newRefreshToken = jwtToken.makeRefreshToken(company.getUsername(), company.getRole().toString());
 		Map<String, String> tokens = new HashMap<>();
@@ -217,7 +217,7 @@ public class CompanyServiceImpl implements CompanyService {
 		Map<String, Object> res = new HashMap<>();
 		res.put("token", objectMapper.writeValueAsString(tokens));
 		res.put("company", company.toDto());
-		
+
 		return res;
 	}
 
@@ -260,5 +260,12 @@ public class CompanyServiceImpl implements CompanyService {
 			throw new Exception("파일이 존재하지 않습니다.");
 		}
 		return filePath;
+	}
+
+	@Override
+	public List<CompanyDto> findIdByEmail(String email) throws Exception {
+		List<CompanyDto> companyList = companyRepository.findAllByEmail(email).stream().map(e -> e.toDto())
+				.collect(Collectors.toList());
+		return companyList;
 	}
 }

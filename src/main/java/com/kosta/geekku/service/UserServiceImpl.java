@@ -3,8 +3,10 @@ package com.kosta.geekku.service;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.geekku.config.jwt.JwtProperties;
 import com.kosta.geekku.config.jwt.JwtToken;
 import com.kosta.geekku.dto.UserDto;
+import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.UserRepository;
@@ -32,8 +35,6 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private ObjectMapper objectMapper;
-	
-	
 
 	@Override
 	public void joinPerson(UserDto userDto) throws Exception {
@@ -91,21 +92,21 @@ public class UserServiceImpl implements UserService {
 			user.setPhone(userDto.getPhone());
 		if (userDto.getEmail() != null)
 			user.setEmail(userDto.getEmail());
-		
+
 		if (profile != null && !profile.isEmpty()) {
 			user.setProfileImage(profile.getBytes());
 		}
-		
+
 		userRepository.save(user);
-		
+
 		System.out.println(user);
 
 		String newAccessToken = jwtToken.makeAccessToken(user.getUsername(), user.getRole().toString());
 		String newRefreshToken = jwtToken.makeRefreshToken(user.getUsername(), user.getRole().toString());
 
 		Map<String, String> tokens = new HashMap<>();
-		tokens.put("access_token", JwtProperties.TOKEN_PREFIX+newAccessToken);
-		tokens.put("refresh_token", JwtProperties.TOKEN_PREFIX+newRefreshToken);
+		tokens.put("access_token", JwtProperties.TOKEN_PREFIX + newAccessToken);
+		tokens.put("refresh_token", JwtProperties.TOKEN_PREFIX + newRefreshToken);
 
 		Map<String, Object> res = new HashMap<>();
 		res.put("token", objectMapper.writeValueAsString(tokens));
@@ -118,17 +119,17 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findById(userId).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
 		user.setPassword(newPassword);
 		userRepository.save(user);
-		
+
 		String newAccessToken = jwtToken.makeAccessToken(user.getUsername(), user.getRole().toString());
 		String newRefreshToken = jwtToken.makeRefreshToken(user.getUsername(), user.getRole().toString());
 		Map<String, String> tokens = new HashMap<>();
-		tokens.put("access_token", JwtProperties.TOKEN_PREFIX+newAccessToken);
-		tokens.put("refresh_token", JwtProperties.TOKEN_PREFIX+newRefreshToken);
-		
+		tokens.put("access_token", JwtProperties.TOKEN_PREFIX + newAccessToken);
+		tokens.put("refresh_token", JwtProperties.TOKEN_PREFIX + newRefreshToken);
+
 		Map<String, Object> res = new HashMap<>();
 		res.put("token", objectMapper.writeValueAsString(tokens));
 		res.put("user", user.toDto());
-		
+
 		return res;
 	}
 
@@ -139,9 +140,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDto findIdByEmail(String email) throws Exception {
-		User user = userRepository.findByEmail(email).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
-		return user.toDto();
+	public List<UserDto> findIdByEmail(String email) throws Exception {
+		List<UserDto> userList = userRepository.findAllByEmail(email).stream().map(e -> e.toDto())
+				.collect(Collectors.toList());
+		return userList;
 	}
 
 }
