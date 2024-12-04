@@ -1,5 +1,7 @@
 package com.kosta.geekku.entity;
 
+import java.util.Base64;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -43,9 +45,16 @@ public class CommunityBookmark {
 	}
 	
 	public CommunityBookmarkDto toDto() {
-		CommunityBookmarkDto communityBookmarkDto = CommunityBookmarkDto.builder().bookmarkCommunityNum(bookmarkCommunityNum)
-				.user(user)
-				.community(community)
+		CommunityBookmarkDto communityBookmarkDto = CommunityBookmarkDto.builder()
+				.bookmarkCommunityNum(bookmarkCommunityNum)
+				.communityNum(community.getCommunityNum())
+				.coverImage(community.getCoverImage())
+				.title(community.getTitle())
+				.name(community.getUser().getName())
+				.nickname(community.getUser().getNickname())
+				.profileImage(community.getUser().getProfileImage())
+//				.user(user)
+//				.community(community)
 				.build();
 		
 		return communityBookmarkDto;

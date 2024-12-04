@@ -14,15 +14,18 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CommunityBookmarkDto {
 	private Integer bookmarkCommunityNum;
-
 	private User user;
-	// private UUID userId; // join column User - userID
-
 	private Community community;
-	// private Integer communityNum;
 
 	public void CommunityBookmark(Integer bookmarkCommunityNum, User userId) {
 		this.bookmarkCommunityNum = bookmarkCommunityNum;
 		this.user = userId;
 	}
+	
+	private String coverImage;
+	private String name;
+	private String nickname;
+	private byte[] profileImage;
+	private String title;
+	private Integer communityNum;
 }

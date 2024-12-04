@@ -22,9 +22,4 @@ public class InteriorBookMarkDto {
 	private String companyName;
 	private String possibleLocation;
 	private boolean possiblePart;
-
-//	public InteriorBookmark toEntity() {
-//		return InteriorBookmark.builder().bookmarkInteriorNum(bookmarkInteriorNum).userId(userId)
-//				.interiorNum(bookmarkInteriorNum).build();
-//	}
 }

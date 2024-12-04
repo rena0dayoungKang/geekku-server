@@ -55,7 +55,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 	public Slice<CommunityBookmarkDto> mypageCommunitybookmarkList(Integer page, UUID userId) throws Exception {
 		User user = userRepository.findById(userId).orElseThrow(() -> new Exception("일반회원찾기 오류"));
 
-		Pageable pageable = PageRequest.of(page - 1, 9, Sort.by(Sort.Direction.DESC, "bookmarkInteriorNum"));
+		Pageable pageable = PageRequest.of(page - 1, 9, Sort.by(Sort.Direction.DESC, "bookmarkCommunityNum"));
 		Slice<CommunityBookmarkDto> pageInfo = communityBookmarkRepository.findAllByUser_UserId(userId, pageable).map(CommunityBookmark::toDto);
 
 		return pageInfo;
