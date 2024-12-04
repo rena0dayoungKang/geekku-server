@@ -59,7 +59,7 @@ public class EstateServiceImpl implements EstateService {
 
 	@Override
 	public EstateDto estateDetail(Integer estateNum) throws Exception {
-		Estate estate = estateRepository.findById(estateNum).orElseThrow(() -> new Exception("매물번호 오류"));
+		Estate estate = estateRepository.findById(estateNum).orElseThrow(() -> new Exception("매물 글번호 오류"));
 		return estate.toDto();
 	}
 
@@ -113,7 +113,7 @@ public class EstateServiceImpl implements EstateService {
 
 	@Override
 	public Integer checkBookmark(String userId, Integer estateNum) throws Exception {
-		EstateBookmark estateBookmark = estateBookmarkRepository.findByEstateNumAndUserId(estateNum, UUID.fromString(userId));
+		EstateBookmark estateBookmark = estateBookmarkRepository.findByEstate_EstateNumAndUserId(estateNum, UUID.fromString(userId));
 		
 		if (estateBookmark == null) {
 			return null; // 북마크가 없는 경우 null 반환
@@ -124,11 +124,12 @@ public class EstateServiceImpl implements EstateService {
 
 	@Override
 	public boolean toggleBookmark(String userId, Integer estateNum) throws Exception {
-		EstateBookmark estateBookmark = estateBookmarkRepository.findByEstateNumAndUserId(estateNum,
+		EstateBookmark estateBookmark = estateBookmarkRepository.findByEstate_EstateNumAndUserId(estateNum,
 				UUID.fromString(userId));
+		Estate estate = estateRepository.findById(estateNum).orElseThrow(() -> new Exception("매물 글번호 오류"));
 
 		if (estateBookmark == null) {
-			estateBookmarkRepository.save(EstateBookmark.builder().userId(UUID.fromString(userId)).estateNum(estateNum).build());
+			estateBookmarkRepository.save(EstateBookmark.builder().userId(UUID.fromString(userId)).estate(estate).build());
 			return true;
 		} else {
 			estateBookmarkRepository.delete(estateBookmark);

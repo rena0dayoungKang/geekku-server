@@ -17,9 +17,15 @@ public class EstateBookMarkDto {
 	private Integer bookmarkEstateNum;
 	private UUID userId;
 	private Integer estateNum;
-
-	public EstateBookmark toEntity() {
-		return EstateBookmark.builder().bookmarkEstateNum(bookmarkEstateNum).userId(userId).estateNum(estateNum)
-				.build();
-	}
+	
+    private String type;
+    private String jibunAddress;
+	private String size1;
+	private String size2;
+	private String estateImageNums;
+	private Integer jeonsePrice;
+	private Integer monthlyPrice;
+	private Integer buyPrice;
+	private Integer depositPrice;
+	private String title;
 }
