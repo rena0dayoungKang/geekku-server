@@ -32,6 +32,8 @@ public class QHouseAnswer extends EntityPathBase<HouseAnswer> {
 
     public final QHouse house;
 
+    public final StringPath title = createString("title");
+
     public QHouseAnswer(String variable) {
         this(HouseAnswer.class, forVariable(variable), INITS);
     }
