@@ -133,6 +133,26 @@ public class InteriorController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@GetMapping("/sampleImage/{imageName}")
+	public void getSampleImage(@PathVariable String imageName, HttpServletResponse response) {
+		try {
+			String uploadPath = "C:/geekku/image_upload/sampleImage/";
+			File file = new File(uploadPath, imageName);
+			
+			if (!file.exists()) {
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				return;
+			}
+			InputStream ins = new FileInputStream(file);
+			response.setContentType("image/png");
+			FileCopyUtils.copy(ins, response.getOutputStream());
+			ins.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	@PostMapping("/user/interiorReviewWrite")
 	public ResponseEntity<String> interiorReviewRegister(Authentication authentication, ReviewDto reviewDto,
