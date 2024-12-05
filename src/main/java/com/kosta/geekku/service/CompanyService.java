@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,4 +39,6 @@ public interface CompanyService {
 	Map<String, Object> changePassword(UUID companyId, String newPassword) throws Exception;
 	
 	List<CompanyDto> findIdByEmail(String email) throws Exception;
+	
+	List<CompanyDto> findIdByPhone(String phone) throws Exception;
 }

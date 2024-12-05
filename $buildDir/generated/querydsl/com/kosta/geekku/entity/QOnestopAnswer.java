@@ -32,6 +32,8 @@ public class QOnestopAnswer extends EntityPathBase<OnestopAnswer> {
 
     public final QOnestop onestop;
 
+    public final StringPath title = createString("title");
+
     public QOnestopAnswer(String variable) {
         this(OnestopAnswer.class, forVariable(variable), INITS);
     }

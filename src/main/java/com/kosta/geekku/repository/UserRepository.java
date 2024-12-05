@@ -15,8 +15,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
 	User findByProviderAndProviderId(String provider, String providerId);
 
-	// Optional<User> findByUserId(UUID userId);
-
 	User findByUserId(UUID userId);
 
 	User findByUserId(String userId);
@@ -25,8 +23,11 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
 	List<User> findAllByEmail(String email);
 	
+	List<User> findAllByPhone(String phone);
+	
 	Optional<User> findByEmail(String email);
+	
+	Optional<User> findByUsernameAndEmail(String username, String email);
 
-//	User findByRecvname(String recvname);
-
+	
 }

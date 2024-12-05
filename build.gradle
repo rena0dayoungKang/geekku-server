@@ -61,6 +61,9 @@ dependencies {
 	// JavaMailSender
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	
+	// SMS
+	implementation 'net.nurigo:sdk:4.2.7'
+	
 	//쿼리DSL  추가
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
