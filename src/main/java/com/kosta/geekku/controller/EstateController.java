@@ -154,14 +154,11 @@ public class EstateController {
 	@GetMapping("/company/mypageEstateList")
 	public ResponseEntity<Map<String, Object>> mypageEstateList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			Authentication authentication) {
-		System.out.println(page);
+			@RequestParam("companyId") String companyId) {
 		try {
-			System.out.println(authentication);
-			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId();
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			List<EstateDto> estateList = estateService.estateListForMypage(pageInfo, companyId.toString());
+			List<EstateDto> estateList = estateService.estateListForMypage(pageInfo, companyId);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("estateList", estateList);
 			listInfo.put("pageInfo", pageInfo);

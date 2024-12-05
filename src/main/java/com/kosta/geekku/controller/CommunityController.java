@@ -109,20 +109,6 @@ public class CommunityController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	// 커뮤니티 글 상세 조회
-		@GetMapping("/communityCall/{num}")
-		public ResponseEntity<Map<String, Object>> communityCall(@PathVariable Integer num) {
-			try {
-				Map<String, Object> res = new HashMap<>();
-				CommunityDto communityDetail = communityService.getCommunityDetail(num);
-				res.put("communityDetail", communityDetail);
-				return new ResponseEntity<>(res, HttpStatus.OK);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-			}
-		}
 
 	// 필터링 조회
 	@PostMapping("/communityList2") // 예시 http://localhost:8080/communityList2/ + json 조건
@@ -133,9 +119,9 @@ public class CommunityController {
 		Page<CommunityDto> filteredList = communityService.getFilteredCommunityList(filterDto, pageable);
 		return ResponseEntity.ok(filteredList);
 	}
-	
+
 	// 커뮤니티 글 작성
-	@PostMapping("/user/communityCreate")
+	@PostMapping("/communityCreate")
 	public ResponseEntity<Integer> createCommunity(@RequestParam("title") String title,
 			@RequestParam("content") String content, @RequestParam("type") String type,
 			@RequestParam("userId") String userId, // userId 파라미터 추가
@@ -157,25 +143,30 @@ public class CommunityController {
 	}
 
 	// 커뮤니티 글 수정
-	@PutMapping(value = "/user/communityUpdate/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<?> updateCommunity(@PathVariable Integer id, 
-			CommunityDto communityDto, @RequestPart(value = "coverImage", required = false) MultipartFile file) {
-	    try {
-	        communityService.updateCommunity(id, communityDto, file);
-	        return ResponseEntity.ok("수정 완료");
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수정 실패");
-	    }
+	@PutMapping(value = "/user/test6/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<?> updateCommunity(@PathVariable Integer id, @RequestPart("community") String communityJson,
+			@RequestPart(value = "coverImage", required = false) MultipartFile coverImage) {
+		try {
+			// JSON 데이터를 DTO로 변환
+			ObjectMapper objectMapper = new ObjectMapper();
+			CommunityDto communityDto = objectMapper.readValue(communityJson, CommunityDto.class);
+
+			// 서비스 호출
+			communityService.updateCommunity(id, communityDto, coverImage);
+
+			return ResponseEntity.ok("수정 완료");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수정 실패");
+		}
 	}
 
-
 	// 커뮤니티 북마크
-	@PostMapping("/user/communityBookmark") // 예시
-	public ResponseEntity<String> toggleCommunityBookmark(Authentication authentication,
+	@PostMapping("/communityBookmark") // 예시
+	public ResponseEntity<String> toggleCommunityBookmark(@RequestParam String userId,
 			@RequestParam Integer communityNum) {
 		try {
-			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
+
 			boolean isBookmarked = communityService.toggleCommunityBookmark(userId, communityNum);
 			if (isBookmarked) {
 				return ResponseEntity.ok("북마크가 활성화되었습니다.");
@@ -201,7 +192,7 @@ public class CommunityController {
 	}
 
 	// 커뮤니티 댓글 작성
-	@PostMapping("/user/communityCommentWrite")
+	@PostMapping("/communityCommentWrite")
 	public ResponseEntity<String> createComment(@RequestParam("communityId") Integer communityId,
 			@RequestParam("userId") String userId, @RequestParam("content") String content) {
 
@@ -311,11 +302,11 @@ public class CommunityController {
 	}
 
 	// 커뮤니티 글 삭제
-	@DeleteMapping("/user/communityDelete/{communityNum}")
+	@DeleteMapping("/communityDelete/{communityNum}")
 	public ResponseEntity<?> deleteCommunity(@PathVariable Integer communityNum) {
 		try {
 			communityService.deleteCommunity(communityNum); // 삭제 로직 호출
-			return ResponseEntity.ok("커뮤니티 게시글이 삭제되었습니다.");	
+			return ResponseEntity.ok("커뮤니티 게시글이 삭제되었습니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 중 오류가 발생했습니다.");
