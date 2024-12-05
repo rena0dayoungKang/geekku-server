@@ -43,10 +43,11 @@ public class EstateController {
 	private String uploadPath;
 
 	@PostMapping("/company/estateWrite")
-	public ResponseEntity<String> estateWrite(EstateDto estateDto,
+	public ResponseEntity<String> estateWrite(Authentication authentication, EstateDto estateDto,
 			@RequestPart(name = "images", required = false) MultipartFile[] images) {
 		try {
-			Integer estateNum = estateService.estateWrite(estateDto, images == null ? null : Arrays.asList(images));
+			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId();
+			Integer estateNum = estateService.estateWrite(estateDto, images == null ? null : Arrays.asList(images), companyId);
 			return new ResponseEntity<String>(String.valueOf(estateNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

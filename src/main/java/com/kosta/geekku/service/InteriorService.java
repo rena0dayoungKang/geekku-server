@@ -24,7 +24,7 @@ public interface InteriorService {
 
 	boolean toggleBookmark(String userId, Integer interiorNum) throws Exception;
 
-	Integer interiorRegister(InteriorDto interiorDto, MultipartFile cover) throws Exception;
+	Integer interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId) throws Exception;
 
 	InteriorDto interiorCompanyDetail(UUID companyId) throws Exception;
 

@@ -74,9 +74,9 @@ public class InteriorController {
 	}
 
 	@GetMapping("/user/interiorBookmark/{num}")
-	public ResponseEntity<String> interiorBookmark(String userId, @PathVariable Integer num) {
+	public ResponseEntity<String> interiorBookmark(Authentication authentication, @PathVariable Integer num) {
 		try {
-//			String id = ((PrincipalDetails)authentication.getPrincipal()).getUser().getId(); 
+			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
 			boolean bookmark = interiorService.toggleBookmark(userId, num);
 			return new ResponseEntity<String>(String.valueOf(bookmark), HttpStatus.OK);
 		} catch (Exception e) {
@@ -85,13 +85,12 @@ public class InteriorController {
 		}
 	}
 
-	@PostMapping("/interiorRegister")
-	public ResponseEntity<String> interiorRegister(InteriorDto interiorDto,
-			@RequestParam(name = "file", required = false) MultipartFile file) {
-		System.out.println(interiorDto);
+	@PostMapping("/company/interiorRegister")
+	public ResponseEntity<String> interiorRegister(Authentication authentication, InteriorDto interiorDto,
+			@RequestParam(name = "coverImg", required = false) MultipartFile coverImage) {
 		try {
-			Integer interiorNum = interiorService.interiorRegister(interiorDto, file);
-			System.out.println(file);
+			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId(); 
+			Integer interiorNum = interiorService.interiorRegister(interiorDto, coverImage, companyId);
 			return new ResponseEntity<String>(String.valueOf(interiorNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
