@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.config.auth.PrincipalDetails;
+import com.kosta.geekku.dto.CommunityBookmarkDto;
 import com.kosta.geekku.dto.EstateBookMarkDto;
 import com.kosta.geekku.dto.InteriorBookMarkDto;
 import com.kosta.geekku.dto.UserDto;
@@ -172,47 +173,47 @@ public class UserController {
 	}
 
 	// 개인회원 마이페이지 - 매물 북마크 내역
-	@GetMapping("/mypagebookmark")
-	public ResponseEntity<Map<String, Object>> myEstateBookmarkList(
-			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam("userId") String userId) {
+	@GetMapping("/user/mypagebookmarkEstate")
+	public ResponseEntity<Slice<EstateBookMarkDto>> myEstateBookmarkList(Authentication authentication,
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
 		try {
-			System.out.println(userId);
-			PageInfo pageInfo = new PageInfo();
-			pageInfo.setCurPage(page);
-			System.out.println("page" + page);
+			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
 			Slice<EstateBookMarkDto> myEstateBookmarkList = bookmarkService.mypageEstatebookmarkList(page, userId);
-			Map<String, Object> listInfo = new HashMap<>();
-			listInfo.put("myEstateBookmarkList", myEstateBookmarkList);
-			listInfo.put("pageInfo", pageInfo);
 
-			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
+			return new ResponseEntity<Slice<EstateBookMarkDto>>(myEstateBookmarkList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Slice<EstateBookMarkDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
-	@GetMapping("/mypagebookmarkInterior")
-	public ResponseEntity<Map<String, Object>> myInteriorBookmarkList(
-			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam("userId") String userId) {
+	// 개인회원 마이페이지 - 인테리어 업체 북마크 내역
+	@GetMapping("/user/mypagebookmarkInterior")
+	public ResponseEntity<Slice<InteriorBookMarkDto>> myInteriorBookmarkList(Authentication authentication,
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
 		try {
-			System.out.println(userId);
-			PageInfo pageInfo = new PageInfo();
-			pageInfo.setCurPage(page);
-			System.out.println("page" + page);
-			Slice<InteriorBookMarkDto> myInteriorBookmarkList = bookmarkService.mypageInteriorbookmarkList(page,
-					userId);
-			Map<String, Object> listInfo = new HashMap<>();
-			listInfo.put("myInteriorBookmarkList", myInteriorBookmarkList);
-			listInfo.put("pageInfo", pageInfo);
+			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
+			Slice<InteriorBookMarkDto> myInteriorBookmarkList = bookmarkService.mypageInteriorbookmarkList(page, userId);
 
-			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
+			return new ResponseEntity<Slice<InteriorBookMarkDto>>(myInteriorBookmarkList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Slice<InteriorBookMarkDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	// 개인회원 마이페이지 - 집들이 북마크 내역
+	@GetMapping("/user/mypagebookmarkCommunity")
+	public ResponseEntity<Slice<CommunityBookmarkDto>> myCommunityBookmarkList(Authentication authentication,
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
+		try {
+			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
+			Slice<CommunityBookmarkDto> myCommunityBookmarkList = bookmarkService.mypageCommunitybookmarkList(page, userId);
 
+			return new ResponseEntity<Slice<CommunityBookmarkDto>>(myCommunityBookmarkList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Slice<CommunityBookmarkDto>>(HttpStatus.BAD_REQUEST);
+		}
+	}
 }

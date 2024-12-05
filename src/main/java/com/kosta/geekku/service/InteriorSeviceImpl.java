@@ -9,16 +9,19 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kosta.geekku.config.jwt.JwtProperties;
+import com.kosta.geekku.config.jwt.JwtToken;
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequestDto;
 import com.kosta.geekku.dto.ReviewDto;
@@ -61,6 +64,11 @@ public class InteriorSeviceImpl implements InteriorService {
 	private final InteriorRequestDslRepository interiorRequestDslRepository;
 	private final InteriorReviewImageRepository interiorReviewImageRepository;
 	private final CompanyRepository companyRepository;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+	@Autowired
+	private JwtToken jwtToken;
 
 	@Value("${upload.path}")
 	private String uploadPath;
@@ -105,13 +113,13 @@ public class InteriorSeviceImpl implements InteriorService {
 	@Override
 	@Transactional
 	public boolean toggleBookmark(String userId, Integer interiorNum) throws Exception {
-		InteriorBookmark interiorBookmark = interiorBookmarkRepository.findByInteriorNumAndUserId(interiorNum,
+		InteriorBookmark interiorBookmark = interiorBookmarkRepository.findByInterior_InteriorNumAndUserId(interiorNum,
 				UUID.fromString(userId));
-		System.out.println(interiorBookmark);
+		Interior interior = interiorRepository.findById(interiorNum).orElseThrow(() -> new Exception("인테리어 번호 오류"));
 
 		if (interiorBookmark == null) {
 			interiorBookmarkRepository
-					.save(InteriorBookmark.builder().userId(UUID.fromString(userId)).interiorNum(interiorNum).build());
+					.save(InteriorBookmark.builder().userId(UUID.fromString(userId)).interior(interior).build());
 			return true;
 		} else {
 			interiorBookmarkRepository.deleteById(interiorBookmark.getBookmarkInteriorNum());
@@ -121,18 +129,24 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	@Transactional
 	@Override
-	public Integer interiorRegister(InteriorDto interiorDto, MultipartFile cover) throws Exception {
-		Interior interior = interiorDto.toEntity();
-//		String company = interior.getCompany().getCompanyName();
-//		if(company == null) {
-//			
-//		}
-
-		if (cover != null && cover.isEmpty()) {
-			interior.setCoverImage(cover.getBytes());
+	public Integer interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId) throws Exception {
+		Interior interior = interiorRepository.findByCompany_companyId(companyId);
+		
+		if (interior != null) {
+			throw new Exception("이미 등록한 인테리어 회사입니다.");
+		} 
+		
+		Interior nInterior = interiorDto.toEntity();
+		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
+		nInterior.setCompany(company);
+		
+		if (coverImage != null && !coverImage.isEmpty()) {
+			nInterior.setCoverImage(coverImage.getBytes());
 		}
-		interiorRepository.save(interior);
-		return interior.getInteriorNum();
+			
+		interiorRepository.save(nInterior);
+		
+		return nInterior.getInteriorNum();
 	}
 
 	@Override
@@ -151,21 +165,21 @@ public class InteriorSeviceImpl implements InteriorService {
 		sample.setCompany(company);
 		sample.setInterior(interior);
 		
-    if (coverImage != null && !coverImage.isEmpty()) {
-       String fileName = coverImage.getOriginalFilename();
-       String filePath = uploadPath + "sampleImage/";
-            
-       // 파일 저장 경로 확인 및 디렉토리 생성
-       File uploadDir = new File(filePath);
-         if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-         }
-                        
-            File file = new File(filePath + fileName);
-            coverImage.transferTo(file);
-            sample.setCoverImage(file.getName()); 
-            interiorSampleRepository.save(sample);
-    }
+	    if (coverImage != null && !coverImage.isEmpty()) {
+	       String fileName = coverImage.getOriginalFilename();
+	       String filePath = uploadPath + "sampleImage/";
+	            
+	       // 파일 저장 경로 확인 및 디렉토리 생성
+	       File uploadDir = new File(filePath);
+	       if (!uploadDir.exists()) {
+	    	   uploadDir.mkdirs();
+	       }
+	                        
+	       File file = new File(filePath + fileName);
+	       coverImage.transferTo(file);
+	       sample.setCoverImage(file.getName()); 
+//	       interiorSampleRepository.save(sample);
+	    }
 
 		interiorSampleRepository.save(sample);
 
@@ -234,27 +248,28 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	@Override
 	public SampleDto sampleDetail(Integer num) throws Exception {
-		InteriorSample sample = interiorSampleRepository.findById(num).orElseThrow(() -> new Exception("湲� 踰덊샇 �삤瑜�"));
+		InteriorSample sample = interiorSampleRepository.findById(num).orElseThrow(() -> new Exception("사례 번호 오류"));
 		return sample.toDto();
 	}
 
 	@Transactional
 	@Override
-	public Integer interiorRequest(String userId, InteriorRequestDto requestDto) throws Exception {
+	public Integer interiorRequest(String userId,InteriorRequestDto requestDto) throws Exception {
 		InteriorRequest request = requestDto.toEntity();
 		User user = User.builder().userId(UUID.fromString(userId)).build();
-		Interior interior = Interior.builder().interiorNum(1).build(); // test용 interiorNum 1 대입
-
+		Interior interior = Interior.builder().interiorNum(1).build();	//test용 interiorNum 1 대입
+		
+		
 		request.setUser(user);
 		request.setInterior(interior);
 		interiorRequestRepository.save(request);
 		return request.getRequestNum();
 	}
-
+	
 	@Override
 	public InteriorRequestDto requestDetail(Integer num) throws Exception {
 		InteriorRequest request = interiorRequestRepository.findById(num)
-				.orElseThrow(() -> new Exception("�슂泥� 湲� 踰덊샇 �삤瑜�"));
+				.orElseThrow(() -> new Exception("문의 번호 오류"));
 		return request.toDto();
 	}
 
@@ -273,19 +288,27 @@ public class InteriorSeviceImpl implements InteriorService {
 	public Map<String, Object> interiorDetail(Integer interiorNum) throws Exception {
 		Map<String, Object> detailInfo = new HashMap<>();
 		Interior interiorDetail = interiorRepository.findById(interiorNum)
-				.orElseThrow(() -> new Exception("�씤�뀒由ъ뼱 �뾽泥� 踰덊샇 �삤瑜�"));
+				.orElseThrow(() -> new Exception("인테리어 번호 오류"));
 		List<InteriorSample> sampleDetail = interiorSampleRepository.findByInterior_InteriorNum(interiorNum);
 		List<InteriorReview> reviewDetail = interiorReviewRepository.findByInterior_interiorNum(interiorNum);
-
+		
+		Integer sampleCount = sampleDetail.size();
+		Integer reviewCount = reviewDetail.size();
+		
 		InteriorDto interiorInfo = interiorDetail.toDto();
 		List<SampleDto> sampleInfo = sampleDetail.stream().map(s -> s.toDto()).collect(Collectors.toList());
 		List<ReviewDto> reviewInfo = reviewDetail.stream().map(r -> r.toDto()).collect(Collectors.toList());
 
+		detailInfo.put("sampleCount", sampleCount);
+		detailInfo.put("reviewCount", reviewCount);
 		detailInfo.put("interiorDetail", interiorInfo);
 		detailInfo.put("sampleDetail", sampleInfo);
 		detailInfo.put("reviewDetail", reviewInfo);
+		
 		return detailInfo;
 	}
+	
+	
 
 	public Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, UUID userId) throws Exception {
 		Optional<User> user = userRepository.findById(userId);
@@ -357,11 +380,6 @@ public class InteriorSeviceImpl implements InteriorService {
 		interiorReviewRepository.deleteById(num);
 	}
 
-	public List<ReviewDto> interiorReviewList(PageInfo pageInfo, String companyId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public List<InteriorRequestDto> interiorRequestList(PageInfo pageInfo, String companyId) throws Exception {
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
@@ -394,12 +412,11 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public List<SampleDto> interiorSampleList(PageInfo pageInfo, String companyId) throws Exception {
+	public List<SampleDto> interiorSampleList(PageInfo pageInfo, UUID companyId) throws Exception {
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
-		List<SampleDto> interiorSampleDtoList = interiorDslRepository
-				.interiorSampleListmypage(pageRequest, UUID.fromString(companyId)).stream().map(e -> e.toDto())
-				.collect(Collectors.toList());
-		Long allCnt = interiorDslRepository.findMypageEstateCount(UUID.fromString(companyId));
+		List<SampleDto> interiorSampleDtoList = interiorDslRepository.interiorSampleListmypage(pageRequest, (companyId))
+				.stream().map(e -> e.toDto()).collect(Collectors.toList());
+		Long allCnt = interiorDslRepository.findMypageEstateCount(companyId);
 
 		Integer allPage = (int) (Math.ceil(allCnt.doubleValue() / pageRequest.getPageSize()));
 		Integer startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
@@ -441,18 +458,37 @@ public class InteriorSeviceImpl implements InteriorService {
 		if (interiorDto.getRecentCount() != null)
 			interior.setRecentCount(interiorDto.getRecentCount());
 
+		if (interiorDto.getRepairDate() != null)
+			interior.setRepairDate(interiorDto.getRepairDate());
+
 		if (file != null && !file.isEmpty()) {
 			interior.setCoverImage(interiorDto.getCoverImage());
 		}
 
 		interiorRepository.save(interior);
-		return new HashMap<String, Object>(interiorDto.getInteriorNum());
+		System.out.println("int" + interior);
+
+		Map<String, Object> res = new HashMap<>();
+		res.put("interior", interior.toDto());
+		return res;
 	}
 
 	public ReviewDto getReview(Integer reviewNum) throws Exception {
 		InteriorReview review = interiorReviewRepository.findById(reviewNum)
 				.orElseThrow(() -> new Exception("인테리어 후기 글번호 오류"));
 		return review.toDto();
+
+	}
+
+	@Override
+	public Page<ReviewDto> interiorReviewList(int page, int size, int interiorNum) throws Exception {
+		Optional<Interior> interior = interiorRepository.findById(interiorNum);
+
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Page<ReviewDto> pageInfo = interiorReviewRepository.findAllByInterior_interiorNum(interior, pageable)
+				.map(InteriorReview::toDto);
+
+		return pageInfo;
 
 	}
 

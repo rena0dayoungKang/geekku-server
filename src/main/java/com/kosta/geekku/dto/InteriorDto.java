@@ -20,9 +20,9 @@ public class InteriorDto {
 	private String companyName;
 	private UUID companyId;
 	private boolean possiblePart;
-	private Integer period;
+	private Float period;
 	private Integer recentCount;
-	private Integer repairDate;
+	private Float repairDate;
 	private String possibleLocation;
 	private byte[] coverImage;
 	private String coverImageStr;
