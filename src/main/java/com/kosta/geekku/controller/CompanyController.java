@@ -64,25 +64,28 @@ public class CompanyController {
 
 	@GetMapping("/searchEstate")
 	public ResponseEntity<String> searchEstate(@RequestParam(required = false) String bsnmCmpnm,
-			@RequestParam(required = false) String brkrNm, @RequestParam(required = false) String jurirno) {
+			@RequestParam(required = false) String brkrNm, 
+			@RequestParam(required = false) String jurirno,
+			@RequestParam(defaultValue = "1") int pageNo, 
+			@RequestParam(defaultValue = "10") int numOfRows) {
 
-		// 전달된 요청 파라미터 출력
+		// 전달된 검색값 출력
 		System.out.println("Received Parameters:");
 		System.out.println("bsnmCmpnm: " + bsnmCmpnm);
 		System.out.println("brkrNm: " + brkrNm);
 		System.out.println("jurirno: " + jurirno);
-
-		// 브이월드 Settings 출력
+		
+		// 브이월드 Settings
 		estateNumberService.vworldSettings();
 		try {
-			String response = estateNumberService.searchEstate(bsnmCmpnm, brkrNm, jurirno);
+			String response = estateNumberService.searchEstate(bsnmCmpnm, brkrNm, jurirno, pageNo, numOfRows);
 			return new ResponseEntity<String>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("조회할 수 없습니다", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/company/changePwd")
 	public ResponseEntity<String> changePwd(Authentication authentication, @RequestBody Map<String, String> param) {
 		try {
@@ -179,7 +182,7 @@ public class CompanyController {
 			return new ResponseEntity<CompanyDto>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/findCompanyByEmail")
 	public ResponseEntity<List<CompanyDto>> findIdByEmail(@RequestBody Map<String, String> param) {
 		try {
@@ -191,18 +194,18 @@ public class CompanyController {
 			return new ResponseEntity<List<CompanyDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/findCompanyByPhone")
-    public ResponseEntity<List<CompanyDto>> findCompanyByPhone(@RequestBody Map<String, String> param) {
-        try {
-            String phone = param.get("phone");
-            List<CompanyDto> companyDtoList = companyService.findIdByPhone(phone);
-            return new ResponseEntity<List<CompanyDto>>(companyDtoList, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<List<CompanyDto>>(HttpStatus.BAD_REQUEST);
-        }
-    }
+	public ResponseEntity<List<CompanyDto>> findCompanyByPhone(@RequestBody Map<String, String> param) {
+		try {
+			String phone = param.get("phone");
+			List<CompanyDto> companyDtoList = companyService.findIdByPhone(phone);
+			return new ResponseEntity<List<CompanyDto>>(companyDtoList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<CompanyDto>>(HttpStatus.BAD_REQUEST);
+		}
+	}
 
 	@GetMapping("/company/companyCertImg/{num}")
 	public ResponseEntity<String> getCompanyImg(Authentication authentication, @PathVariable Integer num) {
