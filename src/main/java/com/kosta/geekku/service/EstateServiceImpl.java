@@ -100,6 +100,7 @@ public class EstateServiceImpl implements EstateService {
 		pageInfo.setAllPage(allPage);
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
+		pageInfo.setTotalCount(allCnt);
 
 		return estateDtoList;
 	}
