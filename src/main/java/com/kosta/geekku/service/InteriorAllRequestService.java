@@ -13,7 +13,7 @@ import com.kosta.geekku.util.PageInfo;
 
 public interface InteriorAllRequestService {
 
-	Integer interiorAllWrite(InteriorAllDto interiorAllDto,  UUID userId) throws Exception;
+	Integer interiorAllWrite(InteriorAllDto interiorAllDto, UUID userId) throws Exception;
 
 	InteriorAllDto interiorDetail(Integer interiorNum) throws Exception;
 
@@ -23,7 +23,7 @@ public interface InteriorAllRequestService {
 
 	void interiorAllDelete(Integer num) throws Exception;
 
-	Integer interiorAnswerWrite(InteriorAnswerDto interiorAnswerDto,  UUID companyId) throws Exception;
+	Integer interiorAnswerWrite(InteriorAnswerDto interiorAnswerDto, UUID companyId) throws Exception;
 
 	List<InteriorAnswerDto> interiorAnswerList(PageInfo pageInfo, Integer requestAllNum) throws Exception;
 
@@ -32,6 +32,6 @@ public interface InteriorAllRequestService {
 	// 마이페이지 - 개인회원 방꾸 작성 내역
 	Page<InteriorAllDto> interiorAllListForUserMypage(int page, int size, String userId) throws Exception;
 
-	Slice<InteriorAnswerDto> interiorAnswerListForMypage(Integer page, String companyId) throws Exception;
+	Slice<InteriorAnswerDto> interiorAnswerListForMypage(Integer page, UUID companyId) throws Exception;
 
 }

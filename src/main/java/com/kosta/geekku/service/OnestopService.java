@@ -26,9 +26,10 @@ public interface OnestopService {
 	List<OnestopAnswerDto> onestopAnswerList(PageInfo pageInfo, Integer onestopNum) throws Exception;
 
 	void onestopAnswerDelete(Integer onestopAnswerNum, Integer onestopNum) throws Exception;
-	
+
 	// 개인 마이페이지 - 한번에 꾸하기 신청내역 리스트
 	Page<OnestopDto> onestopListForUserMypage(int page, int size, UUID userId) throws Exception;
+
 	// 기업 마이페이지 - 한번에 꾸하기 답변내역 리스트
-	Slice<OnestopAnswerDto> onestopAnswerListForMypage(int page, String companyId) throws Exception;
+	Slice<OnestopAnswerDto> onestopAnswerListForMypage(int page, UUID companyId) throws Exception;
 }

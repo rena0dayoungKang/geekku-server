@@ -5,19 +5,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.http.HttpSession;
-
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.geekku.config.auth.PrincipalDetails;
-import com.kosta.geekku.dto.HouseDto;
 import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequestDto;
@@ -71,11 +68,12 @@ public class InteriorUserController {
 	 */
 
 	// 인테리어업자 내가 한 onestop 답변 리스트 조회
-	@GetMapping("/myOnestopAnswerList")
+	@GetMapping("/company/myOnestopAnswerList")
 	public ResponseEntity<Map<String, Object>> myOnestopAnswerList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam("companyId") String companyId) {
+			Authentication authentication) {
 		try {
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
 			Slice<OnestopAnswerDto> myOnestopAnswerList = onestopService.onestopAnswerListForMypage(page, companyId);
@@ -92,18 +90,20 @@ public class InteriorUserController {
 
 	// 인테리어업자 내가 한 방꾸하기 답변 리스트 조회
 
-	@GetMapping("/myInteriorAnswerList")
+	@GetMapping("/company/myInteriorAnswerList")
 	public ResponseEntity<Map<String, Object>> myInteriorAnswerList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam("companyId") String companyId) {
+			Authentication authentication) {
 		try {
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
 			Slice<InteriorAnswerDto> myInteriorAnswerList = interiorAllRequestService.interiorAnswerListForMypage(page,
 					companyId);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("myInteriorAnswerList", myInteriorAnswerList);
-			listInfo.put("pageInfo", pageInfo);
+			// listInfo.put("pageInfo", pageInfo);
+			System.out.println("list" + listInfo.toString());
 
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {
@@ -113,11 +113,12 @@ public class InteriorUserController {
 	}
 
 	// 인테리어업자 내가 작성한 인테리어 시공사례 모아보기
-	@GetMapping("/myInteriorSampleList")
+	@GetMapping("/company/myInteriorSampleList")
 	public ResponseEntity<Map<String, Object>> mypageEstateList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam("companyId") String companyId) {
+			Authentication authentication) {
 		try {
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
 			List<SampleDto> estateList = interiorService.interiorSampleList(pageInfo, companyId);
@@ -132,15 +133,18 @@ public class InteriorUserController {
 		}
 	}
 
-	// 인테리어업자 받은 인테리어 리뷰 모아보기
-	@GetMapping("/myInteriorReviewList")
+	// 인테리어업자 인테리어에 등록된 리뷰 모아보기
+	@GetMapping("/company/myInteriorReviewList")
 	public ResponseEntity<Map<String, Object>> interiorReviewList(
-			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam("companyId") String companyId) {
+			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size,
+			@RequestParam int interiorNum) {
 		try {
+			// UUID companyId = ((PrincipalDetails)
+			// authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			List<ReviewDto> interiorReviewList = interiorService.interiorReviewList(pageInfo, companyId);
+			Page<ReviewDto> interiorReviewList = interiorService.interiorReviewList(page, size, interiorNum);
 			// System.out.println(interiorReviewList);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("interiorReviewList", interiorReviewList);

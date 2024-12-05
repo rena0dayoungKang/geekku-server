@@ -9,16 +9,19 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kosta.geekku.config.jwt.JwtProperties;
+import com.kosta.geekku.config.jwt.JwtToken;
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequestDto;
 import com.kosta.geekku.dto.ReviewDto;
@@ -61,6 +64,11 @@ public class InteriorSeviceImpl implements InteriorService {
 	private final InteriorRequestDslRepository interiorRequestDslRepository;
 	private final InteriorReviewImageRepository interiorReviewImageRepository;
 	private final CompanyRepository companyRepository;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+	@Autowired
+	private JwtToken jwtToken;
 
 	@Value("${upload.path}")
 	private String uploadPath;
@@ -150,22 +158,22 @@ public class InteriorSeviceImpl implements InteriorService {
 		Interior interior = interiorRepository.findByCompany_companyId(companyId);
 		sample.setCompany(company);
 		sample.setInterior(interior);
-		
-    if (coverImage != null && !coverImage.isEmpty()) {
-       String fileName = coverImage.getOriginalFilename();
-       String filePath = uploadPath + "sampleImage/";
-            
-       // 파일 저장 경로 확인 및 디렉토리 생성
-       File uploadDir = new File(filePath);
-         if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-         }
-                        
-            File file = new File(filePath + fileName);
-            coverImage.transferTo(file);
-            sample.setCoverImage(file.getName()); 
-            interiorSampleRepository.save(sample);
-    }
+
+		if (coverImage != null && !coverImage.isEmpty()) {
+			String fileName = coverImage.getOriginalFilename();
+			String filePath = uploadPath + "sampleImage/";
+
+			// 파일 저장 경로 확인 및 디렉토리 생성
+			File uploadDir = new File(filePath);
+			if (!uploadDir.exists()) {
+				uploadDir.mkdirs();
+			}
+
+			File file = new File(filePath + fileName);
+			coverImage.transferTo(file);
+			sample.setCoverImage(file.getName());
+			interiorSampleRepository.save(sample);
+		}
 
 		interiorSampleRepository.save(sample);
 
@@ -357,11 +365,6 @@ public class InteriorSeviceImpl implements InteriorService {
 		interiorReviewRepository.deleteById(num);
 	}
 
-	public List<ReviewDto> interiorReviewList(PageInfo pageInfo, String companyId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public List<InteriorRequestDto> interiorRequestList(PageInfo pageInfo, String companyId) throws Exception {
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
@@ -394,12 +397,11 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public List<SampleDto> interiorSampleList(PageInfo pageInfo, String companyId) throws Exception {
+	public List<SampleDto> interiorSampleList(PageInfo pageInfo, UUID companyId) throws Exception {
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
-		List<SampleDto> interiorSampleDtoList = interiorDslRepository
-				.interiorSampleListmypage(pageRequest, UUID.fromString(companyId)).stream().map(e -> e.toDto())
-				.collect(Collectors.toList());
-		Long allCnt = interiorDslRepository.findMypageEstateCount(UUID.fromString(companyId));
+		List<SampleDto> interiorSampleDtoList = interiorDslRepository.interiorSampleListmypage(pageRequest, (companyId))
+				.stream().map(e -> e.toDto()).collect(Collectors.toList());
+		Long allCnt = interiorDslRepository.findMypageEstateCount(companyId);
 
 		Integer allPage = (int) (Math.ceil(allCnt.doubleValue() / pageRequest.getPageSize()));
 		Integer startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
@@ -441,18 +443,37 @@ public class InteriorSeviceImpl implements InteriorService {
 		if (interiorDto.getRecentCount() != null)
 			interior.setRecentCount(interiorDto.getRecentCount());
 
+		if (interiorDto.getRepairDate() != null)
+			interior.setRepairDate(interiorDto.getRepairDate());
+
 		if (file != null && !file.isEmpty()) {
 			interior.setCoverImage(interiorDto.getCoverImage());
 		}
 
 		interiorRepository.save(interior);
-		return new HashMap<String, Object>(interiorDto.getInteriorNum());
+		System.out.println("int" + interior);
+
+		Map<String, Object> res = new HashMap<>();
+		res.put("interior", interior.toDto());
+		return res;
 	}
 
 	public ReviewDto getReview(Integer reviewNum) throws Exception {
 		InteriorReview review = interiorReviewRepository.findById(reviewNum)
 				.orElseThrow(() -> new Exception("인테리어 후기 글번호 오류"));
 		return review.toDto();
+
+	}
+
+	@Override
+	public Page<ReviewDto> interiorReviewList(int page, int size, int interiorNum) throws Exception {
+		Optional<Interior> interior = interiorRepository.findById(interiorNum);
+
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Page<ReviewDto> pageInfo = interiorReviewRepository.findAllByInterior_interiorNum(interior, pageable)
+				.map(InteriorReview::toDto);
+
+		return pageInfo;
 
 	}
 
