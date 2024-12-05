@@ -152,9 +152,9 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	 */
 
 	@Override
-	public Slice<InteriorAnswerDto> interiorAnswerListForMypage(Integer page, String companyId) throws Exception {
+	public Slice<InteriorAnswerDto> interiorAnswerListForMypage(Integer page, UUID companyId) throws Exception {
 
-		Optional<Company> company = companyRepository.findById(UUID.fromString(companyId));
+		Optional<Company> company = companyRepository.findById(companyId);
 
 		Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Slice<InteriorAnswerDto> pageInfo = interiorAllAnswerRepository.findAllByCompany(company, pageable)
