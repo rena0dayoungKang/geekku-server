@@ -184,7 +184,6 @@ public class AuthService {
 				"https://api.coolsms.co.kr");
 
 		int certificationNum = new Random().nextInt(999999);
-		String randomCode = String.format("%6d", certificationNum);
 
 		Optional<Auth> existPhone = authRepository.findByPhone(phone);
 		if (existPhone.isPresent()) {
@@ -201,7 +200,7 @@ public class AuthService {
 		Message message = new Message();
 		message.setFrom(fromNumber);
 		message.setTo(phone);
-		message.setText("지꾸 인증번호는 " + randomCode + "입니다.");
+		message.setText("지꾸 인증번호는 " + certificationNum + "입니다.");
 		SingleMessageSendingRequest singleMessageSendingRequest = new SingleMessageSendingRequest(message);
 		
 		try {
