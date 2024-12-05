@@ -148,7 +148,7 @@ public class EstateController {
 			e.printStackTrace();
 			return new ResponseEntity<String>("매물 북마크 실패", HttpStatus.BAD_REQUEST);
 		}
-	}
+	} 
 
 	// 중개업자 마이페이지 - 매물 등록 내역
 	@GetMapping("/company/mypageEstateList")
