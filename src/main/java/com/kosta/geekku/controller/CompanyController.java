@@ -180,6 +180,18 @@ public class CompanyController {
 			return new ResponseEntity<CompanyDto>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@PostMapping("/findCompanyByEmail")
+	public ResponseEntity<List<CompanyDto>> findIdByEmail(@RequestBody Map<String, String> param) {
+		try {
+			String email = param.get("email");
+			List<CompanyDto> companyDtoList = companyService.findIdByEmail(email);
+			return new ResponseEntity<List<CompanyDto>>(companyDtoList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<CompanyDto>>(HttpStatus.BAD_REQUEST);
+		}
+	}
 
 	@GetMapping("/company/companyCertImg/{num}")
 	public ResponseEntity<String> getCompanyImg(Authentication authentication, @PathVariable Integer num) {

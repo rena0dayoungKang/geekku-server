@@ -1,5 +1,6 @@
 package com.kosta.geekku.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,5 +27,5 @@ public interface UserService {
 
 	UserDto findIdByPhone(String phone) throws Exception;
 
-	UserDto findIdByEmail(String email) throws Exception;
+	List<UserDto> findIdByEmail(String email) throws Exception;
 }

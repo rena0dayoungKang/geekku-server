@@ -38,4 +38,6 @@ public interface CompanyService {
 	String getCompanyCertificationImagePath(Integer num) throws Exception;
 	
 	Map<String, Object> changePassword(UUID companyId, String newPassword) throws Exception;
+	
+	List<CompanyDto> findIdByEmail(String email) throws Exception;
 }
