@@ -3,6 +3,8 @@ package com.kosta.geekku.dto;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.kosta.geekku.entity.Interior;
 import com.kosta.geekku.entity.InteriorSample;
 
@@ -23,7 +25,7 @@ public class SampleDto {
 	private String style;
 	private Integer size;
 	private String location;
-	private Integer coverImage;
+	private String coverImage;
 	private String intro;
 	private String content;
 	private Timestamp createdAt;

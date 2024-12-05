@@ -30,12 +30,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class InteriorAllRequestController {
 	private final InteriorAllRequestService interiorAllService;
-	private final HttpSession session;
 
-	@PostMapping("/interiorAllWrite")
-	public ResponseEntity<String> interiorAllWrite(InteriorAllDto interiorAllDto) {
+	@PostMapping("/user/interiorAllWrite")
+	public ResponseEntity<String> interiorAllWrite(Authentication authentication, InteriorAllDto interiorAllDto) {
 		try {
-			Integer interiorAllNum = interiorAllService.interiorAllWrite(interiorAllDto);
+			UUID userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId();
+			Integer interiorAllNum = interiorAllService.interiorAllWrite(interiorAllDto, userId);
 			return new ResponseEntity<String>(String.valueOf(interiorAllNum), HttpStatus.OK);
 
 		} catch (Exception e) {

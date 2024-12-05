@@ -11,7 +11,7 @@ import com.kosta.geekku.dto.OnestopDto;
 import com.kosta.geekku.util.PageInfo;
 
 public interface OnestopService {
-	Integer onestopWrite(OnestopDto onestopDto) throws Exception;
+	Integer onestopWrite(OnestopDto onestopDto, UUID userId) throws Exception;
 
 	OnestopDto onestopDetail(Integer onestopNum) throws Exception;
 

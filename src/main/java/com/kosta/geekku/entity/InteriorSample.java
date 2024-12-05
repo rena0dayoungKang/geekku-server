@@ -2,6 +2,7 @@ package com.kosta.geekku.entity;
 
 import java.sql.Timestamp;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,9 +11,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.SampleDto;
 
@@ -35,14 +38,17 @@ public class InteriorSample {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "interiorNum")
 	private Interior interior;
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "companyId")
+	private Company company;
 
 	private String title;
 	private String type; // 주거형태
 	private String style;
 	private Integer size;
 	private String location;
-	private Integer coverImage;// 한장이라서 Integer
-	private String intro;
+	private String coverImage;
 	@Column(columnDefinition = "LONGTEXT")
 	@Lob
 	private String content;

@@ -33,10 +33,11 @@ public class OnestopController {
 	private final OnestopService onestopService;
 	// private final FcmMessageService fcmMessageService;
 
-	@PostMapping("/onestopWrite")
-	public ResponseEntity<String> makeAccount(OnestopDto onestopDto) {
+	@PostMapping("/user/onestopWrite")
+	public ResponseEntity<String> onestopWrite(Authentication authentication, OnestopDto onestopDto) {
 		try {
-			Integer onestopNum = onestopService.onestopWrite(onestopDto);
+			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
+			Integer onestopNum = onestopService.onestopWrite(onestopDto, userId);
 			return new ResponseEntity<String>(String.valueOf(onestopNum), HttpStatus.OK);
 
 		} catch (Exception e) {

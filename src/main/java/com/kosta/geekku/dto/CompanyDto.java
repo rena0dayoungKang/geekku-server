@@ -1,5 +1,7 @@
 package com.kosta.geekku.dto;
 
+import java.sql.Timestamp;
+
 import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.Role;
 
@@ -30,6 +32,7 @@ public class CompanyDto {
 	private String companyAddress;
 	private Integer certificationImageNum;
 	private String certificationImagePath;
+	private Timestamp createdAt;
 	
 	//부동산일경우
 	private String estateNumber; 
@@ -52,6 +55,7 @@ public class CompanyDto {
 								.companyName(companyName)
 								.companyAddress(companyAddress)
 								.estateNumber(estateNumber)
+								.createdAt(null)
 								.build();
 		return company;
 	}
