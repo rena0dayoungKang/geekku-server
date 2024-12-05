@@ -36,6 +36,8 @@ public class QUFile extends EntityPathBase<UFile> {
 
     public final NumberPath<Integer> userImageNum = createNumber("userImageNum", Integer.class);
 
+    public final StringPath username = createString("username");
+
     public QUFile(String variable) {
         this(UFile.class, forVariable(variable), INITS);
     }

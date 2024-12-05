@@ -10,7 +10,7 @@ import com.kosta.geekku.dto.EstateDto;
 import com.kosta.geekku.util.PageInfo;
 
 public interface EstateService {
-	Integer estateWrite(EstateDto estateDto, List<MultipartFile> estateImageList) throws Exception;
+	Integer estateWrite(EstateDto estateDto, List<MultipartFile> estateImageList, UUID companyId) throws Exception;
 	EstateDto estateDetail(Integer estateNum) throws Exception;
 	List<EstateDto> estateList(PageInfo page, String type, String keyword) throws Exception;
 	List<EstateDto> estateListForMain() throws Exception;

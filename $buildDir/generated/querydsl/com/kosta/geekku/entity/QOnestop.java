@@ -38,6 +38,8 @@ public class QOnestop extends EntityPathBase<Onestop> {
 
     public final NumberPath<Integer> movePersons = createNumber("movePersons", Integer.class);
 
+    public final ListPath<OnestopAnswer, QOnestopAnswer> onestopAnswerList = this.<OnestopAnswer, QOnestopAnswer>createList("onestopAnswerList", OnestopAnswer.class, QOnestopAnswer.class, PathInits.DIRECT2);
+
     public final NumberPath<Integer> onestopNum = createNumber("onestopNum", Integer.class);
 
     public final StringPath rentType = createString("rentType");

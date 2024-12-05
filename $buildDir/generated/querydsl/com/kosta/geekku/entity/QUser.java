@@ -23,6 +23,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath email = createString("email");
 
+    public final StringPath fcmToken = createString("fcmToken");
+
     public final StringPath name = createString("name");
 
     public final StringPath nickname = createString("nickname");

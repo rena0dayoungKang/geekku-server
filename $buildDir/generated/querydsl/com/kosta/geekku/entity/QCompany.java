@@ -37,6 +37,8 @@ public class QCompany extends EntityPathBase<Company> {
 
     public final StringPath estateNumber = createString("estateNumber");
 
+    public final StringPath fcmToken = createString("fcmToken");
+
     public final StringPath password = createString("password");
 
     public final StringPath phone = createString("phone");

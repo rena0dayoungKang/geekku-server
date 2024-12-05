@@ -26,7 +26,7 @@ public class QInterior extends EntityPathBase<Interior> {
 
     public final StringPath content = createString("content");
 
-    public final NumberPath<Integer> coverImage = createNumber("coverImage", Integer.class);
+    public final ArrayPath<byte[], Byte> coverImage = createArray("coverImage", byte[].class);
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 

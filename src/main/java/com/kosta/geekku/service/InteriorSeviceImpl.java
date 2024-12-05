@@ -113,13 +113,13 @@ public class InteriorSeviceImpl implements InteriorService {
 	@Override
 	@Transactional
 	public boolean toggleBookmark(String userId, Integer interiorNum) throws Exception {
-		InteriorBookmark interiorBookmark = interiorBookmarkRepository.findByInteriorNumAndUserId(interiorNum,
+		InteriorBookmark interiorBookmark = interiorBookmarkRepository.findByInterior_InteriorNumAndUserId(interiorNum,
 				UUID.fromString(userId));
-		System.out.println(interiorBookmark);
+		Interior interior = interiorRepository.findById(interiorNum).orElseThrow(() -> new Exception("인테리어 번호 오류"));
 
 		if (interiorBookmark == null) {
 			interiorBookmarkRepository
-					.save(InteriorBookmark.builder().userId(UUID.fromString(userId)).interiorNum(interiorNum).build());
+					.save(InteriorBookmark.builder().userId(UUID.fromString(userId)).interior(interior).build());
 			return true;
 		} else {
 			interiorBookmarkRepository.deleteById(interiorBookmark.getBookmarkInteriorNum());
@@ -129,18 +129,24 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	@Transactional
 	@Override
-	public Integer interiorRegister(InteriorDto interiorDto, MultipartFile cover) throws Exception {
-		Interior interior = interiorDto.toEntity();
-//		String company = interior.getCompany().getCompanyName();
-//		if(company == null) {
-//			
-//		}
-
-		if (cover != null && cover.isEmpty()) {
-			interior.setCoverImage(cover.getBytes());
+	public Integer interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId) throws Exception {
+		Interior interior = interiorRepository.findByCompany_companyId(companyId);
+		
+		if (interior != null) {
+			throw new Exception("이미 등록한 인테리어 회사입니다.");
+		} 
+		
+		Interior nInterior = interiorDto.toEntity();
+		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
+		nInterior.setCompany(company);
+		
+		if (coverImage != null && !coverImage.isEmpty()) {
+			nInterior.setCoverImage(coverImage.getBytes());
 		}
-		interiorRepository.save(interior);
-		return interior.getInteriorNum();
+			
+		interiorRepository.save(nInterior);
+		
+		return nInterior.getInteriorNum();
 	}
 
 	@Override
@@ -158,22 +164,22 @@ public class InteriorSeviceImpl implements InteriorService {
 		Interior interior = interiorRepository.findByCompany_companyId(companyId);
 		sample.setCompany(company);
 		sample.setInterior(interior);
-
-		if (coverImage != null && !coverImage.isEmpty()) {
-			String fileName = coverImage.getOriginalFilename();
-			String filePath = uploadPath + "sampleImage/";
-
-			// 파일 저장 경로 확인 및 디렉토리 생성
-			File uploadDir = new File(filePath);
-			if (!uploadDir.exists()) {
-				uploadDir.mkdirs();
-			}
-
-			File file = new File(filePath + fileName);
-			coverImage.transferTo(file);
-			sample.setCoverImage(file.getName());
-			interiorSampleRepository.save(sample);
-		}
+		
+	    if (coverImage != null && !coverImage.isEmpty()) {
+	       String fileName = coverImage.getOriginalFilename();
+	       String filePath = uploadPath + "sampleImage/";
+	            
+	       // 파일 저장 경로 확인 및 디렉토리 생성
+	       File uploadDir = new File(filePath);
+	       if (!uploadDir.exists()) {
+	    	   uploadDir.mkdirs();
+	       }
+	                        
+	       File file = new File(filePath + fileName);
+	       coverImage.transferTo(file);
+	       sample.setCoverImage(file.getName()); 
+//	       interiorSampleRepository.save(sample);
+	    }
 
 		interiorSampleRepository.save(sample);
 

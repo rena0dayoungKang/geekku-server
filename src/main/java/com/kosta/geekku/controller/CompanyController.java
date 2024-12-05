@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.CompanyDto;
-import com.kosta.geekku.dto.UserDto;
 import com.kosta.geekku.entity.Estate;
 import com.kosta.geekku.entity.HouseAnswer;
 import com.kosta.geekku.entity.OnestopAnswer;
@@ -192,6 +191,18 @@ public class CompanyController {
 			return new ResponseEntity<List<CompanyDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@PostMapping("/findCompanyByPhone")
+    public ResponseEntity<List<CompanyDto>> findCompanyByPhone(@RequestBody Map<String, String> param) {
+        try {
+            String phone = param.get("phone");
+            List<CompanyDto> companyDtoList = companyService.findIdByPhone(phone);
+            return new ResponseEntity<List<CompanyDto>>(companyDtoList, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<List<CompanyDto>>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
 	@GetMapping("/company/companyCertImg/{num}")
 	public ResponseEntity<String> getCompanyImg(Authentication authentication, @PathVariable Integer num) {
