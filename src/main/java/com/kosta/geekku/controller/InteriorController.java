@@ -211,6 +211,7 @@ public class InteriorController {
 		}
 	}
 
+
 	@PostMapping("/user/interiorRequest")
 	public ResponseEntity<String> interiorRequest(Authentication authentication,@RequestBody InteriorRequestDto requestDto) {
 		try {
@@ -225,6 +226,7 @@ public class InteriorController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
+
 
 	@PostMapping("/requestDetail")
 	public ResponseEntity<Map<String, Object>> requestDetail(@RequestBody Map<String, String> param) {
@@ -257,10 +259,12 @@ public class InteriorController {
 		}
 	}
 
-	@GetMapping("/interiorDetail")
-	public ResponseEntity<Map<String, Object>> interiorDetail(Integer num) {
+	@PostMapping("/interiorDetail")
+	public ResponseEntity<Map<String, Object>> interiorDetail(@RequestBody Map<String,String> param) {
 		try {
-			Map<String, Object> detailInfo = interiorService.interiorDetail(num);
+			System.out.println(param);
+			Map<String, Object> detailInfo = interiorService.interiorDetail(Integer.parseInt(param.get("num")));
+			System.out.println(detailInfo);
 			return new ResponseEntity<Map<String, Object>>(detailInfo, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

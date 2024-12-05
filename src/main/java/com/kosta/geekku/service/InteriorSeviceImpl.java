@@ -241,27 +241,28 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	@Override
 	public SampleDto sampleDetail(Integer num) throws Exception {
-		InteriorSample sample = interiorSampleRepository.findById(num).orElseThrow(() -> new Exception("湲� 踰덊샇 �삤瑜�"));
+		InteriorSample sample = interiorSampleRepository.findById(num).orElseThrow(() -> new Exception("사례 번호 오류"));
 		return sample.toDto();
 	}
 
 	@Transactional
 	@Override
-	public Integer interiorRequest(String userId, InteriorRequestDto requestDto) throws Exception {
+	public Integer interiorRequest(String userId,InteriorRequestDto requestDto) throws Exception {
 		InteriorRequest request = requestDto.toEntity();
 		User user = User.builder().userId(UUID.fromString(userId)).build();
-		Interior interior = Interior.builder().interiorNum(1).build(); // test용 interiorNum 1 대입
-
+		Interior interior = Interior.builder().interiorNum(1).build();	//test용 interiorNum 1 대입
+		
+		
 		request.setUser(user);
 		request.setInterior(interior);
 		interiorRequestRepository.save(request);
 		return request.getRequestNum();
 	}
-
+	
 	@Override
 	public InteriorRequestDto requestDetail(Integer num) throws Exception {
 		InteriorRequest request = interiorRequestRepository.findById(num)
-				.orElseThrow(() -> new Exception("�슂泥� 湲� 踰덊샇 �삤瑜�"));
+				.orElseThrow(() -> new Exception("문의 번호 오류"));
 		return request.toDto();
 	}
 
@@ -280,19 +281,27 @@ public class InteriorSeviceImpl implements InteriorService {
 	public Map<String, Object> interiorDetail(Integer interiorNum) throws Exception {
 		Map<String, Object> detailInfo = new HashMap<>();
 		Interior interiorDetail = interiorRepository.findById(interiorNum)
-				.orElseThrow(() -> new Exception("�씤�뀒由ъ뼱 �뾽泥� 踰덊샇 �삤瑜�"));
+				.orElseThrow(() -> new Exception("인테리어 번호 오류"));
 		List<InteriorSample> sampleDetail = interiorSampleRepository.findByInterior_InteriorNum(interiorNum);
 		List<InteriorReview> reviewDetail = interiorReviewRepository.findByInterior_interiorNum(interiorNum);
-
+		
+		Integer sampleCount = sampleDetail.size();
+		Integer reviewCount = reviewDetail.size();
+		
 		InteriorDto interiorInfo = interiorDetail.toDto();
 		List<SampleDto> sampleInfo = sampleDetail.stream().map(s -> s.toDto()).collect(Collectors.toList());
 		List<ReviewDto> reviewInfo = reviewDetail.stream().map(r -> r.toDto()).collect(Collectors.toList());
 
+		detailInfo.put("sampleCount", sampleCount);
+		detailInfo.put("reviewCount", reviewCount);
 		detailInfo.put("interiorDetail", interiorInfo);
 		detailInfo.put("sampleDetail", sampleInfo);
 		detailInfo.put("reviewDetail", reviewInfo);
+		
 		return detailInfo;
 	}
+	
+	
 
 	public Page<InteriorRequestDto> interiorRequestListForUserMypage(int page, int size, UUID userId) throws Exception {
 		Optional<User> user = userRepository.findById(userId);
