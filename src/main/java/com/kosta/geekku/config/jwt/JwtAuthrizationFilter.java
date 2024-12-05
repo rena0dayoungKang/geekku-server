@@ -44,7 +44,7 @@ public class JwtAuthrizationFilter extends BasicAuthenticationFilter {
 		String uri = request.getRequestURI();
 		System.out.println("JwtAuthrizationFilter:" + uri);
 		// 1. 로그인 (인증) 이 필요없는 요청은 그대로 진행
-		if (!(uri.contains("/user") || uri.contains("/company"))) {
+		if (!(uri.contains("/user") || uri.contains("/company") || uri.contains("/mypage"))) {
 			chain.doFilter(request, response);
 			return;
 		}
