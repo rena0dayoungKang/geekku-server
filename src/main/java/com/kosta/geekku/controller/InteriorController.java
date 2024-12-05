@@ -105,7 +105,9 @@ public class InteriorController {
 			@RequestParam(name = "file", required = false) MultipartFile file) {
 		System.out.println(interiorDto);
 		try {
-			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서 UUID를 추출
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서
+																												// UUID를
+																												// 추출
 
 			System.out.println(companyId);
 
@@ -118,13 +120,12 @@ public class InteriorController {
 		}
 	}
 
-
 	@PostMapping("/company/interiorSampleRegister")
-	public ResponseEntity<String> interiorSampleRegister(Authentication authentication, SampleDto sampleDto, 
+	public ResponseEntity<String> interiorSampleRegister(Authentication authentication, SampleDto sampleDto,
 			@RequestPart(name = "coverImg", required = false) MultipartFile coverImage) {
 
 		try {
-			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId();
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
 			Integer sampleNum = interiorService.sampleRegister(sampleDto, coverImage, companyId);
 
 			return new ResponseEntity<String>(String.valueOf(sampleNum), HttpStatus.OK);
@@ -149,7 +150,7 @@ public class InteriorController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/reviewImage/{num}")
 	public void image(@PathVariable String num, HttpServletResponse response) {
 		try {
@@ -166,7 +167,7 @@ public class InteriorController {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@GetMapping("/user/interiorReview/{reviewNum}")
 	public ResponseEntity<ReviewDto> interiorReviewRegister(@PathVariable Integer reviewNum) {
 		try {
@@ -178,7 +179,7 @@ public class InteriorController {
 	}
 
 	@PostMapping("/sampleDetail")
-	public ResponseEntity<Map<String, Object>> sampleDetail(@RequestBody Map<String,String> param) {
+	public ResponseEntity<Map<String, Object>> sampleDetail(@RequestBody Map<String, String> param) {
 		try {
 			System.out.println("good");
 			System.out.println(param);
@@ -193,12 +194,13 @@ public class InteriorController {
 	}
 
 	@PostMapping("/user/interiorRequest")
-	public ResponseEntity<String> interiorRequest(Authentication authentication,@RequestBody InteriorRequestDto requestDto) {
+	public ResponseEntity<String> interiorRequest(Authentication authentication,
+			@RequestBody InteriorRequestDto requestDto) {
 		try {
 			System.out.println(requestDto);
 			String id = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString(); // 재확인
 			System.out.println(id);
-			Integer requestNum = interiorService.interiorRequest(id,requestDto);
+			Integer requestNum = interiorService.interiorRequest(id, requestDto);
 			System.out.println(requestNum);
 			return new ResponseEntity<String>(String.valueOf(requestNum), HttpStatus.OK);
 		} catch (Exception e) {
@@ -298,12 +300,10 @@ public class InteriorController {
 	// 개인 마이페이지 - 인테리어 업체 후기 수정
 	@PostMapping("/user/mypageUserReviewUpdate/{num}")
 	public ResponseEntity<String> mypageUserReviewUpdate(Authentication authentication, ReviewDto reviewDto,
-			@PathVariable Integer num, 
-			@RequestParam(name="delFile", required=false) Integer[] delFileNum,
-			@RequestParam(name="file", required=false) MultipartFile[] fileList) {
+			@PathVariable Integer num, @RequestParam(name = "delFile", required = false) Integer[] delFileNum,
+			@RequestParam(name = "file", required = false) MultipartFile[] fileList) {
 		try {
-			interiorService.updateReview(reviewDto, num, 
-					delFileNum == null ? null : Arrays.asList(delFileNum), 
+			interiorService.updateReview(reviewDto, num, delFileNum == null ? null : Arrays.asList(delFileNum),
 					fileList == null ? null : Arrays.asList(fileList));
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 		} catch (Exception e) {
