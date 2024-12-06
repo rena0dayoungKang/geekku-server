@@ -83,9 +83,11 @@ public class Community {
 	        .coverImage(coverImage)    // 커버 이미지 ID
 	        .createdAt(createdAt)      // 생성 시간
 	        .viewCount(viewCount)      // 조회수
-	        .username(user != null ? user.getUsername() : null) // 작성자 이름 
+	        .username(user.getUsername() != null ? user.getUsername() : null) // 작성자 이름 
 	        .isOwner(isOwner)
 	        .userId(user.getUserId().toString())
+	        .nickname(user.getNickname() != null ? user.getNickname() : user.getName())
+	        .profileImage(user.getProfileImage())
 	        .build();
 	}
 

@@ -121,7 +121,7 @@ public class CommunityController {
 	}
 
 	// 커뮤니티 글 작성
-	@PostMapping("/communityCreate")
+	@PostMapping("/user/communityCreate")
 	public ResponseEntity<Integer> createCommunity(@RequestParam("title") String title,
 			@RequestParam("content") String content, @RequestParam("type") String type,
 			@RequestParam("userId") String userId, // userId 파라미터 추가

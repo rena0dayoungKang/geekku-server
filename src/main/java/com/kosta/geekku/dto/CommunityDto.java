@@ -37,6 +37,7 @@ public class CommunityDto {
 	private String nickname;
 	private String userId;
 	private boolean isOwner;
+	private byte[] profileImage;
 		
 	public Community toEntity() {
 	    return Community.builder()
