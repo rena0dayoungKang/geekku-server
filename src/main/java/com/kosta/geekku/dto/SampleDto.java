@@ -23,7 +23,7 @@ public class SampleDto {
 	private String title;
 	private String type;
 	private String style;
-	private Integer size;
+	private String size;
 	private String location;
 	private String coverImage;
 	private String intro;
