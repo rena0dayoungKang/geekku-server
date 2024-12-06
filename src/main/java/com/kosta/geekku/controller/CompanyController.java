@@ -66,18 +66,21 @@ public class CompanyController {
 
 	@GetMapping("/searchEstate")
 	public ResponseEntity<String> searchEstate(@RequestParam(required = false) String bsnmCmpnm,
-			@RequestParam(required = false) String brkrNm, @RequestParam(required = false) String jurirno) {
+			@RequestParam(required = false) String brkrNm, 
+			@RequestParam(required = false) String jurirno,
+			@RequestParam(defaultValue = "1") int pageNo, 
+			@RequestParam(defaultValue = "10") int numOfRows) {
 
-		// 전달된 요청 파라미터 출력
+		// 전달된 검색값 출력
 		System.out.println("Received Parameters:");
 		System.out.println("bsnmCmpnm: " + bsnmCmpnm);
 		System.out.println("brkrNm: " + brkrNm);
 		System.out.println("jurirno: " + jurirno);
-
-		// 브이월드 Settings 출력
+		
+		// 브이월드 Settings
 		estateNumberService.vworldSettings();
 		try {
-			String response = estateNumberService.searchEstate(bsnmCmpnm, brkrNm, jurirno);
+			String response = estateNumberService.searchEstate(bsnmCmpnm, brkrNm, jurirno, pageNo, numOfRows);
 			return new ResponseEntity<String>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

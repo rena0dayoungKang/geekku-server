@@ -23,11 +23,11 @@ public class EstateNumberService {
 	private String vdomain;
 
 	public void vworldSettings() {
-		System.out.println("vworld api key : " + apiKey);
+		System.out.println("vworld api key init success");
 		System.out.println("vworld base-Url : " + baseUrl);
 	}
 
-	public String searchEstate(String bsnmCmpnm, String brkrNm, String jurirno) throws Exception {
+	public String searchEstate(String bsnmCmpnm, String brkrNm, String jurirno, int pageNo, int size) throws Exception {
 		StringBuilder parameter = new StringBuilder();
 		parameter.append("?key=").append(URLEncoder.encode(apiKey, "UTF-8"));
 		parameter.append("&format=json");
@@ -42,6 +42,12 @@ public class EstateNumberService {
 		if (jurirno != null && !jurirno.isEmpty()) {
 			parameter.append("&jurirno=").append(URLEncoder.encode(jurirno, "UTF-8"));
 		}
+		if (pageNo > 1) {
+			parameter.append("&pageNo=").append(pageNo);
+		}
+		if (size >= 0) {
+			parameter.append("&size=").append(size);
+		}
 
 		// API호출
 		URL url = new URL(baseUrl + "/getEBBrokerInfo" + parameter.toString());
@@ -49,7 +55,7 @@ public class EstateNumberService {
 		conn.setRequestMethod("GET");
 		conn.setRequestProperty("Content-type", "application/json");
 		int responseCode = conn.getResponseCode();
-		System.out.println("Response code: " + responseCode);
+		//System.out.println("Response code: " + responseCode);
 
 		BufferedReader rd;
 		if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {

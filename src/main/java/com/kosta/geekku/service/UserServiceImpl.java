@@ -98,8 +98,6 @@ public class UserServiceImpl implements UserService {
 
 		userRepository.save(user);
 
-		System.out.println(user);
-
 		String newAccessToken = jwtToken.makeAccessToken(user.getUsername(), user.getRole().toString());
 		String newRefreshToken = jwtToken.makeRefreshToken(user.getUsername(), user.getRole().toString());
 
@@ -131,12 +129,6 @@ public class UserServiceImpl implements UserService {
 
 		return res;
 	}
-
-//	@Override
-//	public UserDto findIdByPhone(String phone) throws Exception {
-//		User user = userRepository.findByPhone(phone).orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다"));
-//		return user.toDto();
-//	}
 
 	@Override
 	public List<UserDto> findIdByEmail(String email) throws Exception {
