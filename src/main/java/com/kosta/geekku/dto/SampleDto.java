@@ -31,6 +31,7 @@ public class SampleDto {
 	private Timestamp createdAt;
 	private UUID companyId;
 	private String companyName;
+	private byte[] profileImage;
 
 	public InteriorSample toEntity() {
 		InteriorSample sample = InteriorSample.builder().sampleNum(sampleNum)

@@ -38,7 +38,7 @@ public class HouseAnswerDto {
 						.title(title)
 						.content(content)
 						.createdAt(createdAt)
-						.company(Company.builder().companyId(companyId).companyName(companyName).phone(companyPhone).build())
+						.company(Company.builder().companyId(companyId).companyName(companyName).phone(companyPhone).companyAddress(companyAddress).build())
 						.house(House.builder().houseNum(houseNum).build())
 						.build();
 	}
