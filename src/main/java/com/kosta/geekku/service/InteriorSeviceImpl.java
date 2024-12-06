@@ -398,7 +398,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		Long allCnt = interiorDslRepository.findMypageEstateCount(companyId);
 
 		Integer allPage = (int) (Math.ceil(allCnt.doubleValue() / pageRequest.getPageSize()));
-		Integer startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
+		Integer startPage = (pageInfo.getCurPage() - 1) / 10 * 10;
 		Integer endPage = Math.min(startPage + 10 - 1, allPage);
 
 		pageInfo.setAllPage(allPage);

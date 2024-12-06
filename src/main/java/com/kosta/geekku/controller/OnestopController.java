@@ -75,11 +75,11 @@ public class OnestopController {
 	public ResponseEntity<Map<String, Object>> onestopList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 			@RequestParam(value = "type", required = false) String type,
-			@RequestParam(value = "keyword", required = false) String word) {
+			@RequestParam(value = "keyword", required = false) String keyword) {
 		try {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			List<OnestopDto> onestopList = onestopService.onestopList(pageInfo, type, word);
+			List<OnestopDto> onestopList = onestopService.onestopList(pageInfo, type, keyword);
 
 			// 리스트를 내림차순으로 정렬
 			onestopList.sort(Comparator.comparing(OnestopDto::getCreatedAt).reversed());
