@@ -29,10 +29,15 @@ public class OnestopAnswerDto {
 	private Integer onestopNum;
 	private UUID userId;
 	private String title;
+	private Integer viewCount;
+	private String address1;
+	private String address2;
+	private String type;
+	private String username;
 
 	public OnestopAnswer toEntity() {
 		return OnestopAnswer.builder().answerOnestopNum(answerOnestopNum).content(content).createdAt(createdAt)
 				.company(Company.builder().companyId(companyId).companyName(companyName).phone(companyPhone).build())
-				.onestop(Onestop.builder().onestopNum(onestopNum).build()).build();
+				.onestop(Onestop.builder().onestopNum(onestopNum).viewCount(viewCount).address1(address1).address2(address2).build()).build();
 	}
 }

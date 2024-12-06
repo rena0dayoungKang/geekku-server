@@ -20,4 +20,5 @@ public interface EstateService {
 	
 	// 마이페이지 - 중개업자 매물 등록 내역
 	List<EstateDto> estateListForMypage(PageInfo pageInfo, String companyId) throws Exception;
+	void deleteEstate(Integer estateNum) throws Exception;
 }

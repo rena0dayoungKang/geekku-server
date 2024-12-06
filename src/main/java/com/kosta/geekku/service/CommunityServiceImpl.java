@@ -77,68 +77,64 @@ public class CommunityServiceImpl implements CommunityService {
 	@Transactional
 	@Override
 	public Integer createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage,
-            String userId, String address1, String address2, String familyType,
-            String interiorType, Integer money, Date periodStartDate, Date periodEndDate,Integer size, String style) {
-	    UUID userUUID;
-	    try {
-	        userUUID = UUID.fromString(userId);
-	    } catch (IllegalArgumentException e) {
-	        throw new IllegalArgumentException("유효하지 않은 userId 형식입니다.");
-	    }
-
-	    // userRepository에서 userId(UUID)로 사용자 조회
-	    User user = userRepository.findByUserId(userUUID);  // UUID로 조회
-	    if (user == null) {
-	        throw new IllegalArgumentException("유효하지 않은 사용자입니다.");
-	    }
-
-	    // 커뮤니티 객체 생성
-	    Community community = Community.builder()
-	            .title(title)                     // 제목
-	            .content(content)                 // 내용
-	            .type(type)                       // 타입
-	            .user(user)                       // 사용자 (User 엔티티)
-	            .address1(address1)               // 주소 1
-	            .address2(address2)               // 주소 2
-	            .familyType(familyType)           // 가족 유형
-	            .interiorType(interiorType)       // 인테리어 유형
-	            .money(money)                     // 예산
-	            .periodStartDate(periodStartDate) // 시작 날짜
-	            .periodEndDate(periodEndDate)     // 종료 날짜
-	            .size(size)						  // 평수
-	            .style(style)                     // 스타일
-	            .viewCount(0)  
-	            .build();
-	    community = communityRepository.save(community);
-	    System.out.println("Community saved with ID: " + community.getCommunityNum());
-
-	    if (coverImage == null || coverImage.isEmpty()) {
-	        throw new IllegalArgumentException("파일이 비어 있거나 업로드되지 않았습니다.");
-	    }
-	    try {
-	        File uploadDir = new File(uploadPath + "communityImage/");
-	        if (!uploadDir.exists()) {
-	            uploadDir.mkdirs();
-	        }
-	        String fileName = coverImage.getOriginalFilename();
-	        if (fileName == null) {
-	            throw new IllegalArgumentException("파일 이름이 없습니다.");
-	        }
-	        String filePath = uploadPath + "communityImage/" + fileName;
-	        File dest = new File(filePath);  // 파일 객체 생성
-	        coverImage.transferTo(dest);
-	        community.setCoverImage(fileName);  // 파일 경로를 엔티티에 업데이트
-	        communityRepository.save(community);  // 업데이트된 커뮤니티 저장
-	        System.out.println("파일 경로가 데이터베이스에 저장되었습니다: " + fileName);
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        System.err.println("파일 저장 중 오류 발생: " + e.getMessage());
-	        throw new RuntimeException("파일 저장에 실패했습니다. 경로를 확인하세요.");
-	    }
-	    return community.getCommunityNum();
+			String userId, String address1, String address2, String familyType, String interiorType, Integer money,
+			Date periodStartDate, Date periodEndDate, Integer size, String style) {
+		UUID userUUID;
+		try {
+			userUUID = UUID.fromString(userId);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("유효하지 않은 userId 형식입니다.");
+		}
+		// userRepository에서 userId(UUID)로 사용자 조회
+		User user = userRepository.findByUserId(userUUID); // UUID로 조회
+		if (user == null) {
+			throw new IllegalArgumentException("유효하지 않은 사용자입니다.");
+		}
+		// 커뮤니티 객체 생성
+		Community community = Community.builder().title(title) // 제목
+				.content(content) // 내용
+				.type(type) // 타입
+				.user(user) // 사용자 (User 엔티티)
+				.address1(address1) // 주소 1
+				.address2(address2) // 주소 2
+				.familyType(familyType) // 가족 유형
+				.interiorType(interiorType) // 인테리어 유형
+				.money(money) // 예산
+				.periodStartDate(periodStartDate) // 시작 날짜
+				.periodEndDate(periodEndDate) // 종료 날짜
+				.size(size) // 평수
+				.style(style) // 스타일
+				.viewCount(0).build();
+		community = communityRepository.save(community);
+		System.out.println("Community saved with ID: " + community.getCommunityNum());
+		if (coverImage == null || coverImage.isEmpty()) {
+			throw new IllegalArgumentException("파일이 비어 있거나 업로드되지 않았습니다.");
+		}
+		try {
+			File uploadDir = new File(uploadPath);
+			if (!uploadDir.exists()) {
+				uploadDir.mkdirs();
+			}
+			String fileName = coverImage.getOriginalFilename();
+			if (fileName == null) {
+				throw new IllegalArgumentException("파일 이름이 없습니다.");
+			}
+			String filePath = uploadPath + "communityImage/" + fileName;
+			File dest = new File(filePath); // 파일 객체 생성
+			coverImage.transferTo(dest);
+			community.setCoverImage(fileName); // 파일 경로를 엔티티에 업데이트
+			communityRepository.save(community); // 업데이트된 커뮤니티 저장
+			System.out.println("파일 경로가 데이터베이스에 저장되었습니다: " + fileName);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("파일 저장 중 오류 발생: " + e.getMessage());
+			throw new RuntimeException("파일 저장에 실패했습니다. 경로를 확인하세요.");
+		}
+		return community.getCommunityNum();
 	}
 
 	@Override
+	@Transactional
 	public void updateCommunity(Integer id, CommunityDto communityDto, MultipartFile coverImage) throws Exception {
 		// 기존 데이터 조회
 		Community community = communityRepository.findById(id)
@@ -148,8 +144,15 @@ public class CommunityServiceImpl implements CommunityService {
 		community.setTitle(communityDto.getTitle());
 		community.setContent(communityDto.getContent());
 		community.setType(communityDto.getType());
-
-		// 파일 처리 (새로운 파일이 있을 경우만)
+		community.setAddress1(communityDto.getAddress1());
+		community.setAddress2(communityDto.getAddress2());
+		community.setFamilyType(communityDto.getFamilyType());
+		community.setInteriorType(communityDto.getInteriorType());
+		community.setMoney(communityDto.getMoney());
+		community.setPeriodStartDate(communityDto.getPeriodStartDate());
+		community.setPeriodEndDate(communityDto.getPeriodEndDate());
+		community.setSize(communityDto.getSize());
+		community.setStyle(communityDto.getStyle());
 		if (coverImage != null && !coverImage.isEmpty()) {
 			// 기존 파일 삭제
 			if (community.getCoverImage() != null) {
@@ -158,12 +161,19 @@ public class CommunityServiceImpl implements CommunityService {
 					existingFile.delete();
 				}
 			}
-			// 새로운 파일 저장
-			String fileName = UUID.randomUUID() + "_" + coverImage.getOriginalFilename();
-			String filePath = uploadPath + "/" + fileName;
-			coverImage.transferTo(new File(filePath));
-			// 파일 이름 업데이트
-			community.setCoverImage(fileName);
+			try {
+				File uploadDir = new File(uploadPath);
+				if (!uploadDir.exists()) {
+					uploadDir.mkdirs();
+				}
+				String fileName = coverImage.getOriginalFilename();
+				String filePath = uploadPath + "/communityImage/" + fileName;
+				coverImage.transferTo(new File(filePath));
+				community.setCoverImage(fileName); // 파일 이름 업데이트
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException("파일 저장에 실패했습니다. 경로를 확인하세요.");
+			}
 		}
 
 		// 변경 내용 저장
@@ -173,12 +183,23 @@ public class CommunityServiceImpl implements CommunityService {
 	@Override
 	@Transactional
 	public Boolean getCommunityBookmark(String userId, Integer communityNum) throws Exception {
-		System.out.println(userId);
-		CommunityBookmark existingBookmark = communityBookmarkRepository
-				.findByUserUserIdAndCommunityCommunityNum(UUID.fromString(userId), communityNum);
-		if(existingBookmark == null) return false;
-		return true;
- 	}
+		// userId 값 검증
+				if (userId == null || userId.isEmpty()) {
+					System.out.println("Invalid userId: " + userId);
+					return false; // 사용자 ID가 없으면 false 반환
+				}
+				try {
+					// UUID 변환 및 북마크 조회
+					UUID userUuid = UUID.fromString(userId);
+					CommunityBookmark existingBookmark = communityBookmarkRepository
+							.findByUserUserIdAndCommunityCommunityNum(userUuid, communityNum);
+					return existingBookmark != null; // 북마크가 존재하면 true 반환
+				} catch (IllegalArgumentException e) {
+					// userId가 UUID 형식이 아닌 경우 처리
+					System.out.println("Invalid UUID format: " + userId);
+					return false;
+				}
+			}
 	
 	@Override
 	@Transactional
@@ -205,9 +226,9 @@ public class CommunityServiceImpl implements CommunityService {
 	@Transactional
 	@Override
 	public List<CommunityCommentDto> getCommentsByCommunityId(Integer communityNum) {
-	    // communityNum에 해당하는 댓글들을 조회합니다.
-	    return communityCommentRepository.findByCommunityCommunityNum(communityNum)
-	    		.stream().map(cc->cc.toDto()).collect(Collectors.toList());
+		// communityNum에 해당하는 댓글들을 조회합니다.
+		return communityCommentRepository.findByCommunityCommunityNum(communityNum).stream().map(cc -> cc.toDto())
+				.collect(Collectors.toList());
 	}
 
 
@@ -245,9 +266,8 @@ public class CommunityServiceImpl implements CommunityService {
 	public List<CommunityDto> getUserCommunities(String userId) throws Exception {
 	    List<Community> communities = communityRepository.findAllByUser_UserId(UUID.fromString(userId));
 
-	    return communities.stream()
-	        .map(Community::toDto) // Community 엔티티의 toDto 메서드를 사용
-	        .collect(Collectors.toList()); // 반환 타입은 List<CommunityDto>
+	    return communities.stream().map(Community::toDto) // Community 엔티티의 toDto 메서드를 사용
+				.collect(Collectors.toList()); // 반환 타입은 List<CommunityDto>
 	}
 
 
@@ -259,10 +279,10 @@ public class CommunityServiceImpl implements CommunityService {
 	
 	@Override
 	public void increaseViewCount(Integer communityNum) {
-        Community community = communityRepository.findById(communityNum)
-                .orElseThrow(() -> new IllegalArgumentException("해당 커뮤니티 게시글이 없습니다."));
-        community.setViewCount(community.getViewCount() + 1); // 조회수 증가
-        communityRepository.save(community); // 변경된 값 저장
+		Community community = communityRepository.findById(communityNum)
+				.orElseThrow(() -> new IllegalArgumentException("해당 커뮤니티 게시글이 없습니다."));
+		community.setViewCount(community.getViewCount() + 1); // 조회수 증가
+		communityRepository.save(community); // 변경된 값 저장
     }
 	
 	@Override
