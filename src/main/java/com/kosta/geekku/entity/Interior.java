@@ -1,7 +1,7 @@
 package com.kosta.geekku.entity;
 
-import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
+import java.util.Base64;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.kosta.geekku.dto.InteriorDto;
@@ -40,9 +39,9 @@ public class Interior {
 	// private UUID companyId; //join column company - companyId
 
 	private boolean possiblePart; // 부분시공 가능 여부-> 0:불가능 1:가능
-	private Integer period;
+	private Float period;
 	private Integer recentCount;
-	private Integer repairDate;
+	private Float repairDate;
 	private String possibleLocation;
 	@Column(columnDefinition = "MEDIUMBLOB")
 	@Lob
@@ -66,12 +65,13 @@ public class Interior {
 				.createdAt(createdAt)
 				.companyName(company.getCompanyName()).companyId(company.getCompanyId()).build();
 		
-		if(coverImage!=null) {
+		if(coverImage != null) {
 			try {
-				interiorDto.setCoverImageStr(
-						new String(Base64.encodeBase64(coverImage), "UTF-8"));
-			} catch(UnsupportedEncodingException e) {
+			    String encodedImage = Base64.getEncoder().encodeToString(coverImage); // Base64 인코딩
+			    interiorDto.setCoverImageStr(encodedImage);
+			} catch(Exception e) {
 				e.printStackTrace();
+				throw new RuntimeException("이미지 인코딩 중 오류 발생", e);
 			}
 		}
 		

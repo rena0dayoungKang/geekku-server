@@ -10,6 +10,7 @@ public interface AuthRepository extends JpaRepository<Auth, Integer> {
 	
 	Optional<Auth> findByEmailAndCertificationNum(String email, int certificationNum);
 	Optional<Auth> findByEmail(String email);
+	Optional<Auth> findByPhone(String phone);
 	Optional<Auth> findByCertificationNum(int certificationNum);
 
 }

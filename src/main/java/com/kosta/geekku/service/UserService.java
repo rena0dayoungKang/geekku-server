@@ -25,7 +25,8 @@ public interface UserService {
 
 	Map<String, Object> changePassword(UUID userId, String newPassword) throws Exception;
 
-	UserDto findIdByPhone(String phone) throws Exception;
+	List<UserDto> findIdByPhone(String phone) throws Exception;
 
 	List<UserDto> findIdByEmail(String email) throws Exception;
+	
 }

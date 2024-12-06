@@ -32,6 +32,8 @@ public class QInteriorAllAnswer extends EntityPathBase<InteriorAllAnswer> {
 
     public final QInteriorAllRequest interiorAllRequest;
 
+    public final StringPath title = createString("title");
+
     public QInteriorAllAnswer(String variable) {
         this(InteriorAllAnswer.class, forVariable(variable), INITS);
     }

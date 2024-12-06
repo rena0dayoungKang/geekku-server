@@ -74,9 +74,9 @@ public class InteriorController {
 	}
 
 	@GetMapping("/user/interiorBookmark/{num}")
-	public ResponseEntity<String> interiorBookmark(String userId, @PathVariable Integer num) {
+	public ResponseEntity<String> interiorBookmark(Authentication authentication, @PathVariable Integer num) {
 		try {
-//			String id = ((PrincipalDetails)authentication.getPrincipal()).getUser().getId(); 
+			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
 			boolean bookmark = interiorService.toggleBookmark(userId, num);
 			return new ResponseEntity<String>(String.valueOf(bookmark), HttpStatus.OK);
 		} catch (Exception e) {
@@ -85,13 +85,12 @@ public class InteriorController {
 		}
 	}
 
-	@PostMapping("/interiorRegister")
-	public ResponseEntity<String> interiorRegister(InteriorDto interiorDto,
-			@RequestParam(name = "file", required = false) MultipartFile file) {
-		System.out.println(interiorDto);
+	@PostMapping("/company/interiorRegister")
+	public ResponseEntity<String> interiorRegister(Authentication authentication, InteriorDto interiorDto,
+			@RequestParam(name = "coverImg", required = false) MultipartFile coverImage) {
 		try {
-			Integer interiorNum = interiorService.interiorRegister(interiorDto, file);
-			System.out.println(file);
+			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId(); 
+			Integer interiorNum = interiorService.interiorRegister(interiorDto, coverImage, companyId);
 			return new ResponseEntity<String>(String.valueOf(interiorNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -134,13 +133,13 @@ public class InteriorController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/sampleImage/{imageName}")
 	public void getSampleImage(@PathVariable String imageName, HttpServletResponse response) {
 		try {
 			String uploadPath = "C:/geekku/image_upload/sampleImage/";
 			File file = new File(uploadPath, imageName);
-			
+
 			if (!file.exists()) {
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				return;
@@ -247,12 +246,17 @@ public class InteriorController {
 	}
 
 	@GetMapping("/sampleList")
-	public ResponseEntity<Map<String, Object>> sampleList(@RequestParam(required = false) String date,
-			@RequestParam(required = false) String type, @RequestParam(required = false) String style,
-			@RequestParam(required = false) Integer size, @RequestParam(required = false) String location) {
+	public ResponseEntity<Map<String, Object>> sampleList(@RequestParam(name = "date", required = false) String date,
+			@RequestParam(name = "types", required = false) String[] types, @RequestParam(name = "styles", required = false) String[] styles,
+			@RequestParam(name = "sizes", required = false) String[] sizes, @RequestParam(name = "location", required = false) String[] location) {
 		try {
-			List<SampleDto> sampleList = interiorService.sampleList(date, type, style, size, location);
+			List<SampleDto> sampleList = interiorService.sampleList(date, types, styles, sizes, location);
 			System.out.println(sampleList);
+			System.out.println(types);
+			System.out.println(styles);
+			System.out.println(date);
+			System.out.println(sizes);
+			System.out.println(location);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("sampleList", sampleList);
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
@@ -276,8 +280,8 @@ public class InteriorController {
 	}
 
 	// 개인 마이페이지 - 1:1 인테리어 문의내역 리스트
-	@GetMapping("/user/mypageUserInteriorRequestList")
-	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMypage(Authentication authentication,
+	@GetMapping("/user/myPageUserInteriorRequestList")
+	public ResponseEntity<Page<InteriorRequestDto>> interiorRequestListForUserMyPage(Authentication authentication,
 			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
 			@RequestParam(required = false, defaultValue = "10", value = "size") int size) {
 		try {

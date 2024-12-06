@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kosta.geekku.dto.AuthDto;
 import com.kosta.geekku.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
@@ -43,6 +45,28 @@ public class AuthController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping("/sendPwdReset")
+	public ResponseEntity<String> snedPwdResetUrl(@RequestParam String username, @RequestParam String email) {
+		try {
+			authService.sendPwdResetUrl(username, email);
+			return new ResponseEntity<String>("비밀번호 재설정 링크를 이메일로 발송", HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("재설정 이메일 발송 실패", HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping("/resetPwd")
+	public ResponseEntity<Map<String, Object>> resetPassword(@RequestBody AuthDto authDto) {
+		try {
+			Map<String, Object> resMap = authService.resetPwd(authDto);
+			return new ResponseEntity<Map<String,Object>>(resMap, HttpStatus.OK);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String,Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 }

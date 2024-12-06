@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.geekku.config.jwt.JwtProperties;
 import com.kosta.geekku.config.jwt.JwtToken;
 import com.kosta.geekku.dto.CompanyDto;
+import com.kosta.geekku.dto.UserDto;
 import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.Estate;
 import com.kosta.geekku.entity.HouseAnswer;
@@ -265,6 +266,13 @@ public class CompanyServiceImpl implements CompanyService {
 	@Override
 	public List<CompanyDto> findIdByEmail(String email) throws Exception {
 		List<CompanyDto> companyList = companyRepository.findAllByEmail(email).stream().map(e -> e.toDto())
+				.collect(Collectors.toList());
+		return companyList;
+	}
+
+	@Override
+	public List<CompanyDto> findIdByPhone(String phone) throws Exception {
+		List<CompanyDto> companyList = companyRepository.findAllByPhone(phone).stream().map(e -> e.toDto())
 				.collect(Collectors.toList());
 		return companyList;
 	}

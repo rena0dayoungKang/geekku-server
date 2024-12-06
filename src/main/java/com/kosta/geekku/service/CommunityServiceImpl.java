@@ -116,7 +116,7 @@ public class CommunityServiceImpl implements CommunityService {
 	        throw new IllegalArgumentException("파일이 비어 있거나 업로드되지 않았습니다.");
 	    }
 	    try {
-	        File uploadDir = new File(uploadPath);
+	        File uploadDir = new File(uploadPath + "communityImage/");
 	        if (!uploadDir.exists()) {
 	            uploadDir.mkdirs();
 	        }

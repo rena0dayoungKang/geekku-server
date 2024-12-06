@@ -21,7 +21,7 @@ public class QInteriorSample extends EntityPathBase<InteriorSample> {
     private static final PathInits INITS = PathInits.DIRECT2;
 
     public static final QInteriorSample interiorSample = new QInteriorSample("interiorSample");
-
+    
     public final QCompany company;
 
     public final StringPath content = createString("content");
@@ -32,13 +32,17 @@ public class QInteriorSample extends EntityPathBase<InteriorSample> {
 
     public final QInterior interior;
 
+    public final StringPath intro = createString("intro");
+
     public final StringPath location = createString("location");
 
     public final NumberPath<Integer> sampleNum = createNumber("sampleNum", Integer.class);
 
-    public final NumberPath<Integer> size = createNumber("size", Integer.class);
+    public final StringPath size = createString("size");
 
     public final StringPath style = createString("style");
+
+    public final StringPath title = createString("title");
 
     public final StringPath type = createString("type");
 

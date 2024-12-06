@@ -22,17 +22,19 @@ public class QAlarmUser extends EntityPathBase<AlarmUser> {
 
     public static final QAlarmUser alarmUser = new QAlarmUser("alarmUser");
 
-    public final NumberPath<Integer> answerNum = createNumber("answerNum", Integer.class);
-
     public final QCompany company;
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 
+    public final DateTimePath<java.sql.Timestamp> createDate = createDateTime("createDate", java.sql.Timestamp.class);
+
+    public final NumberPath<Integer> detailPath = createNumber("detailPath", Integer.class);
+
     public final StringPath message = createString("message");
 
-    public final NumberPath<Integer> requestNum = createNumber("requestNum", Integer.class);
-
     public final BooleanPath status = createBoolean("status");
+
+    public final StringPath title = createString("title");
 
     public final StringPath type = createString("type");
 

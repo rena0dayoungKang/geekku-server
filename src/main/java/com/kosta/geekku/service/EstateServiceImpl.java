@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.EstateDto;
+import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.Estate;
 import com.kosta.geekku.entity.EstateBookmark;
 import com.kosta.geekku.entity.EstateImage;
+import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.EstateBookmarkRepository;
 import com.kosta.geekku.repository.EstateDslRepository;
 import com.kosta.geekku.repository.EstateImageRepository;
@@ -30,13 +32,16 @@ public class EstateServiceImpl implements EstateService {
 	private final EstateImageRepository estateImageRepository;
 	private final EstateBookmarkRepository estateBookmarkRepository;
 	private final EstateDslRepository estateDslRepository;
+	private final CompanyRepository companyRepository;
 
 	@Value("${upload.path}")
 	private String uploadPath;
 
 	@Override
-	public Integer estateWrite(EstateDto estateDto, List<MultipartFile> estateImageList) throws Exception {
+	public Integer estateWrite(EstateDto estateDto, List<MultipartFile> estateImageList, UUID companyId) throws Exception {
 		Estate estate = estateDto.toEntity();
+		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
+		estate.setCompany(company);
 		estateRepository.save(estate);
 
 		if (estateImageList != null && estateImageList.size() > 0) {
@@ -59,7 +64,7 @@ public class EstateServiceImpl implements EstateService {
 
 	@Override
 	public EstateDto estateDetail(Integer estateNum) throws Exception {
-		Estate estate = estateRepository.findById(estateNum).orElseThrow(() -> new Exception("매물번호 오류"));
+		Estate estate = estateRepository.findById(estateNum).orElseThrow(() -> new Exception("매물 글번호 오류"));
 		return estate.toDto();
 	}
 
@@ -113,7 +118,7 @@ public class EstateServiceImpl implements EstateService {
 
 	@Override
 	public Integer checkBookmark(String userId, Integer estateNum) throws Exception {
-		EstateBookmark estateBookmark = estateBookmarkRepository.findByEstateNumAndUserId(estateNum, UUID.fromString(userId));
+		EstateBookmark estateBookmark = estateBookmarkRepository.findByEstate_EstateNumAndUserId(estateNum, UUID.fromString(userId));
 		
 		if (estateBookmark == null) {
 			return null; // 북마크가 없는 경우 null 반환
@@ -124,11 +129,12 @@ public class EstateServiceImpl implements EstateService {
 
 	@Override
 	public boolean toggleBookmark(String userId, Integer estateNum) throws Exception {
-		EstateBookmark estateBookmark = estateBookmarkRepository.findByEstateNumAndUserId(estateNum,
+		EstateBookmark estateBookmark = estateBookmarkRepository.findByEstate_EstateNumAndUserId(estateNum,
 				UUID.fromString(userId));
+		Estate estate = estateRepository.findById(estateNum).orElseThrow(() -> new Exception("매물 글번호 오류"));
 
 		if (estateBookmark == null) {
-			estateBookmarkRepository.save(EstateBookmark.builder().userId(UUID.fromString(userId)).estateNum(estateNum).build());
+			estateBookmarkRepository.save(EstateBookmark.builder().userId(UUID.fromString(userId)).estate(estate).build());
 			return true;
 		} else {
 			estateBookmarkRepository.delete(estateBookmark);

@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -31,6 +32,8 @@ public class QInteriorAllRequest extends EntityPathBase<InteriorAllRequest> {
 
     public final DateTimePath<java.sql.Timestamp> createAt = createDateTime("createAt", java.sql.Timestamp.class);
 
+    public final ListPath<InteriorAllRequest, QInteriorAllRequest> interiorAll = this.<InteriorAllRequest, QInteriorAllRequest>createList("interiorAll", InteriorAllRequest.class, QInteriorAllRequest.class, PathInits.DIRECT2);
+
     public final StringPath interiorType = createString("interiorType");
 
     public final NumberPath<Integer> money = createNumber("money", Integer.class);
@@ -49,9 +52,9 @@ public class QInteriorAllRequest extends EntityPathBase<InteriorAllRequest> {
 
     public final QUser user;
 
-    public final BooleanPath workType = createBoolean("workType");
-    
     public final NumberPath<Integer> viewCount = createNumber("viewCount", Integer.class);
+
+    public final BooleanPath workType = createBoolean("workType");
 
     public QInteriorAllRequest(String variable) {
         this(InteriorAllRequest.class, forVariable(variable), INITS);

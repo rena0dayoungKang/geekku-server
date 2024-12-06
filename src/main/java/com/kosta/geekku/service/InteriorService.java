@@ -24,7 +24,7 @@ public interface InteriorService {
 
 	boolean toggleBookmark(String userId, Integer interiorNum) throws Exception;
 
-	Integer interiorRegister(InteriorDto interiorDto, MultipartFile cover) throws Exception;
+	Integer interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId) throws Exception;
 
 	InteriorDto interiorCompanyDetail(UUID companyId) throws Exception;
 
@@ -34,11 +34,11 @@ public interface InteriorService {
 
 	SampleDto sampleDetail(Integer num) throws Exception;
 
-	Integer interiorRequest(String userId ,InteriorRequestDto requestDto) throws Exception;
+	Integer interiorRequest(String userId, InteriorRequestDto requestDto) throws Exception;
 
 	InteriorRequestDto requestDetail(Integer num) throws Exception;
 
-	List<SampleDto> sampleList(String date, String type, String style, Integer size, String location) throws Exception;
+	List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location) throws Exception;
 
 	Map<String, Object> interiorDetail(Integer interiorNum) throws Exception;
 
@@ -52,17 +52,18 @@ public interface InteriorService {
 	Page<ReviewDto> reviewListForUserMypage(int page, int size, UUID userId) throws Exception;
 
 	// 개인 마이페이지 - 인테리어 후기 수정
-	Integer updateReview(ReviewDto reviewDto, Integer num,  List<Integer> delFileNum, List<MultipartFile> fileList) throws Exception;
+	Integer updateReview(ReviewDto reviewDto, Integer num, List<Integer> delFileNum, List<MultipartFile> fileList)
+			throws Exception;
 
 	// 개인 마이페이지 - 인테리어 후기 삭제
 	void deleteReview(Integer num) throws Exception;
 
-	List<ReviewDto> interiorReviewList(PageInfo pageInfo, String companyId) throws Exception;
+	Page<ReviewDto> interiorReviewList(int page, int size, int interiorNum) throws Exception;
 
 	List<InteriorRequestDto> interiorRequestList(PageInfo pageInfo, String companyId) throws Exception;
 
-	List<SampleDto> interiorSampleList(PageInfo pageInfo, String companyId) throws Exception;
-	
+	List<SampleDto> interiorSampleList(PageInfo pageInfo, UUID companyId) throws Exception;
+
 	ReviewDto getReview(Integer reviewNum) throws Exception;
 
 	Map<String, Object> updateInteriorCompany(UUID companyId, InteriorDto interiorDto, MultipartFile file);

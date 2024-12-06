@@ -43,10 +43,11 @@ public class EstateController {
 	private String uploadPath;
 
 	@PostMapping("/company/estateWrite")
-	public ResponseEntity<String> estateWrite(EstateDto estateDto,
+	public ResponseEntity<String> estateWrite(Authentication authentication, EstateDto estateDto,
 			@RequestPart(name = "images", required = false) MultipartFile[] images) {
 		try {
-			Integer estateNum = estateService.estateWrite(estateDto, images == null ? null : Arrays.asList(images));
+			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId();
+			Integer estateNum = estateService.estateWrite(estateDto, images == null ? null : Arrays.asList(images), companyId);
 			return new ResponseEntity<String>(String.valueOf(estateNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -148,7 +149,7 @@ public class EstateController {
 			e.printStackTrace();
 			return new ResponseEntity<String>("매물 북마크 실패", HttpStatus.BAD_REQUEST);
 		}
-	}
+	} 
 
 	// 중개업자 마이페이지 - 매물 등록 내역
 	@GetMapping("/company/mypageEstateList")

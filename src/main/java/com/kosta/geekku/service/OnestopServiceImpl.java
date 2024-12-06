@@ -145,9 +145,9 @@ public class OnestopServiceImpl implements OnestopService {
 	}
 
 	@Override
-	public Slice<OnestopAnswerDto> onestopAnswerListForMypage(int page, String companyId) throws Exception {
+	public Slice<OnestopAnswerDto> onestopAnswerListForMypage(int page, UUID companyId) throws Exception {
 
-		Optional<Company> company = companyRepository.findById(UUID.fromString(companyId));
+		Optional<Company> company = companyRepository.findById(companyId);
 
 		Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
 		Slice<OnestopAnswerDto> pageInfo = onestopAnswerRepository.findAllByCompany(company, pageable)
