@@ -1,11 +1,13 @@
 package com.kosta.geekku.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.CompanyDto;
+import com.kosta.geekku.dto.HouseAnswerDto;
+import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.entity.Estate;
-import com.kosta.geekku.entity.HouseAnswer;
-import com.kosta.geekku.entity.OnestopAnswer;
 import com.kosta.geekku.entity.Role;
 import com.kosta.geekku.service.CompanyService;
 import com.kosta.geekku.service.EstateNumberService;
@@ -148,28 +150,42 @@ public class CompanyController {
 	}
 
 	// 중개업자 집꾸하기 답변 글 조회 (테스트 해야함) + 페이징 처리
-	@GetMapping("/estateAnswered/{companyId}")
-	public ResponseEntity<?> getEstateAnswered(@PathVariable UUID companyId, Pageable pageable) {
+	@GetMapping("/company/estateAnswered/{companyId}")
+	public ResponseEntity<Page<HouseAnswerDto>> getAnswersByCompanyId(@PathVariable UUID companyId,
+			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
 		try {
-			Page<HouseAnswer> houseAnswers = companyService.getAnswersByCompanyId(companyId, pageable);
+			Pageable pageable = PageRequest.of(page - 1, size);
+			Page<HouseAnswerDto> houseAnswers = companyService.getAnswersByCompanyId(companyId, pageable);
+
 			return ResponseEntity.ok(houseAnswers);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중개업자가 작성한 게시글을 찾을 수 없습니다.");
 		}
+		return new ResponseEntity<Page<HouseAnswerDto>>(HttpStatus.BAD_REQUEST);
 	}
 
-	@GetMapping("/onestopAnswered/{companyId}")
-	public ResponseEntity<?> getOnestopAnswered(@PathVariable UUID companyId, Pageable pageable) {
-		try {
-			// 회사 ID와 페이지 정보를 받아서 조회
-			Page<OnestopAnswer> onestopAnswers = companyService.getOnestopAnswersByCompanyId(companyId, pageable);
-			return ResponseEntity.ok(onestopAnswers);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중개업자가 작성한 Onestop 답변을 찾을 수 없습니다.");
-		}
-	}
+	 @GetMapping("/onestopAnswered/{companyId}")
+	    public ResponseEntity<?> getOnestopAnswered(
+	            @PathVariable UUID companyId,
+	            @RequestParam(value = "page", defaultValue = "1") int page, 
+	            @RequestParam(value = "size", defaultValue = "10") int size) {
+	        try {
+	            Pageable pageable = PageRequest.of(page - 1, size);
+	            Page<OnestopAnswerDto> onestopAnswers = companyService.getOnestopAnswersByCompanyId(companyId, pageable);
+
+	            // 응답 데이터를 Map으로 정리
+	            Map<String, Object> response = new HashMap<>();
+	            response.put("currentPage", onestopAnswers.getNumber() + 1);
+	            response.put("totalPages", onestopAnswers.getTotalPages());
+	            response.put("totalItems", onestopAnswers.getTotalElements());
+	            response.put("content", onestopAnswers.getContent()); 
+
+	            return ResponseEntity.ok(response);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 중개업자의 데이터를 찾을 수 없습니다.");
+	        }
+	    }
 
 	@GetMapping("/company/companyInfo")
 	public ResponseEntity<CompanyDto> getCompanyInfo(Authentication authentication) {

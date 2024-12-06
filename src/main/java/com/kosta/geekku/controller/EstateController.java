@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -155,11 +155,12 @@ public class EstateController {
 	@GetMapping("/company/mypageEstateList")
 	public ResponseEntity<Map<String, Object>> mypageEstateList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam("companyId") String companyId) {
+			Authentication authentication) {
 		try {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			List<EstateDto> estateList = estateService.estateListForMypage(pageInfo, companyId);
+			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId();
+			List<EstateDto> estateList = estateService.estateListForMypage(pageInfo, companyId.toString());
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("estateList", estateList);
 			listInfo.put("pageInfo", pageInfo);
@@ -170,5 +171,17 @@ public class EstateController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	// 중개업자 마이페이지 글 삭제
+	@DeleteMapping("/company/deleteEstateList/{estateNum}")
+    public ResponseEntity<?> deleteEstate(@PathVariable Integer estateNum) {
+        try {
+            estateService.deleteEstate(estateNum);
+            return ResponseEntity.ok("삭제되었습니다.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("삭제 실패: " + e.getMessage());
+        }
+    }
 
 }

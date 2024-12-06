@@ -21,11 +21,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.geekku.config.jwt.JwtProperties;
 import com.kosta.geekku.config.jwt.JwtToken;
 import com.kosta.geekku.dto.CompanyDto;
-import com.kosta.geekku.dto.UserDto;
+import com.kosta.geekku.dto.HouseAnswerDto;
+import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.Estate;
-import com.kosta.geekku.entity.HouseAnswer;
-import com.kosta.geekku.entity.OnestopAnswer;
 import com.kosta.geekku.entity.UFile;
 import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.EstateRepository;
@@ -243,14 +242,44 @@ public class CompanyServiceImpl implements CompanyService {
 	}
 
 	@Override
-	public Page<HouseAnswer> getAnswersByCompanyId(UUID companyId, Pageable pageable) {
-		return houseAnswerRepository.findByCompanyId(companyId, pageable);
+	public Page<HouseAnswerDto> getAnswersByCompanyId(UUID companyId, Pageable pageable) {
+	    return houseAnswerRepository.findByCompanyId(companyId, pageable)
+	            .map(answer -> HouseAnswerDto.builder()
+	                    .answerHouseNum(answer.getAnswerHouseNum())
+	                    .title(answer.getTitle())
+	                    .content(answer.getContent())
+	                    .createdAt(answer.getCreatedAt())
+	                    .companyId(answer.getCompany().getCompanyId())
+	                    .companyName(answer.getCompany().getCompanyName())
+	                    .companyPhone(answer.getCompany().getPhone())
+	                    .houseNum(answer.getHouse().getHouseNum())
+	                    .viewCount(answer.getHouse().getViewCount())
+	                    .userId(answer.getHouse().getUser().getUserId())
+	                    .userName(answer.getHouse().getUser().getUsername())
+	                    .address1(answer.getHouse().getAddress1())
+	                    .address2(answer.getHouse().getAddress2())
+	                    .type(answer.getHouse().getType())
+	                    .build());
 	}
 
-	@Override
-	public Page<OnestopAnswer> getOnestopAnswersByCompanyId(UUID companyId, Pageable pageable) {
-		return onestopAnswerRepository.findByCompanyId(companyId, pageable);
-	}
+	public Page<OnestopAnswerDto> getOnestopAnswersByCompanyId(UUID companyId, Pageable pageable) {
+        return onestopAnswerRepository.findByCompanyId(companyId, pageable)
+                .map(answer -> OnestopAnswerDto.builder()
+                        .answerOnestopNum(answer.getAnswerOnestopNum())
+                        .title(answer.getTitle())
+                        .content(answer.getContent())
+                        .createdAt(answer.getCreatedAt())
+                        .companyId(answer.getCompany().getCompanyId())
+                        .companyName(answer.getCompany().getCompanyName())
+                        .companyPhone(answer.getCompany().getPhone())
+                        .viewCount(answer.getOnestop().getViewCount())
+                        .userId(answer.getOnestop().getUser().getUserId())
+                        .username(answer.getOnestop().getUser().getUsername())
+                        .address1(answer.getOnestop().getAddress1())
+                        .address2(answer.getOnestop().getAddress2())
+                        .type(answer.getOnestop().getType())
+                        .build());
+    }
 
 	@Override
 	public String getCompanyCertificationImagePath(Integer num) throws Exception {
@@ -276,4 +305,5 @@ public class CompanyServiceImpl implements CompanyService {
 				.collect(Collectors.toList());
 		return companyList;
 	}
+
 }

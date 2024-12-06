@@ -18,3 +18,4 @@ public interface HouseAnswerRepository extends JpaRepository<HouseAnswer, Intege
 	@Query("SELECT h FROM HouseAnswer h WHERE h.company.companyId = :companyId")
     Page<HouseAnswer> findByCompanyId(@Param("companyId") UUID companyId, Pageable pageable);
 }
+	

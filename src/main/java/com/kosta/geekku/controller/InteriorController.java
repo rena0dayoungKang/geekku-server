@@ -76,7 +76,7 @@ public class InteriorController {
 	@GetMapping("/user/interiorBookmark/{num}")
 	public ResponseEntity<String> interiorBookmark(Authentication authentication, @PathVariable Integer num) {
 		try {
-			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
+			String userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString();
 			boolean bookmark = interiorService.toggleBookmark(userId, num);
 			return new ResponseEntity<String>(String.valueOf(bookmark), HttpStatus.OK);
 		} catch (Exception e) {
@@ -89,7 +89,7 @@ public class InteriorController {
 	public ResponseEntity<String> interiorRegister(Authentication authentication, InteriorDto interiorDto,
 			@RequestParam(name = "coverImg", required = false) MultipartFile coverImage) {
 		try {
-			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId(); 
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
 			Integer interiorNum = interiorService.interiorRegister(interiorDto, coverImage, companyId);
 			return new ResponseEntity<String>(String.valueOf(interiorNum), HttpStatus.OK);
 		} catch (Exception e) {
@@ -100,7 +100,7 @@ public class InteriorController {
 
 	// 인테리어 업체 정보 수정
 	@PostMapping("/company/interiorModify")
-	public ResponseEntity<Integer> interiorModify(Authentication authentication, InteriorDto interiorDto,
+	public ResponseEntity<String> interiorModify(Authentication authentication, InteriorDto interiorDto,
 			@RequestParam(name = "file", required = false) MultipartFile file) {
 		System.out.println(interiorDto);
 		try {
@@ -112,10 +112,11 @@ public class InteriorController {
 
 			Map<String, Object> res = interiorService.updateInteriorCompany(companyId, interiorDto, file);
 			System.out.println(file);
-			return new ResponseEntity<Integer>(interiorDto.getInteriorNum(), HttpStatus.OK);
+			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Integer>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -212,7 +213,6 @@ public class InteriorController {
 		}
 	}
 
-
 	@PostMapping("/user/interiorRequest")
 	public ResponseEntity<String> interiorRequest(Authentication authentication,
 			@RequestBody InteriorRequestDto requestDto) {
@@ -228,7 +228,6 @@ public class InteriorController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
-
 
 	@PostMapping("/requestDetail")
 	public ResponseEntity<Map<String, Object>> requestDetail(@RequestBody Map<String, String> param) {
@@ -246,12 +245,17 @@ public class InteriorController {
 	}
 
 	@GetMapping("/sampleList")
-	public ResponseEntity<Map<String, Object>> sampleList(@RequestParam(required = false) String date,
-			@RequestParam(required = false) String type, @RequestParam(required = false) String style,
-			@RequestParam(required = false) Integer size, @RequestParam(required = false) String location) {
+	public ResponseEntity<Map<String, Object>> sampleList(@RequestParam(name = "date", required = false) String date,
+			@RequestParam(name = "types", required = false) String[] types, @RequestParam(name = "styles", required = false) String[] styles,
+			@RequestParam(name = "sizes", required = false) String[] sizes, @RequestParam(name = "location", required = false) String[] location) {
 		try {
-			List<SampleDto> sampleList = interiorService.sampleList(date, type, style, size, location);
+			List<SampleDto> sampleList = interiorService.sampleList(date, types, styles, sizes, location);
 			System.out.println(sampleList);
+			System.out.println(types);
+			System.out.println(styles);
+			System.out.println(date);
+			System.out.println(sizes);
+			System.out.println(location);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("sampleList", sampleList);
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
@@ -262,7 +266,7 @@ public class InteriorController {
 	}
 
 	@PostMapping("/interiorDetail")
-	public ResponseEntity<Map<String, Object>> interiorDetail(@RequestBody Map<String,String> param) {
+	public ResponseEntity<Map<String, Object>> interiorDetail(@RequestBody Map<String, String> param) {
 		try {
 			System.out.println(param);
 			Map<String, Object> detailInfo = interiorService.interiorDetail(Integer.parseInt(param.get("num")));

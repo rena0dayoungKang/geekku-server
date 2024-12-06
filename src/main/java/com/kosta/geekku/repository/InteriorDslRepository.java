@@ -62,24 +62,24 @@ public class InteriorDslRepository {
 				.fetchOne();
 	}
 
-	public List<InteriorSample> sampleListByFilter(String date, String type, String style, Integer size,
-			String location) {
+	public List<InteriorSample> sampleListByFilter(String date, String[] type, String[] style, String[] size,
+			String[] location) {
 		QInteriorSample sample = QInteriorSample.interiorSample;
 		BooleanBuilder filter = new BooleanBuilder();
 //		if (date != null) {
 //			filter.and(sample.createdAt.eq(date));
 //		}
-		if (type != null) {
-			filter.and(sample.type.eq(type));
+		if (type != null && type.length>0) {
+			filter.and(sample.type.in(type));
 		}
-		if (style != null) {
-			filter.and(sample.style.eq(style));
+		if (style != null && style.length>0) {
+			filter.and(sample.style.in(style));
 		}
-		if (size != null) {
-			filter.and(sample.size.eq(size));
+		if (size != null && size.length>0) {
+			filter.and(sample.size.in(size));
 		}
-		if (location != null) {
-			filter.and(sample.location.eq(location));
+		if (location != null && location.length>0) {
+			filter.and(sample.location.in(location));
 		}
 		
 		JPAQuery<InteriorSample> query = jpaQueryFactory.selectFrom(sample).where(filter);
@@ -92,22 +92,22 @@ public class InteriorDslRepository {
 		}
 		return query.fetch();
 	}
-	public Long sampleCountByFilter(String date, String type, String style, Integer size,
-			String location) throws Exception {
+	public Long sampleCountByFilter(String date, String[] type, String[] style, String[] size,
+			String[] location) throws Exception {
 		QInteriorSample sample = QInteriorSample.interiorSample;
 		BooleanBuilder filter = new BooleanBuilder();
 		
-		if (type != null) {
-			filter.and(sample.type.eq(type));
+		if (type != null && type.length>0) {
+			filter.and(sample.type.in(type));
 		}
-		if (style != null) {
-			filter.and(sample.style.eq(style));
+		if (style != null && style.length>0) {
+			filter.and(sample.style.in(style));
 		}
-		if (size != null) {
-			filter.and(sample.size.eq(size));
+		if (size != null && size.length>0) {
+			filter.and(sample.size.in(size));
 		}
-		if (location != null) {
-			filter.and(sample.location.eq(location));
+		if (location != null && location.length>0) {
+			filter.and(sample.location.in(location));
 		}
 		
 		return jpaQueryFactory.select(sample.count()).from(sample)
