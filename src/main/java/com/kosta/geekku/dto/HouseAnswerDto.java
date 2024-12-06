@@ -31,6 +31,10 @@ public class HouseAnswerDto {
 	private UUID userId;
 	private String userName;
 	private String name;
+	private Integer viewCount;
+	private String address1;
+	private String address2;
+	private String type;
 	
 	public HouseAnswer toEntity() {
 		return HouseAnswer.builder()
@@ -38,8 +42,8 @@ public class HouseAnswerDto {
 						.title(title)
 						.content(content)
 						.createdAt(createdAt)
-						.company(Company.builder().companyId(companyId).companyName(companyName).phone(companyPhone).companyAddress(companyAddress).build())
-						.house(House.builder().houseNum(houseNum).build())
+						.company(Company.builder().companyId(companyId).companyName(companyName).phone(companyPhone).build())
+						.house(House.builder().houseNum(houseNum).viewCount(viewCount).address1(address1).address2(address2).type(type).build())
 						.build();
 	}
 }

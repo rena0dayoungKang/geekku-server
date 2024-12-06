@@ -49,19 +49,20 @@ public class OnestopDslRepository {
 	}
 
 	// 제목, 지역, 거래타입
-	public List<Onestop> searchOnestopListByPaging(PageRequest pageRequest, String type, String word) throws Exception {
+	public List<Onestop> searchOnestopListByPaging(PageRequest pageRequest, String type, String keyword)
+			throws Exception {
 		QOnestop onestop = QOnestop.onestop;
 		List<Onestop> onestopList = null;
 		if (type.equals("title")) {
-			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.title.contains(word))
+			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.title.contains(keyword))
 					.orderBy(onestop.onestopNum.desc()).offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
 					.fetch();
 		} else if (type.equals("")) {
-			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.content.contains(word))
+			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.content.contains(keyword))
 					.orderBy(onestop.onestopNum.desc()).offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
 					.fetch();
 		} else if (type.equals("address1")) {
-			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.address1.contains(word))
+			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.address1.contains(keyword))
 					.orderBy(onestop.onestopNum.desc()).offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
 					.fetch();
 		}
@@ -95,9 +96,7 @@ public class OnestopDslRepository {
 	public void updateOnestopViewCount(Integer onestopNum, Integer viewCount) throws Exception {
 		QOnestop onestop = QOnestop.onestop;
 
-		jpaQueryFactory.update(onestop)
-		.set(onestop.viewCount, viewCount)
-		.where(onestop.onestopNum.eq(onestopNum))
+		jpaQueryFactory.update(onestop).set(onestop.viewCount, viewCount).where(onestop.onestopNum.eq(onestopNum))
 				.execute();
 
 	}

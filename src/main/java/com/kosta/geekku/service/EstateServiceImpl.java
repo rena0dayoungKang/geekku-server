@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.EstateDto;
@@ -163,4 +164,17 @@ public class EstateServiceImpl implements EstateService {
 
 		return estateDtoList;
 	}
+	
+	 @Transactional
+	 @Override
+	    public void deleteEstate(Integer estateNum) {
+	        // ID로 데이터 존재 여부 확인
+	        if (!estateRepository.existsById(estateNum)) {
+	            throw new IllegalArgumentException("해당 번호의 부동산 데이터를 찾을 수 없습니다: " + estateNum);
+	        }
+	        // 데이터 삭제
+	        estateRepository.deleteById(estateNum);
+	    }
+	 
+	 
 }

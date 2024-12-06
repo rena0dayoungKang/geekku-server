@@ -1,11 +1,13 @@
 package com.kosta.geekku.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.CompanyDto;
+import com.kosta.geekku.dto.HouseAnswerDto;
+import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.entity.Estate;
-import com.kosta.geekku.entity.HouseAnswer;
-import com.kosta.geekku.entity.OnestopAnswer;
 import com.kosta.geekku.entity.Role;
 import com.kosta.geekku.service.CompanyService;
 import com.kosta.geekku.service.EstateNumberService;
@@ -64,25 +66,28 @@ public class CompanyController {
 
 	@GetMapping("/searchEstate")
 	public ResponseEntity<String> searchEstate(@RequestParam(required = false) String bsnmCmpnm,
-			@RequestParam(required = false) String brkrNm, @RequestParam(required = false) String jurirno) {
+			@RequestParam(required = false) String brkrNm, 
+			@RequestParam(required = false) String jurirno,
+			@RequestParam(defaultValue = "1") int pageNo, 
+			@RequestParam(defaultValue = "10") int numOfRows) {
 
-		// 전달된 요청 파라미터 출력
+		// 전달된 검색값 출력
 		System.out.println("Received Parameters:");
 		System.out.println("bsnmCmpnm: " + bsnmCmpnm);
 		System.out.println("brkrNm: " + brkrNm);
 		System.out.println("jurirno: " + jurirno);
-
-		// 브이월드 Settings 출력
+		
+		// 브이월드 Settings
 		estateNumberService.vworldSettings();
 		try {
-			String response = estateNumberService.searchEstate(bsnmCmpnm, brkrNm, jurirno);
+			String response = estateNumberService.searchEstate(bsnmCmpnm, brkrNm, jurirno, pageNo, numOfRows);
 			return new ResponseEntity<String>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("조회할 수 없습니다", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/company/changePwd")
 	public ResponseEntity<String> changePwd(Authentication authentication, @RequestBody Map<String, String> param) {
 		try {
@@ -145,28 +150,42 @@ public class CompanyController {
 	}
 
 	// 중개업자 집꾸하기 답변 글 조회 (테스트 해야함) + 페이징 처리
-	@GetMapping("/estateAnswered/{companyId}")
-	public ResponseEntity<?> getEstateAnswered(@PathVariable UUID companyId, Pageable pageable) {
+	@GetMapping("/company/estateAnswered/{companyId}")
+	public ResponseEntity<Page<HouseAnswerDto>> getAnswersByCompanyId(@PathVariable UUID companyId,
+			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
 		try {
-			Page<HouseAnswer> houseAnswers = companyService.getAnswersByCompanyId(companyId, pageable);
+			Pageable pageable = PageRequest.of(page - 1, size);
+			Page<HouseAnswerDto> houseAnswers = companyService.getAnswersByCompanyId(companyId, pageable);
+
 			return ResponseEntity.ok(houseAnswers);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중개업자가 작성한 게시글을 찾을 수 없습니다.");
 		}
+		return new ResponseEntity<Page<HouseAnswerDto>>(HttpStatus.BAD_REQUEST);
 	}
 
-	@GetMapping("/onestopAnswered/{companyId}")
-	public ResponseEntity<?> getOnestopAnswered(@PathVariable UUID companyId, Pageable pageable) {
-		try {
-			// 회사 ID와 페이지 정보를 받아서 조회
-			Page<OnestopAnswer> onestopAnswers = companyService.getOnestopAnswersByCompanyId(companyId, pageable);
-			return ResponseEntity.ok(onestopAnswers);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중개업자가 작성한 Onestop 답변을 찾을 수 없습니다.");
-		}
-	}
+	 @GetMapping("/onestopAnswered/{companyId}")
+	    public ResponseEntity<?> getOnestopAnswered(
+	            @PathVariable UUID companyId,
+	            @RequestParam(value = "page", defaultValue = "1") int page, 
+	            @RequestParam(value = "size", defaultValue = "10") int size) {
+	        try {
+	            Pageable pageable = PageRequest.of(page - 1, size);
+	            Page<OnestopAnswerDto> onestopAnswers = companyService.getOnestopAnswersByCompanyId(companyId, pageable);
+
+	            // 응답 데이터를 Map으로 정리
+	            Map<String, Object> response = new HashMap<>();
+	            response.put("currentPage", onestopAnswers.getNumber() + 1);
+	            response.put("totalPages", onestopAnswers.getTotalPages());
+	            response.put("totalItems", onestopAnswers.getTotalElements());
+	            response.put("content", onestopAnswers.getContent()); 
+
+	            return ResponseEntity.ok(response);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 중개업자의 데이터를 찾을 수 없습니다.");
+	        }
+	    }
 
 	@GetMapping("/company/companyInfo")
 	public ResponseEntity<CompanyDto> getCompanyInfo(Authentication authentication) {
@@ -179,7 +198,7 @@ public class CompanyController {
 			return new ResponseEntity<CompanyDto>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/findCompanyByEmail")
 	public ResponseEntity<List<CompanyDto>> findIdByEmail(@RequestBody Map<String, String> param) {
 		try {
@@ -191,18 +210,18 @@ public class CompanyController {
 			return new ResponseEntity<List<CompanyDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/findCompanyByPhone")
-    public ResponseEntity<List<CompanyDto>> findCompanyByPhone(@RequestBody Map<String, String> param) {
-        try {
-            String phone = param.get("phone");
-            List<CompanyDto> companyDtoList = companyService.findIdByPhone(phone);
-            return new ResponseEntity<List<CompanyDto>>(companyDtoList, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<List<CompanyDto>>(HttpStatus.BAD_REQUEST);
-        }
-    }
+	public ResponseEntity<List<CompanyDto>> findCompanyByPhone(@RequestBody Map<String, String> param) {
+		try {
+			String phone = param.get("phone");
+			List<CompanyDto> companyDtoList = companyService.findIdByPhone(phone);
+			return new ResponseEntity<List<CompanyDto>>(companyDtoList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<CompanyDto>>(HttpStatus.BAD_REQUEST);
+		}
+	}
 
 	@GetMapping("/company/companyCertImg/{num}")
 	public ResponseEntity<String> getCompanyImg(Authentication authentication, @PathVariable Integer num) {

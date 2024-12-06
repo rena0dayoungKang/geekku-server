@@ -39,18 +39,18 @@ public class OnestopServiceImpl implements OnestopService {
 	private final CompanyRepository companyRepository;
 
 	@Override
-	public List<OnestopDto> onestopList(PageInfo pageInfo, String type, String word) throws Exception {
+	public List<OnestopDto> onestopList(PageInfo pageInfo, String type, String keyword) throws Exception {
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
 		List<OnestopDto> onestopDtoList = null;
 		Long allCnt = 0L;
-		if (word == null || word.trim().equals("")) { // 전체 목록
+		if (keyword == null || keyword.trim().equals("")) { // 전체 목록
 			onestopDtoList = onestopDslRepository.findOnestopListByPaging(pageRequest).stream().map(b -> b.toDto())
 					.collect(Collectors.toList());
 			allCnt = onestopDslRepository.findOnestopCount();
 		} else { // 검색
-			onestopDtoList = onestopDslRepository.searchOnestopListByPaging(pageRequest, type, word).stream()
+			onestopDtoList = onestopDslRepository.searchOnestopListByPaging(pageRequest, type, keyword).stream()
 					.map(b -> b.toDto()).collect(Collectors.toList());
-			allCnt = onestopDslRepository.searchOnestopCount(type, word);
+			allCnt = onestopDslRepository.searchOnestopCount(type, keyword);
 		}
 
 		Integer allPage = (int) (Math.ceil(allCnt.doubleValue() / pageRequest.getPageSize()));

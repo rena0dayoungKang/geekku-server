@@ -38,7 +38,8 @@ public interface InteriorService {
 
 	InteriorRequestDto requestDetail(Integer num) throws Exception;
 
-	List<SampleDto> sampleList(String date, String type, String style, Integer size, String location) throws Exception;
+	List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location)
+			throws Exception;
 
 	Map<String, Object> interiorDetail(Integer interiorNum) throws Exception;
 
@@ -58,9 +59,9 @@ public interface InteriorService {
 	// 개인 마이페이지 - 인테리어 후기 삭제
 	void deleteReview(Integer num) throws Exception;
 
-	Page<ReviewDto> interiorReviewList(int page, int size, int interiorNum) throws Exception;
+	Page<ReviewDto> interiorReviewList(int page, int size, UUID companyId) throws Exception;
 
-	List<InteriorRequestDto> interiorRequestList(PageInfo pageInfo, String companyId) throws Exception;
+	Page<InteriorRequestDto> interiorRequestList(int page, int size, UUID companyId) throws Exception;
 
 	List<SampleDto> interiorSampleList(PageInfo pageInfo, UUID companyId) throws Exception;
 

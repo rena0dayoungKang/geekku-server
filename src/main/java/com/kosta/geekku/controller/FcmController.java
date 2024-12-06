@@ -26,8 +26,9 @@ public class FcmController {
 	@PostMapping("/fcmToken")
 	public ResponseEntity<String> fcmToken(@RequestBody Map<String, String> param) {
 		String type = param.get("type");
-		System.out.println(param);
 		try {
+			System.out.println("==================>");
+			System.out.println(type);
 			if (type.equals("user")) {
 				fcmMessageService.registUserFcmToken(param.get("userId"), param.get("fcmToken"));
 			} else {

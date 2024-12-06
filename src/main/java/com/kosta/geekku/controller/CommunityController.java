@@ -101,6 +101,8 @@ public class CommunityController {
 			if (param.get("userId") != null) {
 				Boolean bookmark = communityService.getCommunityBookmark(param.get("userId"), num);
 				res.put("bookmark", bookmark);
+			} else {
+				res.put("bookmark", false);
 			}
 
 			return new ResponseEntity<>(res, HttpStatus.OK);
@@ -110,6 +112,19 @@ public class CommunityController {
 		}
 	}
 
+	@GetMapping("/communityCall/{num}")
+	public ResponseEntity<Map<String, Object>> communityCall(@PathVariable Integer num) {
+		try {
+			Map<String, Object> res = new HashMap<>();
+			CommunityDto communityDetail = communityService.getCommunityDetail(num);
+			res.put("communityDetail", communityDetail);
+			return new ResponseEntity<>(res, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	// 필터링 조회
 	@PostMapping("/communityList2") // 예시 http://localhost:8080/communityList2/ + json 조건
 	public ResponseEntity<Page<CommunityDto>> getFilteredCommunities(@RequestBody CommunityFilterDto filterDto,
@@ -143,30 +158,24 @@ public class CommunityController {
 	}
 
 	// 커뮤니티 글 수정
-	@PutMapping(value = "/user/test6/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<?> updateCommunity(@PathVariable Integer id, @RequestPart("community") String communityJson,
-			@RequestPart(value = "coverImage", required = false) MultipartFile coverImage) {
-		try {
-			// JSON 데이터를 DTO로 변환
-			ObjectMapper objectMapper = new ObjectMapper();
-			CommunityDto communityDto = objectMapper.readValue(communityJson, CommunityDto.class);
-
-			// 서비스 호출
-			communityService.updateCommunity(id, communityDto, coverImage);
-
-			return ResponseEntity.ok("수정 완료");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수정 실패");
-		}
+	@PutMapping(value = "/user/communityUpdate/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<?> updateCommunity(@PathVariable Integer id, 
+			CommunityDto communityDto, @RequestPart(value = "coverImage", required = false) MultipartFile file) {
+	    try {
+	        communityService.updateCommunity(id, communityDto, file);
+	        return ResponseEntity.ok("수정 완료");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수정 실패");
+	    }
 	}
 
 	// 커뮤니티 북마크
-	@PostMapping("/communityBookmark") // 예시
-	public ResponseEntity<String> toggleCommunityBookmark(@RequestParam String userId,
+	@PostMapping("/user/communityBookmark") // 예시
+	public ResponseEntity<String> toggleCommunityBookmark(Authentication authentication,
 			@RequestParam Integer communityNum) {
 		try {
-
+			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
 			boolean isBookmarked = communityService.toggleCommunityBookmark(userId, communityNum);
 			if (isBookmarked) {
 				return ResponseEntity.ok("북마크가 활성화되었습니다.");
@@ -192,7 +201,7 @@ public class CommunityController {
 	}
 
 	// 커뮤니티 댓글 작성
-	@PostMapping("/communityCommentWrite")
+	@PostMapping("/user/communityCommentWrite")
 	public ResponseEntity<String> createComment(@RequestParam("communityId") Integer communityId,
 			@RequestParam("userId") String userId, @RequestParam("content") String content) {
 
@@ -302,7 +311,7 @@ public class CommunityController {
 	}
 
 	// 커뮤니티 글 삭제
-	@DeleteMapping("/communityDelete/{communityNum}")
+	@DeleteMapping("/user/communityDelete/{communityNum}")
 	public ResponseEntity<?> deleteCommunity(@PathVariable Integer communityNum) {
 		try {
 			communityService.deleteCommunity(communityNum); // 삭제 로직 호출
