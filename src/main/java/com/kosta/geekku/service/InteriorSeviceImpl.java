@@ -178,7 +178,6 @@ public class InteriorSeviceImpl implements InteriorService {
 			File file = new File(filePath + fileName);
 			coverImage.transferTo(file);
 			sample.setCoverImage(file.getName());
-//	       interiorSampleRepository.save(sample);
 		}
 
 		interiorSampleRepository.save(sample);
@@ -272,7 +271,7 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public List<SampleDto> sampleList(String date, String type, String style, Integer size, String location)
+	public List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location)
 			throws Exception {
 		List<SampleDto> sampleDtoList = null;
 		Long allCnt = 0L;
@@ -446,6 +445,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		}
 
 		interiorRepository.save(interior);
+
 		System.out.println("int" + interior);
 
 		Map<String, Object> res = new HashMap<>();

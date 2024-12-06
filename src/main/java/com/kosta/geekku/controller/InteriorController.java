@@ -113,6 +113,7 @@ public class InteriorController {
 			Map<String, Object> res = interiorService.updateInteriorCompany(companyId, interiorDto, file);
 			System.out.println(file);
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
@@ -244,12 +245,17 @@ public class InteriorController {
 	}
 
 	@GetMapping("/sampleList")
-	public ResponseEntity<Map<String, Object>> sampleList(@RequestParam(required = false) String date,
-			@RequestParam(required = false) String type, @RequestParam(required = false) String style,
-			@RequestParam(required = false) Integer size, @RequestParam(required = false) String location) {
+	public ResponseEntity<Map<String, Object>> sampleList(@RequestParam(name = "date", required = false) String date,
+			@RequestParam(name = "types", required = false) String[] types, @RequestParam(name = "styles", required = false) String[] styles,
+			@RequestParam(name = "sizes", required = false) String[] sizes, @RequestParam(name = "location", required = false) String[] location) {
 		try {
-			List<SampleDto> sampleList = interiorService.sampleList(date, type, style, size, location);
+			List<SampleDto> sampleList = interiorService.sampleList(date, types, styles, sizes, location);
 			System.out.println(sampleList);
+			System.out.println(types);
+			System.out.println(styles);
+			System.out.println(date);
+			System.out.println(sizes);
+			System.out.println(location);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("sampleList", sampleList);
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
