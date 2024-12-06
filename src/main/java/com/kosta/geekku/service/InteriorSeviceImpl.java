@@ -114,14 +114,17 @@ public class InteriorSeviceImpl implements InteriorService {
 	public boolean toggleBookmark(String userId, Integer interiorNum) throws Exception {
 		InteriorBookmark interiorBookmark = interiorBookmarkRepository.findByInterior_InteriorNumAndUserId(interiorNum,
 				UUID.fromString(userId));
+		System.out.println(interiorBookmark);
 		Interior interior = interiorRepository.findById(interiorNum).orElseThrow(() -> new Exception("인테리어 번호 오류"));
-
-		if (interiorBookmark == null) {
+		System.out.println(interior);
+		Integer bookmarkNum = interiorDslRepository.findInteriorBookmark(UUID.fromString(userId), interiorNum);
+		System.out.println(bookmarkNum);
+		if (bookmarkNum == null) {
 			interiorBookmarkRepository
 					.save(InteriorBookmark.builder().userId(UUID.fromString(userId)).interior(interior).build());
 			return true;
 		} else {
-			interiorBookmarkRepository.deleteById(interiorBookmark.getBookmarkInteriorNum());
+			interiorBookmarkRepository.deleteById(bookmarkNum);
 			return false;
 		}
 	}

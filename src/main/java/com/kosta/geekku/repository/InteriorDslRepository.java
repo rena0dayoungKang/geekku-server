@@ -57,8 +57,9 @@ public class InteriorDslRepository {
 	public Integer findInteriorBookmark(UUID userId, Integer interiorNum) throws Exception {
 		QInteriorBookmark interiorBookmark = QInteriorBookmark.interiorBookmark;
 
-		return jpaQueryFactory.select(interiorBookmark.bookmarkInteriorNum).from(interiorBookmark)
-				.where(interiorBookmark.userId.eq(userId).and(interiorBookmark.bookmarkInteriorNum.eq(interiorNum)))
+		return jpaQueryFactory.select(interiorBookmark.bookmarkInteriorNum)
+				.from(interiorBookmark)
+				.where(interiorBookmark.userId.eq(userId).and(interiorBookmark.interiorNum.eq(interiorNum)))
 				.fetchOne();
 	}
 
