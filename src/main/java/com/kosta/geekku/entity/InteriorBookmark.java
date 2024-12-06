@@ -30,7 +30,7 @@ public class InteriorBookmark {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer bookmarkInteriorNum;
 
-	@Column(unique = false)
+	@Column(unique = false, columnDefinition = "BINARY(16)")
 	private UUID userId;
 
     @ManyToOne(fetch = FetchType.LAZY)

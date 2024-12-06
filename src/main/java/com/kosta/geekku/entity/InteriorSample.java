@@ -59,7 +59,9 @@ public class InteriorSample {
 		SampleDto sampleDto = SampleDto.builder().sampleNum(sampleNum).interiorNum(interior.getInteriorNum())
 				.title(title).type(type).style(style).size(size).location(location).coverImage(coverImage)
 				.intro(interior.getIntro()).companyName(interior.getCompany().getCompanyName())
-				.companyId(interior.getCompany().getCompanyId()).content(content).createdAt(createdAt).build();
+				.companyId(interior.getCompany().getCompanyId()).content(content).createdAt(createdAt)
+				.profileImage(company.getProfileImage())
+				.build();
 
 		return sampleDto;
 	}
