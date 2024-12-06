@@ -246,8 +246,10 @@ public class InteriorController {
 
 	@GetMapping("/sampleList")
 	public ResponseEntity<Map<String, Object>> sampleList(@RequestParam(name = "date", required = false) String date,
-			@RequestParam(name = "types", required = false) String[] types, @RequestParam(name = "styles", required = false) String[] styles,
-			@RequestParam(name = "sizes", required = false) String[] sizes, @RequestParam(name = "location", required = false) String[] location) {
+			@RequestParam(name = "types", required = false) String[] types,
+			@RequestParam(name = "styles", required = false) String[] styles,
+			@RequestParam(name = "sizes", required = false) String[] sizes,
+			@RequestParam(name = "location", required = false) String[] location) {
 		try {
 			List<SampleDto> sampleList = interiorService.sampleList(date, types, styles, sizes, location);
 			System.out.println(sampleList);
@@ -277,6 +279,7 @@ public class InteriorController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
 
 	// 개인 마이페이지 - 1:1 인테리어 문의내역 리스트
 	@GetMapping("/user/myPageUserInteriorRequestList")
