@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kosta.geekku.config.jwt.JwtProperties;
 import com.kosta.geekku.config.jwt.JwtToken;
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequestDto;
@@ -179,7 +178,6 @@ public class InteriorSeviceImpl implements InteriorService {
 			File file = new File(filePath + fileName);
 			coverImage.transferTo(file);
 			sample.setCoverImage(file.getName());
-			interiorSampleRepository.save(sample);
 		}
 
 		interiorSampleRepository.save(sample);
@@ -377,36 +375,20 @@ public class InteriorSeviceImpl implements InteriorService {
 		interiorReviewRepository.deleteById(num);
 	}
 
-	@Override
-	public List<InteriorRequestDto> interiorRequestList(PageInfo pageInfo, String companyId) throws Exception {
-		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
-		/*
-		 * InteriorRequest interiorRequest =
-		 * interiorRequestRepository.findById(companyId) .orElseThrow(() -> new
-		 * Exception("諛⑷씀 湲�踰덊샇 �삤瑜�"));
-		 */
-
-		/*
-		 * List<InteriorRequestDto> interiorRequestDtoList = interiorDslRepository
-		 * .interiorSampleListmypage(pageRequest,
-		 * UUID.fromString(companyId)).stream().map(e -> e.toDto())
-		 * .collect(Collectors.toList());
-		 */
-		Long cnt = interiorRequestDslRepository.interiorRequestCount();
-
-		Integer allPage = (int) (Math.ceil(cnt.doubleValue() / pageRequest.getPageSize()));
-		Integer startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
-		Integer endPage = Math.min(startPage + 10 - 1, allPage);
-
-		pageInfo.setAllPage(allPage);
-		pageInfo.setStartPage(startPage);
-		pageInfo.setEndPage(endPage);
-		pageInfo.setTotalCount(cnt);
-
-		return null;
-
-		/* return interiorRequestDtoList; */
-	}
+	/*
+	 * return interiorRequestDtoList;
+	 * 
+	 * public Page<InteriorRequestDto> interiorRequestListForUserMypage(int page,
+	 * int size, UUID userId) throws Exception { Optional<User> user =
+	 * userRepository.findById(userId);
+	 * 
+	 * Pageable pageable = PageRequest.of(page - 1, size,
+	 * Sort.by(Sort.Direction.DESC, "createdAt")); Page<InteriorRequestDto> pageInfo
+	 * = interiorRequestRepository.findAllByUser(user, pageable)
+	 * .map(InteriorRequest::toDto);
+	 * 
+	 * return pageInfo; }
+	 */
 
 	@Override
 	public List<SampleDto> interiorSampleList(PageInfo pageInfo, UUID companyId) throws Exception {
@@ -479,15 +461,35 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public Page<ReviewDto> interiorReviewList(int page, int size, int interiorNum) throws Exception {
-		Optional<Interior> interior = interiorRepository.findById(interiorNum);
+	public Page<InteriorRequestDto> interiorRequestList(int page, int size, UUID companyId) throws Exception {
+		Optional<Interior> interiorNum = interiorRepository.findNumByCompany_companyId(companyId);
 
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-		Page<ReviewDto> pageInfo = interiorReviewRepository.findAllByInterior_interiorNum(interior, pageable)
+		Page<InteriorRequestDto> pageInfo = interiorRequestRepository.findAllByInterior(interiorNum, pageable)
+				.map(InteriorRequest::toDto);
+		return pageInfo;
+	}
+
+	@Override
+	public Page<ReviewDto> interiorReviewList(int page, int size, UUID companyId) throws Exception {
+		Optional<Interior> interiorNum = interiorRepository.findNumByCompany_companyId(companyId);
+
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Page<ReviewDto> pageInfo = interiorReviewRepository.findAllByInterior(interiorNum, pageable)
 				.map(InteriorReview::toDto);
 
 		return pageInfo;
 
 	}
+
+//	@Override
+//	public Page<ReviewDto> reviewListForUserMypage(int page, int size, UUID userId) throws Exception {
+//		Optional<User> user = userRepository.findById(userId);
+//
+//		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+//		Page<ReviewDto> pageInfo = interiorReviewRepository.findAllByUser(user, pageable).map(InteriorReview::toDto);
+//
+//		return pageInfo;
+//	}
 
 }
