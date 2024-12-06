@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kosta.geekku.dto.CompanyDto;
+import com.kosta.geekku.dto.HouseAnswerDto;
+import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.entity.Estate;
 import com.kosta.geekku.entity.HouseAnswer;
 import com.kosta.geekku.entity.OnestopAnswer;
@@ -30,9 +32,9 @@ public interface CompanyService {
 
 	void deleteEstateCommunity(Integer estateId) throws Exception;
 
-	Page<HouseAnswer> getAnswersByCompanyId(UUID companyId, Pageable pageable) throws Exception;
-
-	Page<OnestopAnswer> getOnestopAnswersByCompanyId(UUID companyId, Pageable pageable) throws Exception;
+	Page<HouseAnswerDto> getAnswersByCompanyId(UUID companyId, Pageable pageable) throws Exception;
+	
+	Page<OnestopAnswerDto> getOnestopAnswersByCompanyId(UUID companyId, Pageable pageable) throws Exception;
 
 	String getCompanyCertificationImagePath(Integer num) throws Exception;
 	
@@ -41,4 +43,5 @@ public interface CompanyService {
 	List<CompanyDto> findIdByEmail(String email) throws Exception;
 	
 	List<CompanyDto> findIdByPhone(String phone) throws Exception;
+
 }
