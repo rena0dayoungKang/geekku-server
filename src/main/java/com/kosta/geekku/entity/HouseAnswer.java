@@ -63,6 +63,7 @@ public class HouseAnswer {
 							.companyId(company.getCompanyId())
 							.companyName(company.getCompanyName())
 							.companyPhone(company.getPhone())
+							.companyAddress(company.getCompanyAddress())
 							.userId(house.getUser() != null ? house.getUser().getUserId() : UUID.fromString(""))
 							.name(house.getUser() != null ? house.getUser().getName() : "")
 							.userName(house.getUser() != null ? house.getUser().getUsername() : "")

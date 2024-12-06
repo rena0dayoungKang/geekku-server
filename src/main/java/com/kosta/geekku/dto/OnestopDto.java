@@ -36,6 +36,7 @@ public class OnestopDto {
 	private Timestamp createdAt;
 	
 	private UUID userId;
+	private String name;
 	private String nickname;
 	private String userProfileImage;
 	private String userPhone;
