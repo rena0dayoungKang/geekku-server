@@ -100,7 +100,7 @@ public class InteriorController {
 
 	// 인테리어 업체 정보 수정
 	@PostMapping("/company/interiorModify")
-	public ResponseEntity<Integer> interiorModify(Authentication authentication, InteriorDto interiorDto,
+	public ResponseEntity<String> interiorModify(Authentication authentication, InteriorDto interiorDto,
 			@RequestParam(name = "file", required = false) MultipartFile file) {
 		System.out.println(interiorDto);
 		try {
@@ -112,10 +112,10 @@ public class InteriorController {
 
 			Map<String, Object> res = interiorService.updateInteriorCompany(companyId, interiorDto, file);
 			System.out.println(file);
-			return new ResponseEntity<Integer>(interiorDto.getInteriorNum(), HttpStatus.OK);
+			return new ResponseEntity<String>(String.valueOf("true"), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Integer>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
