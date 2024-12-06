@@ -57,8 +57,9 @@ public class InteriorDslRepository {
 	public Integer findInteriorBookmark(UUID userId, Integer interiorNum) throws Exception {
 		QInteriorBookmark interiorBookmark = QInteriorBookmark.interiorBookmark;
 
-		return jpaQueryFactory.select(interiorBookmark.bookmarkInteriorNum).from(interiorBookmark)
-				.where(interiorBookmark.userId.eq(userId).and(interiorBookmark.bookmarkInteriorNum.eq(interiorNum)))
+		return jpaQueryFactory.select(interiorBookmark.bookmarkInteriorNum)
+				.from(interiorBookmark)
+				.where(interiorBookmark.userId.eq(userId).and(interiorBookmark.interiorNum.eq(interiorNum)))
 				.fetchOne();
 	}
 
@@ -69,19 +70,19 @@ public class InteriorDslRepository {
 //		if (date != null) {
 //			filter.and(sample.createdAt.eq(date));
 //		}
-		if (type != null && type.length>0) {
+		if (type != null && type.length > 0) {
 			filter.and(sample.type.in(type));
 		}
-		if (style != null && style.length>0) {
+		if (style != null && style.length > 0) {
 			filter.and(sample.style.in(style));
 		}
-		if (size != null && size.length>0) {
+		if (size != null && size.length > 0) {
 			filter.and(sample.size.in(size));
 		}
-		if (location != null && location.length>0) {
+		if (location != null && location.length > 0) {
 			filter.and(sample.location.in(location));
 		}
-		
+
 		JPAQuery<InteriorSample> query = jpaQueryFactory.selectFrom(sample).where(filter);
 		if (date != null) {
 			if ("latest".equalsIgnoreCase(date)) {
@@ -92,33 +93,33 @@ public class InteriorDslRepository {
 		}
 		return query.fetch();
 	}
-	public Long sampleCountByFilter(String date, String[] type, String[] style, String[] size,
-			String[] location) throws Exception {
+
+	public Long sampleCountByFilter(String date, String[] type, String[] style, String[] size, String[] location)
+			throws Exception {
 		QInteriorSample sample = QInteriorSample.interiorSample;
 		BooleanBuilder filter = new BooleanBuilder();
-		
-		if (type != null && type.length>0) {
+
+		if (type != null && type.length > 0) {
 			filter.and(sample.type.in(type));
 		}
-		if (style != null && style.length>0) {
+		if (style != null && style.length > 0) {
 			filter.and(sample.style.in(style));
 		}
-		if (size != null && size.length>0) {
+		if (size != null && size.length > 0) {
 			filter.and(sample.size.in(size));
 		}
-		if (location != null && location.length>0) {
+		if (location != null && location.length > 0) {
 			filter.and(sample.location.in(location));
 		}
-		
-		return jpaQueryFactory.select(sample.count()).from(sample)
-				.where(filter)
-				.fetchOne();				
+
+		return jpaQueryFactory.select(sample.count()).from(sample).where(filter).fetchOne();
 	}
-	
+
 	public List<InteriorSample> interiorSampleListmypage(PageRequest pageRequest, UUID companyId) throws Exception {
 		QInteriorSample interiorSample = QInteriorSample.interiorSample;
 		return jpaQueryFactory.selectFrom(interiorSample).where(interiorSample.company.companyId.eq(companyId))
-				.orderBy(interiorSample.createdAt.desc()).fetch();
+				.orderBy(interiorSample.createdAt.desc()).offset(pageRequest.getOffset())
+				.limit(pageRequest.getPageSize()).fetch(); // 무한스크롤 갯수 제한
 	}
 
 	/*
