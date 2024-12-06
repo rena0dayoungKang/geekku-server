@@ -138,13 +138,12 @@ public class InteriorUserController {
 	public ResponseEntity<Map<String, Object>> interiorReviewList(
 			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
 			@RequestParam(required = false, defaultValue = "10", value = "size") int size,
-			@RequestParam int interiorNum) {
+			Authentication authentication) {
 		try {
-			// UUID companyId = ((PrincipalDetails)
-			// authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			Page<ReviewDto> interiorReviewList = interiorService.interiorReviewList(page, size, interiorNum);
+			Page<ReviewDto> interiorReviewList = interiorService.interiorReviewList(page, size, companyId);
 			// System.out.println(interiorReviewList);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("interiorReviewList", interiorReviewList);
@@ -156,18 +155,19 @@ public class InteriorUserController {
 	}
 
 	// 인테리어업자 나한테 들어온 인테리어 신청 모아보기
-	@GetMapping("/myInteriorRequestList")
+	@GetMapping("/company/myInteriorRequestList")
 	public ResponseEntity<Map<String, Object>> interiorRequestList(
-			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam("companyId") String companyId) {
+			@RequestParam(required = false, defaultValue = "1", value = "page") int page,
+			@RequestParam(required = false, defaultValue = "10", value = "size") int size,
+			Authentication authentication) {
 		try {
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			List<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestList(pageInfo, companyId);
+			Page<InteriorRequestDto> interiorRequestList = interiorService.interiorRequestList(page, size, companyId);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("interiorRequestList", interiorRequestList);
-			listInfo.put("pageInfo", pageInfo);
-
+			listInfo.put("page", page);
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
