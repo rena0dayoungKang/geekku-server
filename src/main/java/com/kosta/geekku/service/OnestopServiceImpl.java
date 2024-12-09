@@ -171,7 +171,7 @@ public class OnestopServiceImpl implements OnestopService {
 
 	@Override
 	public Page<HouseAnswerDto> getAnswersByCompanyId(UUID companyId, Pageable pageable) throws Exception {
-		return onestopAnswerRepository.findByCompanyId(companyId, pageable)
+		return onestopAnswerRepository.findByCompanyIdOrderByCreatedAtDesc(companyId, pageable)
 				.map(answer -> HouseAnswerDto.builder().answerHouseNum(answer.getAnswerOnestopNum())
 						.title(answer.getTitle()).content(answer.getContent()).createdAt(answer.getCreatedAt())
 						.companyId(answer.getCompany().getCompanyId()).companyName(answer.getCompany().getCompanyName())
