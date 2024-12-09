@@ -66,7 +66,8 @@ public class HouseAnswer {
 							.companyAddress(company.getCompanyAddress())
 							.userId(house.getUser() != null ? house.getUser().getUserId() : UUID.fromString(""))
 							.name(house.getUser() != null ? house.getUser().getName() : "")
-							.userName(house.getUser() != null ? house.getUser().getUsername() : "")
+							.nickname(house.getUser().getNickname())
+							.profileImage(house.getUser().getProfileImage())
 							.build();
 		
 		if (company.getProfileImage() != null) {

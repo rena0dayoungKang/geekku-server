@@ -37,7 +37,8 @@ public class InteriorAllDto {
 	private Timestamp createAt;
 
 	public InteriorAllRequest toEntity() {
-		return InteriorAllRequest.builder().requestAllNum(requestAllNum).user(user).name(user.getName()).phone(user.getPhone())
+		return InteriorAllRequest.builder().requestAllNum(requestAllNum)
+				.user(User.builder().name(name).nickname(nickname).phone(phone).profileImage(profileImage).build())
 				.type(type).size(size).address1(address1).address2(address2).money(money).workType(workType)
 				.interiorType(interiorType).allowPhone(allowPhone).title(title).addContent(addContent)
 				.createAt(createAt).build();

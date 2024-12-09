@@ -29,7 +29,8 @@ public class HouseAnswerDto {
 	private String companyAddress;
 	private Integer houseNum;
 	private UUID userId;
-	private String userName;
+	private byte[] profileImage;
+	private String nickname;
 	private String name;
 	private Integer viewCount;
 	private String address1;
