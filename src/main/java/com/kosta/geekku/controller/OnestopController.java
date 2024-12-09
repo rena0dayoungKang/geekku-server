@@ -46,19 +46,6 @@ public class OnestopController {
 		}
 	}
 
-	/*
-	 * @PostMapping("/onestopModify") public ResponseEntity<Integer>
-	 * onestopModify(OnestopDto onestopDto)
-	 * 
-	 * @RequestPart(value = "delFile", required = false) Integer[] delFileNum,
-	 * 
-	 * @RequestPart(value = "file", required = false) MultipartFile[] fileList) {
-	 * try { onestopService.onestopModify(onestopDto); return new
-	 * ResponseEntity<Integer>(onestopDto.getOnestopNum(), HttpStatus.OK); } catch
-	 * (Exception e) { e.printStackTrace(); return new
-	 * ResponseEntity<Integer>(HttpStatus.BAD_REQUEST); } }
-	 */
-
 	@GetMapping("/onestopDetail/{num}")
 	public ResponseEntity<OnestopDto> onestopDetail(@PathVariable Integer num) {
 		try {

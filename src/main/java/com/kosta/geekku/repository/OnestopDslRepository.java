@@ -57,8 +57,8 @@ public class OnestopDslRepository {
 			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.title.contains(keyword))
 					.orderBy(onestop.onestopNum.desc()).offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
 					.fetch();
-		} else if (type.equals("")) {
-			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.content.contains(keyword))
+		} else if (type.equals("rentType")) {
+			onestopList = jpaQueryFactory.selectFrom(onestop).where(onestop.rentType.contains(keyword))
 					.orderBy(onestop.onestopNum.desc()).offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
 					.fetch();
 		} else if (type.equals("address1")) {
@@ -83,12 +83,12 @@ public class OnestopDslRepository {
 		return jpaQueryFactory.select(onestopAnswer.count()).from(onestopAnswer).fetchOne();
 	}
 
-	public List<OnestopAnswer> onestopAnswerListByPaging(PageRequest pageRequest) throws Exception {
+	public List<OnestopAnswer> onestopAnswerListByPaging(PageRequest pageRequest, Integer onestopNum) throws Exception {
 		QOnestopAnswer onestopAnswer = QOnestopAnswer.onestopAnswer;
 
 		List<OnestopAnswer> onestopAnswerList = jpaQueryFactory.selectFrom(onestopAnswer)
-				.orderBy(onestopAnswer.createdAt.asc()).offset(pageRequest.getOffset()).limit(pageRequest.getPageSize())
-				.fetch();
+				.where(onestopAnswer.onestop.onestopNum.eq(onestopNum)).orderBy(onestopAnswer.createdAt.asc())
+				.offset(pageRequest.getOffset()).limit(pageRequest.getPageSize()).fetch();
 
 		return onestopAnswerList;
 	}

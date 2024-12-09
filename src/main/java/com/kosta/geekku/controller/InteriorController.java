@@ -104,11 +104,8 @@ public class InteriorController {
 			@RequestParam(name = "file", required = false) MultipartFile file) {
 		System.out.println(interiorDto);
 		try {
-			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서
-																												// UUID를
-																												// 추출
-
-			System.out.println(companyId);
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // UUID 추출
+//			System.out.println(companyId);
 
 			Map<String, Object> res = interiorService.updateInteriorCompany(companyId, interiorDto, file);
 			System.out.println(file);

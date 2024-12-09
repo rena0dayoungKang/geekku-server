@@ -117,7 +117,8 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
 
 		List<InteriorAnswerDto> interiorAnswerDtoList = interiorAllRequestDslRepository
-				.interiorAllAnswerListByPaging(pageRequest).stream().map(a -> a.toDto()).collect(Collectors.toList());
+				.interiorAllAnswerListByPaging(pageRequest, requestAllNum).stream().map(a -> a.toDto())
+				.collect(Collectors.toList());
 		Long cnt = interiorAllRequestDslRepository.interiorAllAnswerCount();
 
 		Integer allPage = (int) (Math.ceil(cnt.doubleValue() / pageRequest.getPageSize()));
