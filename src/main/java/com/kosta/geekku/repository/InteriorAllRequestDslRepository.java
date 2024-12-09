@@ -65,10 +65,10 @@ public class InteriorAllRequestDslRepository {
 			interiorAllList = jpaQueryFactory.selectFrom(interiorAll).where(interiorAll.address1.contains(word))
 					.orderBy(interiorAll.requestAllNum.desc()).offset(pageRequest.getOffset())
 					.limit(pageRequest.getPageSize()).fetch();
-		} else if (type.equals("interiorType")) {
+		} else if (type.equals("workType")) {
 			interiorAllList = jpaQueryFactory.selectFrom(interiorAll).where(interiorAll.interiorType.contains(word))
 					.orderBy(interiorAll.requestAllNum.desc()).offset(pageRequest.getOffset())
-					.limit(pageRequest.getPageSize()).fetch();
+					.limit(pageRequest.getPageSize()).fetch(); //workType??
 		}
 		return interiorAllList;
 	}
@@ -80,10 +80,12 @@ public class InteriorAllRequestDslRepository {
 		return jpaQueryFactory.select(interiorAllAnswer.count()).from(interiorAllAnswer).fetchOne();
 	}
 
-	public List<InteriorAllAnswer> interiorAllAnswerListByPaging(PageRequest pageRequest) throws Exception {
+	public List<InteriorAllAnswer> interiorAllAnswerListByPaging(PageRequest pageRequest, Integer requestAllNum)
+			throws Exception {
 		QInteriorAllAnswer interiorAllAnswer = QInteriorAllAnswer.interiorAllAnswer;
 
 		List<InteriorAllAnswer> interiorAllAnswerList = jpaQueryFactory.selectFrom(interiorAllAnswer)
+				.where(interiorAllAnswer.interiorAllRequest.requestAllNum.eq(requestAllNum))
 				.orderBy(interiorAllAnswer.createdAt.asc()).offset(pageRequest.getOffset())
 				.limit(pageRequest.getPageSize()).fetch();
 

@@ -118,11 +118,12 @@ public class OnestopServiceImpl implements OnestopService {
 	@Transactional
 	@Override
 	public List<OnestopAnswerDto> onestopAnswerList(PageInfo pageInfo, Integer onestopNum) throws Exception {
-		Onestop onestop = onestopRepository.findById(onestopNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
+		Onestop onestop = onestopRepository.findById(onestopNum).orElseThrow(() -> new Exception("한번에꾸하기 글번호 오류"));
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
 
-		List<OnestopAnswerDto> onestopAnswerDtoList = onestopDslRepository.onestopAnswerListByPaging(pageRequest)
-				.stream().map(a -> a.toDto()).collect(Collectors.toList());
+		List<OnestopAnswerDto> onestopAnswerDtoList = onestopDslRepository
+				.onestopAnswerListByPaging(pageRequest, onestopNum).stream().map(a -> a.toDto())
+				.collect(Collectors.toList());
 		Long cnt = onestopDslRepository.findOnestopCount();
 
 		Integer allPage = (int) (Math.ceil(cnt.doubleValue() / pageRequest.getPageSize()));
@@ -132,6 +133,7 @@ public class OnestopServiceImpl implements OnestopService {
 		pageInfo.setAllPage(allPage);
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
+		pageInfo.setTotalCount(cnt);
 
 		return onestopAnswerDtoList;
 	}
