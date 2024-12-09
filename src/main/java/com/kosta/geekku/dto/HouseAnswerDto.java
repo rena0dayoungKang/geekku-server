@@ -3,6 +3,8 @@ package com.kosta.geekku.dto;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import org.springframework.security.core.userdetails.User;
+
 import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.House;
 import com.kosta.geekku.entity.HouseAnswer;
@@ -29,7 +31,8 @@ public class HouseAnswerDto {
 	private String companyAddress;
 	private Integer houseNum;
 	private UUID userId;
-	private byte[] profileImage;
+	private String userName;
+	private byte[] userProfileImage;
 	private String nickname;
 	private String name;
 	private Integer viewCount;

@@ -47,7 +47,7 @@ public class CommunityServiceImpl implements CommunityService {
 
 	@Override
 	public Page<CommunityDto> getCommunityList(Pageable pageable) {
-	    return communityRepository.findAllByOrderByCreatedAtDesc(pageable).map(community -> community.toDto());
+	    return communityRepository.findAll(pageable).map(community -> community.toDto());
 	}
 
 	@Override
