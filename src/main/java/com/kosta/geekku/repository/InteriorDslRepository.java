@@ -39,8 +39,10 @@ public class InteriorDslRepository {
 
 	public Long interiorCountByLoc(String possibleLocation) throws Exception {
 		QInterior interior = QInterior.interior;
-		return jpaQueryFactory.select(interior.count()).from(interior)
-				.where(interior.possibleLocation.eq(possibleLocation)).fetchOne();
+		return jpaQueryFactory.select(interior.count())
+				.from(interior)
+				.where(interior.possibleLocation.contains(possibleLocation))
+				.fetchOne();
 	}
 
 	public List<Interior> interiorListAll() throws Exception {
@@ -50,7 +52,8 @@ public class InteriorDslRepository {
 
 	public List<Interior> interiorListByLoc(String possibleLocation) throws Exception {
 		QInterior interior = QInterior.interior;
-		return jpaQueryFactory.selectFrom(interior).where(interior.possibleLocation.eq(possibleLocation))
+		return jpaQueryFactory.selectFrom(interior)
+				.where(interior.possibleLocation.contains(possibleLocation))
 				.orderBy(interior.createdAt.desc()).fetch();
 	}
 
@@ -59,7 +62,7 @@ public class InteriorDslRepository {
 
 		return jpaQueryFactory.select(interiorBookmark.bookmarkInteriorNum)
 				.from(interiorBookmark)
-				.where(interiorBookmark.userId.eq(userId).and(interiorBookmark.interiorNum.eq(interiorNum)))
+				.where(interiorBookmark.userId.eq(userId).and(interiorBookmark.interior.interiorNum.eq(interiorNum)))
 				.fetchOne();
 	}
 

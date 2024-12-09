@@ -62,6 +62,7 @@ public class InteriorController {
 	public ResponseEntity<Map<String, Object>> interiorList(
 			@RequestParam(value = "possibleLocation", required = false) String possibleLocation) {
 		try {
+			System.out.println(possibleLocation);
 			List<InteriorDto> interiorList = interiorService.interiorList(possibleLocation);
 			System.out.println(interiorList);
 			Map<String, Object> listInfo = new HashMap<>();
@@ -215,7 +216,7 @@ public class InteriorController {
 
 	@PostMapping("/user/interiorRequest")
 	public ResponseEntity<String> interiorRequest(Authentication authentication,
-			@RequestBody InteriorRequestDto requestDto) {
+			@RequestBody InteriorRequestDto requestDto, Integer interiorNum) {
 		try {
 			System.out.println(requestDto);
 			String id = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString(); // 재확인
@@ -273,6 +274,14 @@ public class InteriorController {
 			System.out.println(param);
 			Map<String, Object> detailInfo = interiorService.interiorDetail(Integer.parseInt(param.get("num")));
 			System.out.println(detailInfo);
+			
+			System.out.println("-----------test id=="+param.get("id"));
+			if(param.get("id") != null ) {
+				boolean bookmark = interiorService.checkBookmark(param.get("id"), Integer.parseInt(param.get("num"))) != null;
+				detailInfo.put("bookmark", bookmark);
+				System.out.println("========================bookmarkTest===================");
+				System.out.println(bookmark);
+			}
 			return new ResponseEntity<Map<String, Object>>(detailInfo, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

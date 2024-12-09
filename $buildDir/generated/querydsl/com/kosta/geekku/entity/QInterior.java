@@ -34,7 +34,7 @@ public class QInterior extends EntityPathBase<Interior> {
 
     public final StringPath intro = createString("intro");
 
-    public final NumberPath<Integer> period = createNumber("period", Integer.class);
+    public final NumberPath<Float> period = createNumber("period", Float.class);
 
     public final StringPath possibleLocation = createString("possibleLocation");
 
@@ -42,7 +42,7 @@ public class QInterior extends EntityPathBase<Interior> {
 
     public final NumberPath<Integer> recentCount = createNumber("recentCount", Integer.class);
 
-    public final NumberPath<Integer> repairDate = createNumber("repairDate", Integer.class);
+    public final NumberPath<Float> repairDate = createNumber("repairDate", Float.class);
 
     public QInterior(String variable) {
         this(Interior.class, forVariable(variable), INITS);
