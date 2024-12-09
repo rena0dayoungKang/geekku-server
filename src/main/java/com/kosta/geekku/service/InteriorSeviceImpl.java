@@ -115,7 +115,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		InteriorBookmark interiorBookmark = interiorBookmarkRepository.findByInterior_InteriorNumAndUserId(interiorNum,
 				UUID.fromString(userId));
 		System.out.println(interiorBookmark);
-		
+
 		Interior interior = interiorRepository.findById(interiorNum).orElseThrow(() -> new Exception("인테리어 번호 오류"));
 		System.out.println(interior);
 //		Integer bookmarkNum = interiorDslRepository.findInteriorBookmark(UUID.fromString(userId), interiorNum);
@@ -432,6 +432,7 @@ public class InteriorSeviceImpl implements InteriorService {
 
 		if (interiorDto.getContent() != null)
 			interior.setContent(interiorDto.getContent());
+
 		if (interiorDto.getPossibleLocation() != null)
 			interior.setPossibleLocation(interiorDto.getPossibleLocation());
 
@@ -447,6 +448,8 @@ public class InteriorSeviceImpl implements InteriorService {
 		if (file != null && !file.isEmpty()) {
 			interior.setCoverImage(interiorDto.getCoverImage());
 		}
+
+		interior.setPossiblePart(interiorDto.isPossiblePart());
 
 		interiorRepository.save(interior);
 

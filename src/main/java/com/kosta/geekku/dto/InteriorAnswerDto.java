@@ -33,7 +33,7 @@ public class InteriorAnswerDto {
 	private String name;
 
 	public InteriorAllAnswer toEntity() {
-		return InteriorAllAnswer.builder().answerAllNum(answerAllNum).content(content).createdAt(createdAt)
+		return InteriorAllAnswer.builder().answerAllNum(answerAllNum).content(content).title(title).createdAt(createdAt)
 				.company(Company.builder().companyId(companyId).companyName(companyName).phone(companyPhone).build())
 				.interiorAllRequest(InteriorAllRequest.builder().requestAllNum(requestAllNum).build()).build();
 	}
