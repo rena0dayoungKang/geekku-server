@@ -15,7 +15,7 @@ import com.kosta.geekku.entity.HouseAnswer;
 public interface HouseAnswerRepository extends JpaRepository<HouseAnswer, Integer> {
 	Page<HouseAnswer> findAllByCompany(Optional<Company> company, Pageable pageable);
 
-	@Query("SELECT h FROM HouseAnswer h WHERE h.company.companyId = :companyId")
-    Page<HouseAnswer> findByCompanyId(@Param("companyId") UUID companyId, Pageable pageable);
+	@Query("SELECT h FROM HouseAnswer h WHERE h.company.companyId = :companyId ORDER BY h.createdAt DESC")
+    Page<HouseAnswer> findByCompanyIdOrderByCreatedAtDesc(@Param("companyId") UUID companyId, Pageable pageable);
 }
 	

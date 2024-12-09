@@ -16,6 +16,6 @@ import com.kosta.geekku.entity.OnestopAnswer;
 public interface OnestopAnswerRepository extends JpaRepository<OnestopAnswer, Integer> {
 	Page<OnestopAnswer> findAllByCompany(Optional<Company> company, Pageable pageable);
 
-    @Query("SELECT o FROM OnestopAnswer o WHERE o.company.companyId = :companyId")
-    Page<OnestopAnswer> findByCompanyId(@Param("companyId") UUID companyId, Pageable pageable);
+    @Query("SELECT o FROM OnestopAnswer o WHERE o.company.companyId = :companyId ORDER BY o.createdAt DESC")
+    Page<OnestopAnswer> findByCompanyIdOrderByCreatedAtDesc(@Param("companyId") UUID companyId, Pageable pageable);
 }
