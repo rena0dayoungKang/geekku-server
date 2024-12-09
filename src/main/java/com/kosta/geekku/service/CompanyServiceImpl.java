@@ -266,7 +266,7 @@ public class CompanyServiceImpl implements CompanyService {
         return onestopAnswerRepository.findByCompanyId(companyId, pageable)
                 .map(answer -> OnestopAnswerDto.builder()
                         .answerOnestopNum(answer.getAnswerOnestopNum())
-                        .title(answer.getTitle())
+                        .title(answer.getOnestop().getTitle())
                         .content(answer.getContent())
                         .createdAt(answer.getCreatedAt())
                         .companyId(answer.getCompany().getCompanyId())
@@ -278,6 +278,7 @@ public class CompanyServiceImpl implements CompanyService {
                         .address1(answer.getOnestop().getAddress1())
                         .address2(answer.getOnestop().getAddress2())
                         .type(answer.getOnestop().getType())
+                        .onestopNum(answer.getOnestop().getOnestopNum())
                         .build());
     }
 

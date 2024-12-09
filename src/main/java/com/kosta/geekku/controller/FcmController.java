@@ -28,7 +28,6 @@ public class FcmController {
 		String type = param.get("type");
 		try {
 			System.out.println("==================>");
-			System.out.println(type);
 			if (type.equals("user")) {
 				fcmMessageService.registUserFcmToken(param.get("userId"), param.get("fcmToken"));
 			} else {
@@ -46,25 +45,34 @@ public class FcmController {
 
 			userAlarms(@RequestBody Map<String, String> param) {
 		try {
-			System.out.println(param.get("userId"));
-			return new ResponseEntity<List<MessageDto>>(
-					fcmMessageService.getUserAlarmList(UUID.fromString(param.get("userId"))), HttpStatus.OK);
+			System.out.println(param);
+			String type = param.get("type");
+//			String role = param.get("role");
+			if ("user".equals(type)) {
+				return new ResponseEntity<>(fcmMessageService.getUserAlarmList(UUID.fromString(param.get("userId"))),
+						HttpStatus.OK);
+			} else {
+				List<MessageDto> messageDtoList = fcmMessageService.getCompanyAlarmList(UUID.fromString(param.get("userId")));
+				System.out.println(messageDtoList);
+				return new ResponseEntity<>(messageDtoList,
+						HttpStatus.OK);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<List<MessageDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
-	@PostMapping("/companyAlarms")
-	public ResponseEntity<List<MessageDto>> companyAlarms(@RequestBody Map<String, String> param) {
-		try {
-			return new ResponseEntity<List<MessageDto>>(
-					fcmMessageService.getCompanyAlarmList(UUID.fromString(param.get("userId"))), HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<List<MessageDto>>(HttpStatus.BAD_REQUEST);
-		}
-	}
+//	@PostMapping("/companyAlarms")
+//	public ResponseEntity<List<MessageDto>> companyAlarms(@RequestBody Map<String, String> param) {
+//		try {
+//			return new ResponseEntity<List<MessageDto>>(
+//					fcmMessageService.getCompanyAlarmList(UUID.fromString(param.get("userId"))), HttpStatus.OK);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return new ResponseEntity<List<MessageDto>>(HttpStatus.BAD_REQUEST);
+//		}
+//	}
 
 	@GetMapping("/confirm/{num}")
 	public ResponseEntity<Boolean> confirmAlarm(@PathVariable Integer num) {
