@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -17,24 +18,35 @@ public class QInteriorBookmark extends EntityPathBase<InteriorBookmark> {
 
     private static final long serialVersionUID = -2022037360L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QInteriorBookmark interiorBookmark = new QInteriorBookmark("interiorBookmark");
 
     public final NumberPath<Integer> bookmarkInteriorNum = createNumber("bookmarkInteriorNum", Integer.class);
 
-    public final NumberPath<Integer> interiorNum = createNumber("interiorNum", Integer.class);
+    public final QInterior interior;
 
     public final ComparablePath<java.util.UUID> userId = createComparable("userId", java.util.UUID.class);
 
     public QInteriorBookmark(String variable) {
-        super(InteriorBookmark.class, forVariable(variable));
+        this(InteriorBookmark.class, forVariable(variable), INITS);
     }
 
     public QInteriorBookmark(Path<? extends InteriorBookmark> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QInteriorBookmark(PathMetadata metadata) {
-        super(InteriorBookmark.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QInteriorBookmark(PathMetadata metadata, PathInits inits) {
+        this(InteriorBookmark.class, metadata, inits);
+    }
+
+    public QInteriorBookmark(Class<? extends InteriorBookmark> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.interior = inits.isInitialized("interior") ? new QInterior(forProperty("interior"), inits.get("interior")) : null;
     }
 
 }

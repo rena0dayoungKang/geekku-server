@@ -176,6 +176,7 @@ public class HouseController {
 		}
 	}
 
+	// 중개업자 마이페이지 - 집꾸하기 답변 삭제
 	@PostMapping("/company/houseAnswerDelete")
 	public ResponseEntity<String> houseAnswerDelete(@RequestBody Map<String, Object> params) {
 		try {
@@ -189,6 +190,7 @@ public class HouseController {
 		}
 	}
 	
+	// 중개업자 마이페이지 - 집꾸하기 답변내역
 	@GetMapping("/company/mypageHouseAnswerList")
 	public ResponseEntity<Page<HouseAnswerDto>> houseAnswerListForMypage(
 			 Authentication authentication,
@@ -204,6 +206,7 @@ public class HouseController {
 		}
 	}
 	
+	// 개인 마이페이지 - 집꾸 작성내역
 	@GetMapping("/user/mypageUserHouseList")
 	public ResponseEntity<Page<HouseDto>> houseListForUserMypage(
 			Authentication authentication,

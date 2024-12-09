@@ -21,6 +21,4 @@ public interface CommunityRepository extends JpaRepository<Community, Integer>, 
 	
 	@Query("SELECT c FROM Community c JOIN FETCH c.user")
     List<Community> findAllWithUser(Pageable pageable); // username 포함된 모든 커뮤니티 조회
-
-
 }

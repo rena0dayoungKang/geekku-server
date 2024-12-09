@@ -64,9 +64,16 @@ public class HouseAnswer {
 							.companyName(company.getCompanyName())
 							.companyPhone(company.getPhone())
 							.companyAddress(company.getCompanyAddress())
-							.userId(house.getUser() != null ? house.getUser().getUserId() : UUID.fromString(""))
-							.name(house.getUser() != null ? house.getUser().getName() : "")
-							.userName(house.getUser() != null ? house.getUser().getUsername() : "")
+							.userId(house.getUser().getUserId())
+							.name(house.getUser().getName())
+							.userName(house.getUser().getUsername())
+							.name(house.getUser().getName())
+							.nickname(house.getUser().getNickname())
+							.userProfileImage(house.getUser().getProfileImage())
+							.address1(house.getAddress1())
+							.address2(house.getAddress2())
+							.type(house.getType())
+							.viewCount(house.getViewCount())
 							.build();
 		
 		if (company.getProfileImage() != null) {

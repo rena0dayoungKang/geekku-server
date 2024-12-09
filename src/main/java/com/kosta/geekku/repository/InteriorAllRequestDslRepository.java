@@ -111,7 +111,7 @@ public class InteriorAllRequestDslRepository {
 		return null;
 	}
 
-	public void updateOnestopViewCount(Integer interiorNum, Integer viewCount) throws Exception {
+	public void updateinteriorAllViewCount(Integer interiorNum, Integer viewCount) throws Exception {
 		QInteriorAllRequest interiorall = QInteriorAllRequest.interiorAllRequest;
 
 		jpaQueryFactory.update(interiorall).set(interiorall.viewCount, viewCount)

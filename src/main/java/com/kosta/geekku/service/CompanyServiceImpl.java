@@ -243,7 +243,7 @@ public class CompanyServiceImpl implements CompanyService {
 
 	@Override
 	public Page<HouseAnswerDto> getAnswersByCompanyId(UUID companyId, Pageable pageable) {
-	    return houseAnswerRepository.findByCompanyId(companyId, pageable)
+	    return houseAnswerRepository.findByCompanyIdOrderByCreatedAtDesc(companyId, pageable)
 	            .map(answer -> HouseAnswerDto.builder()
 	                    .answerHouseNum(answer.getAnswerHouseNum())
 	                    .title(answer.getTitle())
@@ -263,10 +263,10 @@ public class CompanyServiceImpl implements CompanyService {
 	}
 
 	public Page<OnestopAnswerDto> getOnestopAnswersByCompanyId(UUID companyId, Pageable pageable) {
-        return onestopAnswerRepository.findByCompanyId(companyId, pageable)
+        return onestopAnswerRepository.findByCompanyIdOrderByCreatedAtDesc(companyId, pageable)
                 .map(answer -> OnestopAnswerDto.builder()
                         .answerOnestopNum(answer.getAnswerOnestopNum())
-                        .title(answer.getTitle())
+                        .title(answer.getOnestop().getTitle())
                         .content(answer.getContent())
                         .createdAt(answer.getCreatedAt())
                         .companyId(answer.getCompany().getCompanyId())
@@ -278,6 +278,7 @@ public class CompanyServiceImpl implements CompanyService {
                         .address1(answer.getOnestop().getAddress1())
                         .address2(answer.getOnestop().getAddress2())
                         .type(answer.getOnestop().getType())
+                        .onestopNum(answer.getOnestop().getOnestopNum())
                         .build());
     }
 

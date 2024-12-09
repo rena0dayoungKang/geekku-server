@@ -95,6 +95,7 @@ public class HouseServiceImpl implements HouseService {
 		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
 
 		HouseAnswer houseAnswer = houseAnswerDto.toEntity();
+		houseAnswer.setHouse(house);
 		houseAnswer.setCompany(company);
 		houseAnswerRepository.save(houseAnswer);
 
