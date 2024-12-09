@@ -33,7 +33,7 @@ public interface OnestopService {
 	Page<OnestopDto> onestopListForUserMypage(int page, int size, UUID userId) throws Exception;
 
 	// 기업 마이페이지 - 한번에 꾸하기 답변내역 리스트
-	Slice<OnestopAnswerDto> onestopAnswerListForMypage(int page, UUID companyId) throws Exception;
+	Page<OnestopAnswerDto> onestopAnswerListForMypage(int page, UUID companyId) throws Exception;
 
 	Page<HouseAnswerDto> getAnswersByCompanyId(UUID companyId, Pageable pageable) throws Exception;
 
