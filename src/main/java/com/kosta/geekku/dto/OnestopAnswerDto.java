@@ -35,9 +35,16 @@ public class OnestopAnswerDto {
 	private String type;
 	private String username;
 
+	private OnestopDto onestop;
+
+	// Getters and Setters
+
 	public OnestopAnswer toEntity() {
 		return OnestopAnswer.builder().answerOnestopNum(answerOnestopNum).title(title).content(content).createdAt(createdAt)
+
 				.company(Company.builder().companyId(companyId).companyName(companyName).phone(companyPhone).build())
-				.onestop(Onestop.builder().onestopNum(onestopNum).viewCount(viewCount).address1(address1).address2(address2).build()).build();
+				.onestop(Onestop.builder().onestopNum(onestopNum).viewCount(viewCount).address1(address1)
+						.address2(address2).build())
+				.build();
 	}
 }

@@ -124,14 +124,14 @@ public class OnestopController {
 		}
 	}
 
-	@GetMapping("/onestopAnswerList/{onestopNum}")
+	@GetMapping("/onestopAnswerList/{oneStopNum}")
 	public ResponseEntity<Map<String, Object>> onestopAnswerList(
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@PathVariable Integer onestopNum) {
+			@PathVariable Integer oneStopNum) {
 		try {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			List<OnestopAnswerDto> onestopAnswerList = onestopService.onestopAnswerList(pageInfo, onestopNum);
+			List<OnestopAnswerDto> onestopAnswerList = onestopService.onestopAnswerList(pageInfo, oneStopNum);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("onestopAnswerList", onestopAnswerList);
 			listInfo.put("pageInfo", pageInfo);
@@ -148,8 +148,8 @@ public class OnestopController {
 	public ResponseEntity<String> onestopAnswerDelete(@RequestBody Map<String, Object> params) {
 		try {
 			Integer onestopAnswerNum = (Integer) params.get("onestopAnswerNum");
-			Integer onestopNum = (Integer) params.get("onestopNum");
-			onestopService.onestopAnswerDelete(onestopAnswerNum, onestopNum);
+			Integer oneStopNum = (Integer) params.get("oneStopNum");
+			onestopService.onestopAnswerDelete(onestopAnswerNum, oneStopNum);
 			System.out.println(onestopAnswerNum);
 			return new ResponseEntity<String>("true", HttpStatus.OK);
 		} catch (Exception e) {
