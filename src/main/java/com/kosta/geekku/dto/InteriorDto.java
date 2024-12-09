@@ -39,6 +39,7 @@ public class InteriorDto {
 				.recentCount(recentCount)
 				.repairDate(repairDate)
 				.possibleLocation(possibleLocation)
+				.possiblePart(possiblePart)
 				.coverImage(coverImage)
 				.intro(intro)
 				.content(content)

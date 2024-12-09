@@ -1,6 +1,5 @@
 package com.kosta.geekku.entity;
 
-import java.io.UnsupportedEncodingException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
@@ -36,7 +34,6 @@ import lombok.NoArgsConstructor;
 @DynamicInsert
 @Entity
 public class House {
-	// 吏묎씀
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer houseNum;
@@ -88,6 +85,7 @@ public class House {
 				.nickname(user.getNickname())
 				.userId(user.getUserId())
 				.name(user.getName())
+				.userProfileImage(user.getProfileImage())
 				.build();
 		
 		if (rentType.equals("jeonse")) {
@@ -97,15 +95,6 @@ public class House {
 			houseDto.setDepositPrice(depositPrice);
 		} else {
 			houseDto.setBuyPrice(buyPrice);
-		}
-		
-		
-		if (user.getProfileImage() != null) {
-			try {
-				houseDto.setUserProfileImage(new String(Base64.encodeBase64(user.getProfileImage()), "UTF-8"));
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
 		}
 
 		return houseDto;

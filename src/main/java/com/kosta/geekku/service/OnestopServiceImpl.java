@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kosta.geekku.dto.HouseAnswerDto;
 import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
 import com.kosta.geekku.entity.Company;
@@ -117,12 +118,12 @@ public class OnestopServiceImpl implements OnestopService {
 
 	@Transactional
 	@Override
-	public List<OnestopAnswerDto> onestopAnswerList(PageInfo pageInfo, Integer onestopNum) throws Exception {
-		Onestop onestop = onestopRepository.findById(onestopNum).orElseThrow(() -> new Exception("한번에꾸하기 글번호 오류"));
+	public List<OnestopAnswerDto> onestopAnswerList(PageInfo pageInfo, Integer oneStopNum) throws Exception {
+		Onestop onestop = onestopRepository.findById(oneStopNum).orElseThrow(() -> new Exception("한번에꾸하기 글번호 오류"));
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
 
 		List<OnestopAnswerDto> onestopAnswerDtoList = onestopDslRepository
-				.onestopAnswerListByPaging(pageRequest, onestopNum).stream().map(a -> a.toDto())
+				.onestopAnswerListByPaging(pageRequest, oneStopNum).stream().map(a -> a.toDto())
 				.collect(Collectors.toList());
 		Long cnt = onestopDslRepository.findOnestopCount();
 
@@ -147,12 +148,12 @@ public class OnestopServiceImpl implements OnestopService {
 	}
 
 	@Override
-	public Slice<OnestopAnswerDto> onestopAnswerListForMypage(int page, UUID companyId) throws Exception {
+	public Page<OnestopAnswerDto> onestopAnswerListForMypage(int page, UUID companyId) throws Exception {
 
 		Optional<Company> company = companyRepository.findById(companyId);
 
 		Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
-		Slice<OnestopAnswerDto> pageInfo = onestopAnswerRepository.findAllByCompany(company, pageable)
+		Page<OnestopAnswerDto> pageInfo = onestopAnswerRepository.findAllByCompany(company, pageable)
 				.map(OnestopAnswer::toDto);
 
 		return pageInfo;
@@ -166,6 +167,19 @@ public class OnestopServiceImpl implements OnestopService {
 		Page<OnestopDto> pageInfo = onestopRepository.findAllByUser(user, pageable).map(Onestop::toDto);
 
 		return pageInfo;
+	}
+
+	@Override
+	public Page<HouseAnswerDto> getAnswersByCompanyId(UUID companyId, Pageable pageable) throws Exception {
+		return onestopAnswerRepository.findByCompanyId(companyId, pageable)
+				.map(answer -> HouseAnswerDto.builder().answerHouseNum(answer.getAnswerOnestopNum())
+						.title(answer.getTitle()).content(answer.getContent()).createdAt(answer.getCreatedAt())
+						.companyId(answer.getCompany().getCompanyId()).companyName(answer.getCompany().getCompanyName())
+						.companyPhone(answer.getCompany().getPhone()).houseNum(answer.getOnestop().getOnestopNum())
+						.viewCount(answer.getOnestop().getViewCount()).userId(answer.getOnestop().getUser().getUserId())
+						.userName(answer.getOnestop().getUser().getUsername())
+						.address1(answer.getOnestop().getAddress1()).address2(answer.getOnestop().getAddress2())
+						.type(answer.getOnestop().getType()).build());
 	}
 
 }

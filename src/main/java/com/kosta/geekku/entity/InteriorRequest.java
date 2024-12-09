@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.kosta.geekku.dto.InteriorRequestDto;
@@ -54,17 +55,19 @@ public class InteriorRequest {
 				.requestNum(requestNum)
 				.userId(user.getUserId())
 				.name(user.getName())
+				.nickname(user.getNickname())
+				.profileImage(user.getProfileImage())
 				.companyId(interior.getCompany().getCompanyId())
 				.interiorNum(interior.getInteriorNum())
 				.period(period)
 				.type(type)
 				.status(status)
 				.size(size)
-				.name(name)
 				.allowTime(allowTime)
 				.content(content)
 				.createdAt(createdAt)
 				.build();
+		
 		return requestDto;
 	}
 	

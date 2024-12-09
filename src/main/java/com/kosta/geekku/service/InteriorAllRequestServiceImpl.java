@@ -58,7 +58,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	public InteriorAllDto interiorDetail(Integer interiorNum) throws Exception {
 		InteriorAllRequest interiorAll = interiorAllRepository.findById(interiorNum)
 				.orElseThrow(() -> new Exception("글번호 오류"));
-		interiorAllRequestDslRepository.updateOnestopViewCount(interiorNum, interiorAll.getViewCount() + 1);
+		interiorAllRequestDslRepository.updateinteriorAllViewCount(interiorNum, interiorAll.getViewCount() + 1);
 		return interiorAll.toDto();
 	}
 

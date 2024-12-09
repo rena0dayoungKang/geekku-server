@@ -22,7 +22,7 @@ public class QInteriorRequest extends EntityPathBase<InteriorRequest> {
 
     public static final QInteriorRequest interiorRequest = new QInteriorRequest("interiorRequest");
 
-    public final NumberPath<Integer> allowTime = createNumber("allowTime", Integer.class);
+    public final StringPath allowTime = createString("allowTime");
 
     public final StringPath content = createString("content");
 
@@ -32,17 +32,17 @@ public class QInteriorRequest extends EntityPathBase<InteriorRequest> {
 
     public final StringPath name = createString("name");
 
-    public final NumberPath<Integer> period = createNumber("period", Integer.class);
+    public final StringPath period = createString("period");
 
     public final StringPath phone = createString("phone");
 
     public final NumberPath<Integer> requestNum = createNumber("requestNum", Integer.class);
 
-    public final NumberPath<Integer> size = createNumber("size", Integer.class);
+    public final StringPath size = createString("size");
 
-    public final NumberPath<Integer> status = createNumber("status", Integer.class);
+    public final StringPath status = createString("status");
 
-    public final NumberPath<Integer> type = createNumber("type", Integer.class);
+    public final StringPath type = createString("type");
 
     public final QUser user;
 

@@ -66,10 +66,24 @@ public class InteriorAllRequestDslRepository {
 					.orderBy(interiorAll.requestAllNum.desc()).offset(pageRequest.getOffset())
 					.limit(pageRequest.getPageSize()).fetch();
 		} else if (type.equals("workType")) {
-			interiorAllList = jpaQueryFactory.selectFrom(interiorAll).where(interiorAll.interiorType.contains(word))
-					.orderBy(interiorAll.requestAllNum.desc()).offset(pageRequest.getOffset())
-					.limit(pageRequest.getPageSize()).fetch(); //workType??
+			// "전체" → true, "부분" → false 변환
+			Boolean workTypeValue = null;
+			if ("전체".equals(word)) {
+				workTypeValue = false;
+			} else if ("부분".equals(word)) {
+				workTypeValue = true;
+			}
+
+			if (workTypeValue != null) {
+				interiorAllList = jpaQueryFactory.selectFrom(interiorAll).where(interiorAll.workType.eq(workTypeValue))
+						.orderBy(interiorAll.requestAllNum.desc()).offset(pageRequest.getOffset())
+						.limit(pageRequest.getPageSize()).fetch();
+			} else {
+				// word가 "전체" 또는 "부분"이 아닌 경우 빈 결과 반환
+				interiorAllList = List.of();
+			}
 		}
+
 		return interiorAllList;
 	}
 
@@ -97,7 +111,7 @@ public class InteriorAllRequestDslRepository {
 		return null;
 	}
 
-	public void updateOnestopViewCount(Integer interiorNum, Integer viewCount) throws Exception {
+	public void updateinteriorAllViewCount(Integer interiorNum, Integer viewCount) throws Exception {
 		QInteriorAllRequest interiorall = QInteriorAllRequest.interiorAllRequest;
 
 		jpaQueryFactory.update(interiorall).set(interiorall.viewCount, viewCount)

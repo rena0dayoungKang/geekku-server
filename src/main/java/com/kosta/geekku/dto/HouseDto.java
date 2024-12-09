@@ -38,7 +38,7 @@ public class HouseDto {
 	private UUID userId;
 	private String nickname;
 	private String name;
-	private String userProfileImage;
+	private byte[] userProfileImage;
 	private String userPhone;
 	
 	public House toEntity() {
@@ -56,7 +56,7 @@ public class HouseDto {
 				.content(content)
 				.viewCount(viewCount)
 				.createdAt(createdAt)
-				.user(User.builder().userId(userId).name(name).nickname(nickname).phone(userPhone).build())
+				.user(User.builder().userId(userId).name(name).nickname(nickname).phone(userPhone).profileImage(userProfileImage).build())
 				.build();
 		
 		if (rentType.equals("jeonse")) {

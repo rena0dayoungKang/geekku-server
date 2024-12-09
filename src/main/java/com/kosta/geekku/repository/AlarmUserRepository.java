@@ -1,5 +1,6 @@
 package com.kosta.geekku.repository;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,9 +14,11 @@ import com.kosta.geekku.entity.AlarmUser;
 
 public interface AlarmUserRepository extends JpaRepository<AlarmUser, Integer> {
 
-	List<AlarmUser> findByUser_UserIdAndStatusFalse(UUID userId);
+	List<AlarmUser> findByUser_UserIdAndTypeNotAndStatusFalse(UUID userId, String type);
 
-	List<AlarmUser> findByCompany_CompanyIdAndStatusFalse(UUID companyId);
+	List<AlarmUser> findByCompany_CompanyIdAndTypeAndStatusFalse(UUID companyId, String type);
+	
+	List<AlarmUser> findByUser_UserIdAndTypeInAndStatusFalse(UUID userId, List<String> types);
 
 	@Query("SELECT new com.kosta.geekku.dto.MessageDto("
 	        + "a.userAlarmNum, a.message, a.user.userId, u.username, "
