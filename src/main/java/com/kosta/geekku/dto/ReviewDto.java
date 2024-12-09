@@ -1,7 +1,6 @@
 package com.kosta.geekku.dto;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.UUID;
 
 import com.kosta.geekku.entity.Interior;
@@ -21,7 +20,7 @@ public class ReviewDto {
 	private Integer reviewNum;
 	private UUID userId;
 	private String companyName;
-	private LocalDate date;
+	private String date;
 	private String type;
 	private String style;
 	private Integer size;
