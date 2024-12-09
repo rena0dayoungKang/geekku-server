@@ -34,7 +34,7 @@ public class InteriorAllRequestController {
 	@PostMapping("/user/interiorAllWrite")
 	public ResponseEntity<String> interiorAllWrite(Authentication authentication, InteriorAllDto interiorAllDto) {
 		try {
-			UUID userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId();
+			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
 			Integer interiorAllNum = interiorAllService.interiorAllWrite(interiorAllDto, userId);
 			return new ResponseEntity<String>(String.valueOf(interiorAllNum), HttpStatus.OK);
 
@@ -43,19 +43,6 @@ public class InteriorAllRequestController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
-
-	/*
-	 * @PostMapping("/interiorAllModify") public ResponseEntity<Integer>
-	 * onestopModify(InteriorAllDto interiorAllDto,
-	 * 
-	 * @RequestPart(value = "delFile", required = false) Integer[] delFileNum,
-	 * 
-	 * @RequestPart(value = "file", required = false) MultipartFile[] fileList) {
-	 * try { interiorAllService.interiorAllModify(interiorAllDto); return new
-	 * ResponseEntity<Integer>(interiorAllDto.getRequestAllNum(), HttpStatus.OK); }
-	 * catch (Exception e) { e.printStackTrace(); return new
-	 * ResponseEntity<Integer>(HttpStatus.BAD_REQUEST); } }
-	 */
 
 	@GetMapping("/interiorAllDetail/{num}")
 	public ResponseEntity<InteriorAllDto> interiorAllDetail(@PathVariable Integer num) {

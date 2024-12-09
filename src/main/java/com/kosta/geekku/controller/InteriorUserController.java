@@ -56,17 +56,6 @@ public class InteriorUserController {
 		}
 	}
 
-	/*
-	 * @GetMapping("/company/myInteriorInfo") public ResponseEntity<CompanyDto>
-	 * getInteriorInfo(Authentication authentication) { String username =
-	 * ((PrincipalDetails)
-	 * authentication.getPrincipal()).getCompany().getUsername(); try { CompanyDto
-	 * companyDto = interiorService.getCompany(username); return new
-	 * ResponseEntity<CompanyDto>(companyDto, HttpStatus.OK); } catch (Exception e)
-	 * { e.printStackTrace(); return new
-	 * ResponseEntity<CompanyDto>(HttpStatus.BAD_REQUEST); } }
-	 */
-
 	// 인테리어업자 내가 한 onestop 답변 리스트 조회
 	@GetMapping("/company/myOnestopAnswerList")
 	public ResponseEntity<Map<String, Object>> myOnestopAnswerList(
