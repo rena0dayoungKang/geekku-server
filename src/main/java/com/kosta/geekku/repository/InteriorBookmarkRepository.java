@@ -10,6 +10,6 @@ import com.kosta.geekku.entity.InteriorBookmark;
 
 public interface InteriorBookmarkRepository extends JpaRepository<InteriorBookmark, Integer> {
 	InteriorBookmark findByInterior_InteriorNumAndUserId(Integer interiorNum, UUID userId);
-
+	
 	Page<InteriorBookmark> findAllByUserId(UUID userId, Pageable pageable);
 }

@@ -87,7 +87,7 @@ public class InteriorSeviceImpl implements InteriorService {
 				.collect(Collectors.toList());
 		return sampleList;
 	}
-
+	
 	@Override
 	public List<InteriorDto> interiorList(String possibleLocation) throws Exception {
 		List<InteriorDto> interiorDtoList = null;
@@ -114,7 +114,7 @@ public class InteriorSeviceImpl implements InteriorService {
 	public boolean toggleBookmark(String userId, Integer interiorNum) throws Exception {
 		InteriorBookmark interiorBookmark = interiorBookmarkRepository.findByInterior_InteriorNumAndUserId(interiorNum,
 				UUID.fromString(userId));
-		System.out.println(interiorBookmark);
+		System.out.println("test============="+interiorBookmark);
 		
 		Interior interior = interiorRepository.findById(interiorNum).orElseThrow(() -> new Exception("인테리어 번호 오류"));
 		System.out.println(interior);

@@ -1,11 +1,11 @@
 package com.kosta.geekku.dto;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import com.kosta.geekku.entity.Interior;
 import com.kosta.geekku.entity.InteriorReview;
-import com.kosta.geekku.entity.InteriorReviewImage;
 import com.kosta.geekku.entity.User;
 
 import lombok.AllArgsConstructor;
@@ -21,6 +21,7 @@ public class ReviewDto {
 	private Integer reviewNum;
 	private UUID userId;
 	private String companyName;
+	private LocalDate date;
 	private String type;
 	private String style;
 	private Integer size;
@@ -35,6 +36,7 @@ public class ReviewDto {
 		InteriorReview review = InteriorReview.builder()
 				.reviewNum(reviewNum)
 				.companyName(getCompanyName())
+				.date(date)
 				.type(type)
 				.style(style)
 				.size(size)

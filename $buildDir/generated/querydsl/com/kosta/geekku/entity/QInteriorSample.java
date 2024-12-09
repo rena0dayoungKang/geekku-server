@@ -21,18 +21,16 @@ public class QInteriorSample extends EntityPathBase<InteriorSample> {
     private static final PathInits INITS = PathInits.DIRECT2;
 
     public static final QInteriorSample interiorSample = new QInteriorSample("interiorSample");
-    
+
     public final QCompany company;
 
     public final StringPath content = createString("content");
 
-    public final NumberPath<Integer> coverImage = createNumber("coverImage", Integer.class);
+    public final StringPath coverImage = createString("coverImage");
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 
     public final QInterior interior;
-
-    public final StringPath intro = createString("intro");
 
     public final StringPath location = createString("location");
 
