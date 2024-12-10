@@ -270,11 +270,13 @@ public class InteriorController {
 		try {
 			System.out.println("param=====" + param);
 			Map<String, Object> detailInfo = interiorService.interiorDetail(Integer.parseInt(param.get("num")));
+
 			System.out.println("detailInfo=====" + detailInfo);
 
 			System.out.println("-----------test id==" + param.get("id"));
 			System.out.println("-----------" + param.get("num"));
 			if (param.get("id") != null && !param.get("id").isEmpty()) {
+
 				boolean bookmark = interiorService.checkBookmark(param.get("id"),
 						Integer.parseInt(param.get("num"))) != null;
 				detailInfo.put("bookmark", bookmark);

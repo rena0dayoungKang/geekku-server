@@ -21,7 +21,6 @@ public class InteriorAnswerDto {
 	private String content;
 	private Timestamp createdAt;
 
-	private String title;
 	private UUID companyId;
 	private String companyName;
 	private String companyProfileImage;
@@ -29,8 +28,13 @@ public class InteriorAnswerDto {
 	private String companyAddress;
 	private Integer requestAllNum;
 	private UUID userId;
+	private String title;
+	private Integer viewCount;
+	private String address1;
+	private String address2;
+	private String type;
 	private String username;
-	private String name;
+	private String nickname;
 
 	public InteriorAllAnswer toEntity() {
 		return InteriorAllAnswer.builder().answerAllNum(answerAllNum).content(content).title(title).createdAt(createdAt)

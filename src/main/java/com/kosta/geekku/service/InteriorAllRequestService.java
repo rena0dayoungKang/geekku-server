@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
-
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import com.kosta.geekku.dto.InteriorAllDto;
@@ -33,5 +33,8 @@ public interface InteriorAllRequestService {
 	Page<InteriorAllDto> interiorAllListForUserMypage(int page, int size, String userId) throws Exception;
 
 	Slice<InteriorAnswerDto> interiorAnswerListForMypage(Integer page, UUID companyId) throws Exception;
+
+	// 인테리어 업자 마이페이지 - 방꾸 답변 내역
+	Page<InteriorAnswerDto> getInteriorAnswersByCompanyId(UUID companyId, Pageable pageable);
 
 }

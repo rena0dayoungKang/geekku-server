@@ -84,17 +84,6 @@ public class OnestopServiceImpl implements OnestopService {
 		return onestop.toDto();
 	}
 
-	/*
-	 * @Override public Integer onestopModify(OnestopDto onestopDto) throws
-	 * Exception { Onestop onestop =
-	 * onestopRepository.findById(onestopDto.getOnestopNum()) .orElseThrow(() -> new
-	 * Exception("글번호 오류")); System.out.println(onestop.getOnestopNum());
-	 * onestop.setTitle(onestopDto.getTitle());
-	 * onestop.setContent(onestopDto.getContent()); onestopRepository.save(onestop);
-	 * 
-	 * return onestop.getOnestopNum(); }
-	 */
-
 	@Override
 	@Transactional
 	public void onestopDelete(Integer onestopNum) throws Exception {
@@ -108,7 +97,9 @@ public class OnestopServiceImpl implements OnestopService {
 		Onestop onestop = onestopRepository.findById(onestopAnswerDto.getOnestopNum())
 				.orElseThrow(() -> new Exception("한번에꾸하기 글 번호 오류"));
 		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
+
 		OnestopAnswer onestopAnswer = onestopAnswerDto.toEntity();
+		onestopAnswer.setOnestop(onestop);
 		onestopAnswer.setCompany(company);
 		onestopAnswerRepository.save(onestopAnswer);
 
@@ -169,17 +160,18 @@ public class OnestopServiceImpl implements OnestopService {
 		return pageInfo;
 	}
 
+	// 원스탑
 	@Override
-	public Page<HouseAnswerDto> getAnswersByCompanyId(UUID companyId, Pageable pageable) throws Exception {
+	public Page<OnestopAnswerDto> getAnswersByCompanyId(UUID companyId, Pageable pageable) throws Exception {
 		return onestopAnswerRepository.findByCompanyIdOrderByCreatedAtDesc(companyId, pageable)
-				.map(answer -> HouseAnswerDto.builder().answerHouseNum(answer.getAnswerOnestopNum())
-						.title(answer.getTitle()).content(answer.getContent()).createdAt(answer.getCreatedAt())
-						.companyId(answer.getCompany().getCompanyId()).companyName(answer.getCompany().getCompanyName())
-						.companyPhone(answer.getCompany().getPhone()).houseNum(answer.getOnestop().getOnestopNum())
+				.map(answer -> OnestopAnswerDto.builder().title(answer.getTitle()).content(answer.getContent())
+						.createdAt(answer.getCreatedAt()).companyId(answer.getCompany().getCompanyId())
+						.companyName(answer.getCompany().getCompanyName()).companyPhone(answer.getCompany().getPhone())
 						.viewCount(answer.getOnestop().getViewCount()).userId(answer.getOnestop().getUser().getUserId())
-						.userName(answer.getOnestop().getUser().getUsername())
+						.username(answer.getOnestop().getUser().getUsername())
+						.nickname(answer.getOnestop().getUser().getNickname())
 						.address1(answer.getOnestop().getAddress1()).address2(answer.getOnestop().getAddress2())
-						.type(answer.getOnestop().getType()).build());
+						.onestopNum(answer.getOnestop().getOnestopNum()).type(answer.getOnestop().getType()).build());
 	}
 
 }
