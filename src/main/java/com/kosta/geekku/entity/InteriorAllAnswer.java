@@ -51,10 +51,10 @@ public class InteriorAllAnswer {
 	private Timestamp createdAt;
 
 	public InteriorAnswerDto toDto() {
-		InteriorAnswerDto interiorAnswerDto = InteriorAnswerDto.builder().answerAllNum(answerAllNum).title(title).content(content)
-				.createdAt(createdAt).requestAllNum(interiorAllRequest.getRequestAllNum())
-				.companyId(company.getCompanyId()).companyName(company.getCompanyName())
-				.companyPhone(company.getPhone()).build();
+		InteriorAnswerDto interiorAnswerDto = InteriorAnswerDto.builder().answerAllNum(answerAllNum).title(title)
+				.content(content).createdAt(createdAt).requestAllNum(interiorAllRequest.getRequestAllNum())
+				.companyId(company.getCompanyId()).companyAddress(company.getCompanyAddress())
+				.companyName(company.getCompanyName()).companyPhone(company.getPhone()).build();
 
 		if (company.getProfileImage() != null) {
 			try {
