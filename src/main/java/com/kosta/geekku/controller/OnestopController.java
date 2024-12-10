@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.geekku.config.auth.PrincipalDetails;
-import com.kosta.geekku.dto.HouseAnswerDto;
 import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
 //import com.kosta.geekku.service.FcmMessageService;
@@ -157,14 +156,13 @@ public class OnestopController {
 			return new ResponseEntity<String>("한번에꾸하기 답변 삭제 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	// 중개업자 마이페이지 - 한번에 꾸하기 답변내역
 	@GetMapping("/company/mypageOnestopAnswerList")
-	public ResponseEntity<Page<OnestopAnswerDto>> onestopAnswerListForMypage(
-			 Authentication authentication,
-			 @RequestParam(required = false, defaultValue = "1", value = "page") int page) {
+	public ResponseEntity<Page<OnestopAnswerDto>> onestopAnswerListForMypage(Authentication authentication,
+			@RequestParam(required = false, defaultValue = "1", value = "page") int page) {
 		try {
-			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId();
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
 			Page<OnestopAnswerDto> onestopAnswerList = onestopService.onestopAnswerListForMypage(page, companyId);
 			return new ResponseEntity<Page<OnestopAnswerDto>>(onestopAnswerList, HttpStatus.OK);
 		} catch (Exception e) {

@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kosta.geekku.config.auth.PrincipalDetails;
-import com.kosta.geekku.dto.HouseAnswerDto;
 import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequestDto;
@@ -60,63 +58,36 @@ public class InteriorUserController {
 		}
 	}
 
-	/*
-	 * // 인테리어업자 내가 한 onestop 답변 리스트 조회
-	 * 
-	 * @GetMapping("/company/myOnestopAnswerList") public ResponseEntity<Map<String,
-	 * Object>> myOnestopAnswerList(
-	 * 
-	 * @RequestParam(value = "page", required = false, defaultValue = "1") Integer
-	 * page, Authentication authentication) { try { UUID companyId =
-	 * ((PrincipalDetails)
-	 * authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서 PageInfo
-	 * pageInfo = new PageInfo(); pageInfo.setCurPage(page); Slice<OnestopAnswerDto>
-	 * myOnestopAnswerList = onestopService.onestopAnswerListForMypage(page,
-	 * companyId); Map<String, Object> listInfo = new HashMap<>();
-	 * listInfo.put("myOnestopAnswerList", myOnestopAnswerList);
-	 * listInfo.put("pageInfo", pageInfo);
-	 * 
-	 * return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK); }
-	 * catch (Exception e) { e.printStackTrace(); return new
-	 * ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST); } }
-	 */
-	// 중개업자 집꾸하기 답변 글 조회 (테스트 해야함) + 페이징 처리
+	// 인테리어 업자 한번에꾸하기 답변 글 조회
 	@GetMapping("/company/myOnestopAnswerList/{companyId}")
-	public ResponseEntity<Page<HouseAnswerDto>> getAnswersByCompanyId(@PathVariable UUID companyId,
+	public ResponseEntity<Page<OnestopAnswerDto>> getAnswersByCompanyId(@PathVariable UUID companyId,
 			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
 		try {
 			Pageable pageable = PageRequest.of(page - 1, size);
-			Page<HouseAnswerDto> houseAnswers = onestopService.getAnswersByCompanyId(companyId, pageable);
+			Page<OnestopAnswerDto> onestopAnswers = onestopService.getAnswersByCompanyId(companyId, pageable);
 
-			return ResponseEntity.ok(houseAnswers);
+			return ResponseEntity.ok(onestopAnswers);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new ResponseEntity<Page<HouseAnswerDto>>(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<Page<OnestopAnswerDto>>(HttpStatus.BAD_REQUEST);
 	}
 
 	// 인테리어업자 내가 한 방꾸하기 답변 리스트 조회
 
-	@GetMapping("/company/myInteriorAnswerList")
-	public ResponseEntity<Map<String, Object>> myInteriorAnswerList(
-			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			Authentication authentication) {
+	@GetMapping("/company/myInteriorAnswerList/{companyId}")
+	public ResponseEntity<Page<InteriorAnswerDto>> getInteriorAnswersByCompanyId(@PathVariable UUID companyId,
+			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
 		try {
-			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서
-			PageInfo pageInfo = new PageInfo();
-			pageInfo.setCurPage(page);
-			Slice<InteriorAnswerDto> myInteriorAnswerList = interiorAllRequestService.interiorAnswerListForMypage(page,
-					companyId);
-			Map<String, Object> listInfo = new HashMap<>();
-			listInfo.put("myInteriorAnswerList", myInteriorAnswerList);
-			// listInfo.put("pageInfo", pageInfo);
-			System.out.println("list" + listInfo.toString());
+			Pageable pageable = PageRequest.of(page - 1, size);
+			Page<InteriorAnswerDto> interiorAnswers = interiorAllRequestService.getInteriorAnswersByCompanyId(companyId,
+					pageable);
 
-			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
+			return ResponseEntity.ok(interiorAnswers);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
+		return new ResponseEntity<Page<InteriorAnswerDto>>(HttpStatus.BAD_REQUEST);
 	}
 
 	// 인테리어업자 내가 작성한 인테리어 시공사례 모아보기

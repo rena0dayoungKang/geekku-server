@@ -105,7 +105,10 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	public Integer interiorAnswerWrite(InteriorAnswerDto interiorAnswerDto, UUID companyId) throws Exception {
 		InteriorAllRequest interiorAllRequest = interiorAllRepository.findById(interiorAnswerDto.getRequestAllNum())
 				.orElseThrow(() -> new Exception("방꾸하기 글 번호 오류"));
+		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
 		InteriorAllAnswer interiorAllAnswer = interiorAnswerDto.toEntity();
+		interiorAllAnswer.setInteriorAllRequest(interiorAllRequest);
+		interiorAllAnswer.setCompany(company);
 		interiorAllAnswerRepository.save(interiorAllAnswer);
 		return interiorAllAnswer.getAnswerAllNum();
 	}
@@ -173,6 +176,22 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 				.map(InteriorAllRequest::toDto);
 
 		return pageInfo;
+	}
+
+	@Override
+	public Page<InteriorAnswerDto> getInteriorAnswersByCompanyId(UUID companyId, Pageable pageable) {
+		return interiorAllAnswerRepository.findByCompanyIdOrderByCreatedAtDesc(companyId, pageable)
+				.map(answer -> InteriorAnswerDto.builder().title(answer.getTitle()).content(answer.getContent())
+						.createdAt(answer.getCreatedAt()).companyId(answer.getCompany().getCompanyId())
+						.companyName(answer.getCompany().getCompanyName()).companyPhone(answer.getCompany().getPhone())
+						.viewCount(answer.getInteriorAllRequest().getViewCount())
+						.userId(answer.getInteriorAllRequest().getUser().getUserId())
+						.username(answer.getInteriorAllRequest().getUser().getUsername())
+						.nickname(answer.getInteriorAllRequest().getUser().getNickname())
+						.address1(answer.getInteriorAllRequest().getAddress1())
+						.address2(answer.getInteriorAllRequest().getAddress2())
+						.requestAllNum(answer.getInteriorAllRequest().getRequestAllNum())
+						.type(answer.getInteriorAllRequest().getType()).build());
 	}
 
 }
