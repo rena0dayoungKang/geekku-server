@@ -25,6 +25,8 @@ public class QAuth extends EntityPathBase<Auth> {
 
     public final StringPath email = createString("email");
 
+    public final DateTimePath<java.time.LocalDateTime> expiresTime = createDateTime("expiresTime", java.time.LocalDateTime.class);
+
     public final StringPath phone = createString("phone");
 
     public QAuth(String variable) {

@@ -87,7 +87,7 @@ public class InteriorSeviceImpl implements InteriorService {
 				.collect(Collectors.toList());
 		return sampleList;
 	}
-	
+
 	@Override
 	public List<InteriorDto> interiorList(String possibleLocation) throws Exception {
 		List<InteriorDto> interiorDtoList = null;
@@ -130,25 +130,31 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	@Transactional
 	@Override
-	public Integer interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId)
+	public Map<Object,Object> interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId)
 			throws Exception {
 		Interior interior = interiorRepository.findByCompany_companyId(companyId);
 
 		if (interior != null) {
 			throw new Exception("이미 등록한 인테리어 회사입니다.");
 		}
-
+		
 		Interior nInterior = interiorDto.toEntity();
 		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
+		company.setRegStatus(true);
 		nInterior.setCompany(company);
 
+		
 		if (coverImage != null && !coverImage.isEmpty()) {
 			nInterior.setCoverImage(coverImage.getBytes());
 		}
 
 		interiorRepository.save(nInterior);
 
-		return nInterior.getInteriorNum();
+		Map<Object,Object> total = new HashMap<>();
+		total.put("regStatus", company.isRegStatus());
+		total.put("interiorNum", nInterior.getInteriorNum());
+		
+		return total;
 	}
 
 	@Override
@@ -239,7 +245,7 @@ public class InteriorSeviceImpl implements InteriorService {
 	public Integer interiorRequest(String userId, InteriorRequestDto requestDto) throws Exception {
 		InteriorRequest request = requestDto.toEntity();
 		User user = User.builder().userId(UUID.fromString(userId)).build();
-		Interior interior = Interior.builder().interiorNum(1).build(); // test용 interiorNum 1 대입
+		Interior interior = Interior.builder().interiorNum(request.getInterior().getInteriorNum()).build();
 
 		request.setUser(user);
 		request.setInterior(interior);

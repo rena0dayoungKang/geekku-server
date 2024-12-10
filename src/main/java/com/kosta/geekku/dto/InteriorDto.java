@@ -8,10 +8,12 @@ import com.kosta.geekku.entity.Interior;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -29,6 +31,7 @@ public class InteriorDto {
 	private String intro;
 	private String content;
 	private Timestamp createdAt;
+	private boolean regStatus;
 
 	public Interior toEntity() {
 		Interior interior = Interior.builder().interiorNum(interiorNum)
@@ -49,4 +52,14 @@ public class InteriorDto {
 		}
 		return interior;
 	}
+
+	@Override
+	public String toString() {
+		return "InteriorDto [interiorNum=" + interiorNum + ", companyName=" + companyName + ", companyId=" + companyId
+				+ ", possiblePart=" + possiblePart + ", period=" + period + ", recentCount=" + recentCount
+				+ ", repairDate=" + repairDate + ", possibleLocation=" + possibleLocation + ", intro=" + intro
+				+ ", content=" + content + ", createdAt=" + createdAt + ", regStatus=" + regStatus + "]";
+	}
+	
+	
 }
