@@ -193,30 +193,12 @@ public class InteriorSeviceImpl implements InteriorService {
 
 		InteriorReview review = reviewDto.toEntity();
 
-		Company company = companyRepository.findByCompanyNameContaining(reviewDto.getCompanyName()); // 리뷰 등록할 때 회사이름
-																										// 일부만 작성했을수도
-																										// 있기때문에 포함된 회사
-																										// 조회
-
+		Company company = companyRepository.findByCompanyNameContaining(reviewDto.getCompanyName()); // 리뷰 등록할 때 회사이름 일부만 작성했을수도 있기때문에 포함된 회사 조회
 		UUID findCompany = company.getCompanyId();
-
-		System.out.println(findCompany);
-
 		Interior findInteriorNum = interiorRepository.findByCompany_companyId(findCompany);
-
 		Integer num = findInteriorNum.getInteriorNum();
 
-		System.out.println(num);
-
 		review.setInterior(findInteriorNum);
-
-//		Interior interior = interiorRepository.findByCompany_companyNameContaining(findCompany);
-//		
-//		Integer findInteriorNum = interior.getInteriorNum();
-
-//		System.out.println(findCompany);
-
-//		Integer collectComNum = interior.getInteriorNum();
 
 		User user = User.builder().userId(UUID.fromString(userId)).build();
 
@@ -243,7 +225,6 @@ public class InteriorSeviceImpl implements InteriorService {
 				}
 			}
 		}
-		System.out.println(review.getReviewNum());
 		return review.getReviewNum();
 	}
 
@@ -338,6 +319,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		review.setLocation(reviewDto.getLocation());
 		review.setStyle(reviewDto.getStyle());
 		review.setType(reviewDto.getType());
+		review.setDate(reviewDto.getDate());
 
 		interiorReviewRepository.save(review);
 
@@ -376,21 +358,6 @@ public class InteriorSeviceImpl implements InteriorService {
 				.orElseThrow(() -> new Exception("인테리어 후기 글번호 오류"));
 		interiorReviewRepository.deleteById(num);
 	}
-
-	/*
-	 * return interiorRequestDtoList;
-	 * 
-	 * public Page<InteriorRequestDto> interiorRequestListForUserMypage(int page,
-	 * int size, UUID userId) throws Exception { Optional<User> user =
-	 * userRepository.findById(userId);
-	 * 
-	 * Pageable pageable = PageRequest.of(page - 1, size,
-	 * Sort.by(Sort.Direction.DESC, "createdAt")); Page<InteriorRequestDto> pageInfo
-	 * = interiorRequestRepository.findAllByUser(user, pageable)
-	 * .map(InteriorRequest::toDto);
-	 * 
-	 * return pageInfo; }
-	 */
 
 	@Override
 	public List<SampleDto> interiorSampleList(PageInfo pageInfo, UUID companyId) throws Exception {
@@ -486,15 +453,4 @@ public class InteriorSeviceImpl implements InteriorService {
 		return pageInfo;
 
 	}
-
-//	@Override
-//	public Page<ReviewDto> reviewListForUserMypage(int page, int size, UUID userId) throws Exception {
-//		Optional<User> user = userRepository.findById(userId);
-//
-//		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-//		Page<ReviewDto> pageInfo = interiorReviewRepository.findAllByUser(user, pageable).map(InteriorReview::toDto);
-//
-//		return pageInfo;
-//	}
-
 }

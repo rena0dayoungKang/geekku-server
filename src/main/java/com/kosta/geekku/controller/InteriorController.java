@@ -156,13 +156,10 @@ public class InteriorController {
 	@PostMapping("/user/interiorReviewWrite")
 	public ResponseEntity<String> interiorReviewRegister(Authentication authentication, ReviewDto reviewDto,
 			@RequestParam(name = "file", required = false) MultipartFile[] files) {
-		System.out.println(reviewDto);
-		System.out.println(files);
 		try {
-			String id = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString(); // 재확인
+			String id = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString();
 			Integer reviewNum = interiorService.reviewRegister(id, reviewDto,
 					files == null ? null : Arrays.asList(files));
-			System.out.println(reviewNum);
 			return new ResponseEntity<String>(String.valueOf(reviewNum), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
