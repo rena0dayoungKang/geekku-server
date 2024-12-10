@@ -132,9 +132,16 @@ public class JwtAuthrizationFilter extends BasicAuthenticationFilter {
 				map.put("refresh_token", JwtProperties.TOKEN_PREFIX + reRefreshToken);
 				String reToken = objectMapper.writeValueAsString(map); // map -> jsonString
 				response.addHeader(JwtProperties.HEADER_STRING, reToken);
+				System.out.println(reToken);
 				response.setContentType("application/json; charset=utf-8");
-				response.getWriter().print("token");// 토큰을 다시 줄거야 하는 나만의방법이야
+				//response.getWriter().print("token");// 토큰을 다시 줄거야 하는 나만의방법이야
+				
+				UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(principalDetails, null,
+						principalDetails.getAuthorities());
+				SecurityContextHolder.getContext().setAuthentication(auth);
 
+				chain.doFilter(request, response);
+				return;
 			} catch (Exception e2) {
 				e2.printStackTrace();
 				// 여기까지 왔다는 것은 1), 2) 둘다 실패했음 -> 다시해라
