@@ -11,4 +11,6 @@ import com.kosta.geekku.entity.User;
 
 public interface InteriorAllRequestRepository extends JpaRepository<InteriorAllRequest, Integer> {
 	Page<InteriorAllRequest> findAllByUser(Optional<User> user, Pageable pageable);
+	
+	InteriorAllRequest findByRequestAllNum(Integer requestAllNum);//추가
 }

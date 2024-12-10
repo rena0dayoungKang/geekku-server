@@ -36,6 +36,7 @@ public interface InteriorService {
 
 	Integer interiorRequest(String userId, InteriorRequestDto requestDto) throws Exception;
 
+
 	InteriorRequestDto requestDetail(Integer num) throws Exception;
 
 	List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location)

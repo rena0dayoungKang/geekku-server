@@ -32,7 +32,7 @@ public class FcmMessageService {
 	private final AlarmUserRepository alarmRepository;
 	private final CompanyRepository companyRepository;
 
-	// 집꾸 알림
+	/** 집꾸 알림 */
 	public Boolean sendHouseAnswer(HouseAnswerDto houseAnswerDto) throws Exception {
 		// 1. 수신자 fcmToken 가져오기
 		User user = userRepository.findById(houseAnswerDto.getUserId()).orElseThrow(() -> new Exception("User 오류"));
@@ -48,6 +48,10 @@ public class FcmMessageService {
 				.detailPath(houseAnswerDto.getHouseNum()).title(houseAnswerDto.getTitle()).build();
 		alarmRepository.save(alarm);
 		// 3. Alarm 전송
+		Company company = companyRepository.findById(houseAnswerDto.getCompanyId()).get(); // 테스트 해봐야함
+		if (company.getFcmToken().equals(fcmToken))
+			return true;
+
 		Message message = Message.builder().setToken(fcmToken).putData("num", alarm.getUserAlarmNum() + "")
 				.putData("message", alarm.getMessage()).putData("type", alarm.getType())
 				.putData("detailPath", alarm.getDetailPath() + "").putData("sender", houseAnswerDto.getCompanyName())
@@ -60,7 +64,9 @@ public class FcmMessageService {
 			return false;
 		}
 	}
-	// 방꾸 알림
+
+	/** 방꾸 알림 */
+	/** TODO */
 	public Boolean sendInteriorAllAnswer(InteriorAnswerDto interiorAnswerDto) throws Exception {
 		// 1. 수신자 fcmToken 가져오기
 		User user = userRepository.findById(interiorAnswerDto.getUserId()).orElseThrow(() -> new Exception("User 오류"));
@@ -72,10 +78,15 @@ public class FcmMessageService {
 		// 2. AlarmTable에 저장
 		AlarmUser alarm = AlarmUser.builder().user(user.getUserId()) // UUID 타입 전달
 				.company(Company.builder().companyId(interiorAnswerDto.getCompanyId()).build())
-				.message(interiorAnswerDto.getTitle()).status(false).type("interior")
-				.detailPath(interiorAnswerDto.getAnswerAllNum()).build();
+				.message(interiorAnswerDto.getContent()).status(false).type("interior")
+				.detailPath(interiorAnswerDto.getRequestAllNum()).title(interiorAnswerDto.getTitle()).build();
+
 		alarmRepository.save(alarm);
 		// 3. Alarm 전송
+		Company company = companyRepository.findById(interiorAnswerDto.getCompanyId()).get();
+		if (company.getFcmToken().equals(fcmToken))
+			return true;
+
 		Message message = Message.builder().setToken(fcmToken).putData("num", alarm.getUserAlarmNum() + "")
 				.putData("message", alarm.getMessage()).putData("type", alarm.getType())
 				.putData("detailPath", alarm.getDetailPath() + "").putData("sender", interiorAnswerDto.getCompanyName())
@@ -88,7 +99,9 @@ public class FcmMessageService {
 			return false;
 		}
 	}
-	// onestop 알림
+
+	/** onestop 답변이 달렸을 때, 개인에게 알림 가는 함수 */
+	/** TODO */
 	public Boolean sendOnestopAnswer(OnestopAnswerDto onestopAnswerDto) throws Exception {
 		// 1. 수신자 fcmToken 가져오기
 		User user = userRepository.findById(onestopAnswerDto.getUserId()).orElseThrow(() -> new Exception("User 오류"));
@@ -118,28 +131,34 @@ public class FcmMessageService {
 		}
 
 	}
-	// request 알림
-	public Boolean sendInteriorRequest(InteriorRequestDto interiorRequestDto) throws Exception {
+
+	/** 인테리어 신청할 때, 인테리어 업자에게 알림 보내는 함수 */
+	public Boolean sendInteriorRequest(InteriorRequestDto requestDto) throws Exception {
 		// 1. 수신자 fcmToken 가져오기
 		// 수신자가 인테리어 회사이기 때문에 해당 회사의 토큰을 가져온다.
-		Company company = companyRepository.findById(interiorRequestDto.getCompanyId())
+
+		Company company = companyRepository.findById(requestDto.getCompanyId())
 				.orElseThrow(() -> new Exception("Company 오류"));
 		String fcmToken = company.getFcmToken();
 		if (fcmToken == null || fcmToken.trim().length() == 0) {
 			System.out.println("FCM Token 오류");
 			return false;
 		}
-		// 2. AlarmTable에 저장
-		AlarmUser alarm = AlarmUser.builder().user(interiorRequestDto.getUserId()) // UUID 타입 전달
-				.company(company).message(interiorRequestDto.getName() + "님으로부터 인테리어 문의").status(false).type("request")
-				.detailPath(interiorRequestDto.getRequestNum()).build();
 
+		// 2. AlarmTable에 저장
+		AlarmUser alarm = AlarmUser.builder().user(requestDto.getUserId()) // UUID 타입 전달
+				.company(company).message("<p>" + requestDto.getName() + "님으로부터 인테리어 문의" + "</p>").status(false)
+				.type("request").title("인테리어 문의가 왔습니다").detailPath(requestDto.getRequestNum()).build();
 		alarmRepository.save(alarm);
 
 		// 3. Alarm 전송
+		User user = userRepository.findById(requestDto.getUserId()).get();
+		if (user.getFcmToken().equals(fcmToken))
+			return true;
+
 		Message message = Message.builder().setToken(fcmToken).putData("num", alarm.getUserAlarmNum() + "")
 				.putData("message", alarm.getMessage()).putData("type", alarm.getType())
-				.putData("detailPath", alarm.getDetailPath() + "").putData("sender", interiorRequestDto.getName())
+				.putData("detailPath", alarm.getDetailPath() + "").putData("sender", requestDto.getName())
 				.putData("title", alarm.getTitle()).build();
 		try {
 			firebaseMessaging.send(message);
@@ -154,7 +173,9 @@ public class FcmMessageService {
 	public List<MessageDto> getUserAlarmList(UUID userId) {
 		// Repository에서 MessageDto 리스트를 바로 반환
 		List<AlarmUser> alarmList = alarmRepository.findByUser_UserIdAndTypeNotAndStatusFalse(userId, "request");
-	  //List<AlarmUser> alarmList = alarmRepository.findByUser_UserIdAndTypeInAndStatusFalse(userId, Arrays.asList("house", "interior", "oneStop"));
+		// List<AlarmUser> alarmList =
+		// alarmRepository.findByUser_UserIdAndTypeInAndStatusFalse(userId,
+		// Arrays.asList("house", "interior", "oneStop"));
 
 		return alarmList.stream()
 				.map(alarm -> MessageDto.builder().num(alarm.getUserAlarmNum()).receiver(alarm.getUser().getUserId())
@@ -168,8 +189,8 @@ public class FcmMessageService {
 	// 알람목록 조회(미확인것만),인테리어
 	public List<MessageDto> getCompanyAlarmList(UUID comapnyId) {
 		List<AlarmUser> alarmList = alarmRepository.findByCompany_CompanyIdAndTypeAndStatusFalse(comapnyId, "request");
-		System.out.println("~~~~~~~~~~~~~~~~~~~~~");
-		System.out.println(alarmList);
+//		System.out.println("~~~~~~~~~~~~~~~~~~~~~");
+//		System.out.println(alarmList);
 		return alarmList.stream()
 				.map(alarm -> MessageDto.builder().num(alarm.getUserAlarmNum())
 						.receiver(alarm.getCompany().getCompanyId()).companyName(alarm.getCompany().getCompanyName())
@@ -182,7 +203,7 @@ public class FcmMessageService {
 	// 특정알람 확인(알람번호)
 	public Boolean confirmAlarm(Integer alarmNum) {
 		Optional<AlarmUser> oalarm = alarmRepository.findById(alarmNum);
-		System.out.println(oalarm.get());
+//		System.out.println(oalarm.get());
 		if (oalarm.isEmpty()) {
 			System.out.println("알람번호 오류");
 			return false;

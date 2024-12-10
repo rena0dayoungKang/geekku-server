@@ -63,6 +63,7 @@ public class InteriorSeviceImpl implements InteriorService {
 	private final InteriorRequestDslRepository interiorRequestDslRepository;
 	private final InteriorReviewImageRepository interiorReviewImageRepository;
 	private final CompanyRepository companyRepository;
+	private final FcmMessageService fcmMessageService;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -245,13 +246,21 @@ public class InteriorSeviceImpl implements InteriorService {
 	public Integer interiorRequest(String userId, InteriorRequestDto requestDto) throws Exception {
 		InteriorRequest request = requestDto.toEntity();
 		User user = User.builder().userId(UUID.fromString(userId)).build();
-		Interior interior = Interior.builder().interiorNum(request.getInterior().getInteriorNum()).build();
 
+		Interior interior = Interior.builder().interiorNum(request.getInterior().getInteriorNum()).build();
 		request.setUser(user);
 		request.setInterior(interior);
 		interiorRequestRepository.save(request);
+		Optional<Interior> oInterior = interiorRepository.findById(interior.getInteriorNum());
+		//알림 기능 추가
+		requestDto.setCompanyId(oInterior.get().getCompany().getCompanyId());
+		requestDto.setUserId(UUID.fromString(userId));
+		System.out.println(requestDto);
+		fcmMessageService.sendInteriorRequest(requestDto);
+
 		return request.getRequestNum();
 	}
+
 
 	@Override
 	public InteriorRequestDto requestDetail(Integer num) throws Exception {

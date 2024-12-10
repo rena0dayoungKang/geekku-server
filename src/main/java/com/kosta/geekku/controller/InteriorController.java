@@ -31,6 +31,7 @@ import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequestDto;
 import com.kosta.geekku.dto.ReviewDto;
 import com.kosta.geekku.dto.SampleDto;
+import com.kosta.geekku.service.FcmMessageService;
 import com.kosta.geekku.service.InteriorService;
 
 import lombok.RequiredArgsConstructor;
@@ -212,11 +213,12 @@ public class InteriorController {
 	public ResponseEntity<String> interiorRequest(Authentication authentication,
 			@RequestBody InteriorRequestDto requestDto) {
 		try {
-			System.out.println(requestDto);
+//			System.out.println(requestDto);
 			String id = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString(); // 재확인
-			System.out.println(id);
-			Integer requestNum = interiorService.interiorRequest(id, requestDto);
-			System.out.println(requestNum);
+//			System.out.println(id);
+
+	        Integer requestNum = interiorService.interiorRequest(id, requestDto);
+	        
 			return new ResponseEntity<String>(String.valueOf(requestNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
