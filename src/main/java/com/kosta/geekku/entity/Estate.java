@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -66,13 +67,17 @@ public class Estate {
 	private Integer parking;
 	private String utility;
 	private String title;
-	@Column(length = 1000)
+	@Column(columnDefinition = "LONGTEXT")
+	@Lob
 	private String content;
 	@CreationTimestamp
 	private Timestamp createdAt;
 
 	@OneToMany(mappedBy = "estate", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<EstateImage> imageList = new ArrayList<>();
+	
+    @OneToMany(mappedBy = "estate", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<EstateBookmark> estateBookmarkList;
 
 	public EstateDto toDto() {
 		EstateDto estateDto = EstateDto.builder()
