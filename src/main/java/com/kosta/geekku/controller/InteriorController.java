@@ -88,15 +88,15 @@ public class InteriorController {
 	}
 
 	@PostMapping("/company/interiorRegister")
-	public ResponseEntity<String> interiorRegister(Authentication authentication, InteriorDto interiorDto,
+	public ResponseEntity<Map<Object,Object>> interiorRegister(Authentication authentication, InteriorDto interiorDto,
 			@RequestParam(name = "coverImg", required = false) MultipartFile coverImage) {
 		try {
 			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
-			Integer interiorNum = interiorService.interiorRegister(interiorDto, coverImage, companyId);
-			return new ResponseEntity<String>(String.valueOf(interiorNum), HttpStatus.OK);
+			Map<Object,Object> interiorNum = interiorService.interiorRegister(interiorDto, coverImage, companyId);
+			return new ResponseEntity<Map<Object,Object>>(interiorNum, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<Object,Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -211,7 +211,7 @@ public class InteriorController {
 
 	@PostMapping("/user/interiorRequest")
 	public ResponseEntity<String> interiorRequest(Authentication authentication,
-			@RequestBody InteriorRequestDto requestDto, Integer interiorNum) {
+			@RequestBody InteriorRequestDto requestDto) {
 		try {
 //			System.out.println(requestDto);
 			String id = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString(); // 재확인
@@ -267,17 +267,22 @@ public class InteriorController {
 	@PostMapping("/interiorDetail")
 	public ResponseEntity<Map<String, Object>> interiorDetail(@RequestBody Map<String, String> param) {
 		try {
-			System.out.println(param);
+			System.out.println("param=====" + param);
 			Map<String, Object> detailInfo = interiorService.interiorDetail(Integer.parseInt(param.get("num")));
-			System.out.println(detailInfo);
+
+			System.out.println("detailInfo=====" + detailInfo);
 
 			System.out.println("-----------test id==" + param.get("id"));
-			if (param.get("id") != null) {
+			System.out.println("-----------" + param.get("num"));
+			if (param.get("id") != null && !param.get("id").isEmpty()) {
+
 				boolean bookmark = interiorService.checkBookmark(param.get("id"),
 						Integer.parseInt(param.get("num"))) != null;
 				detailInfo.put("bookmark", bookmark);
 				System.out.println("========================bookmarkTest===================");
 				System.out.println(bookmark);
+			} else {
+				System.out.println("else test");
 			}
 			return new ResponseEntity<Map<String, Object>>(detailInfo, HttpStatus.OK);
 		} catch (Exception e) {

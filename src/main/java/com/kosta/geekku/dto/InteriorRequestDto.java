@@ -38,6 +38,7 @@ public class InteriorRequestDto {
 				.requestNum(requestNum)
 				.user(User.builder().userId(userId).name(name).nickname(nickname).build())
 				.interior(Interior.builder().interiorNum(interiorNum).build())
+				.name(name)
 				.period(period)
 				.type(type)
 				.status(status)

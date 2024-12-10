@@ -1,7 +1,6 @@
 package com.kosta.geekku.entity;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +42,7 @@ public class InteriorReview {
 	// private UUID userId; //join column User - userId
 	
 	private String companyName;
-	private LocalDate date;
+	private String date;
 	private String type;
 	private String style;
 	private Integer size;
@@ -63,7 +62,11 @@ public class InteriorReview {
 	private Timestamp createdAt;
 	
 	public ReviewDto toDto() {
-		ReviewDto reviewDto = ReviewDto.builder().reviewNum(reviewNum).userId(user.getUserId())
+		ReviewDto reviewDto = ReviewDto.builder()
+				.reviewNum(reviewNum)
+				.userId(user.getUserId())
+				.name(user.getName())
+				.nickName(user.getNickname())
 				.companyName(interior.getCompany().getCompanyName()).type(type)
 				.date(date)
 				.style(style).size(size)
