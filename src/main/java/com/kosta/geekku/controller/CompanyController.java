@@ -42,7 +42,7 @@ public class CompanyController {
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
-
+	
 	@PostMapping("/joinCompany")
 	public ResponseEntity<String> joinCompany(CompanyDto companyDto,
 			@RequestParam(name = "file", required = false) MultipartFile file) {

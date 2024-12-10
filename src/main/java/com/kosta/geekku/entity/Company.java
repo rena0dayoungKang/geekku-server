@@ -55,7 +55,7 @@ public class Company {
 	@CreationTimestamp
 	private Timestamp createdAt;
 	private boolean status;// 회원탈퇴여부 -> 0: 탈퇴X 1: 탈퇴O
-	
+	private boolean regStatus;
 	@Enumerated(EnumType.STRING)
 	private Role role;	//user, company 구분
 	
@@ -76,6 +76,7 @@ public class Company {
 										.estateNumber(estateNumber)
 										.createdAt(createdAt)
 										.role(role)
+										.regStatus(regStatus)
 										.build();
 		if (profileImage != null) {
 			try {

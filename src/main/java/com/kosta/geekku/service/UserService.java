@@ -29,4 +29,6 @@ public interface UserService {
 
 	List<UserDto> findIdByEmail(String email) throws Exception;
 	
+	void logout(UUID id) throws Exception;
+	
 }

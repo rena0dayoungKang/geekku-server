@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.geekku.config.jwt.JwtProperties;
 import com.kosta.geekku.config.jwt.JwtToken;
 import com.kosta.geekku.dto.UserDto;
+import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.CompanyRepository;
 import com.kosta.geekku.repository.UserRepository;
@@ -144,4 +146,20 @@ public class UserServiceImpl implements UserService {
 		return userList;
 	}
 
+	@Override
+	public void logout(UUID id) throws Exception {
+		Optional<User> ouser = userRepository.findById(id);
+		if(ouser.isPresent()) {
+			User user = ouser.get();
+			user.setFcmToken("");
+			userRepository.save(user);
+		} else {
+			Optional<Company> ocompany = companyRepository.findById(id);
+			if(ocompany.isPresent()) {
+				Company company = ocompany.get();
+				company.setFcmToken("");
+				companyRepository.save(company);
+			}
+		}
+	}
 }

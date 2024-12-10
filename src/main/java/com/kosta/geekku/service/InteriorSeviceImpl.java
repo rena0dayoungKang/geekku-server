@@ -63,6 +63,7 @@ public class InteriorSeviceImpl implements InteriorService {
 	private final InteriorRequestDslRepository interiorRequestDslRepository;
 	private final InteriorReviewImageRepository interiorReviewImageRepository;
 	private final CompanyRepository companyRepository;
+	private final FcmMessageService fcmMessageService;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -87,7 +88,7 @@ public class InteriorSeviceImpl implements InteriorService {
 				.collect(Collectors.toList());
 		return sampleList;
 	}
-	
+
 	@Override
 	public List<InteriorDto> interiorList(String possibleLocation) throws Exception {
 		List<InteriorDto> interiorDtoList = null;
@@ -130,25 +131,31 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	@Transactional
 	@Override
-	public Integer interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId)
+	public Map<Object,Object> interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId)
 			throws Exception {
 		Interior interior = interiorRepository.findByCompany_companyId(companyId);
 
 		if (interior != null) {
 			throw new Exception("이미 등록한 인테리어 회사입니다.");
 		}
-
+		
 		Interior nInterior = interiorDto.toEntity();
 		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
+		company.setRegStatus(true);
 		nInterior.setCompany(company);
 
+		
 		if (coverImage != null && !coverImage.isEmpty()) {
 			nInterior.setCoverImage(coverImage.getBytes());
 		}
 
 		interiorRepository.save(nInterior);
 
-		return nInterior.getInteriorNum();
+		Map<Object,Object> total = new HashMap<>();
+		total.put("regStatus", company.isRegStatus());
+		total.put("interiorNum", nInterior.getInteriorNum());
+		
+		return total;
 	}
 
 	@Override
@@ -193,30 +200,12 @@ public class InteriorSeviceImpl implements InteriorService {
 
 		InteriorReview review = reviewDto.toEntity();
 
-		Company company = companyRepository.findByCompanyNameContaining(reviewDto.getCompanyName()); // 리뷰 등록할 때 회사이름
-																										// 일부만 작성했을수도
-																										// 있기때문에 포함된 회사
-																										// 조회
-
+		Company company = companyRepository.findByCompanyNameContaining(reviewDto.getCompanyName()); // 리뷰 등록할 때 회사이름 일부만 작성했을수도 있기때문에 포함된 회사 조회
 		UUID findCompany = company.getCompanyId();
-
-		System.out.println(findCompany);
-
 		Interior findInteriorNum = interiorRepository.findByCompany_companyId(findCompany);
-
 		Integer num = findInteriorNum.getInteriorNum();
 
-		System.out.println(num);
-
 		review.setInterior(findInteriorNum);
-
-//		Interior interior = interiorRepository.findByCompany_companyNameContaining(findCompany);
-//		
-//		Integer findInteriorNum = interior.getInteriorNum();
-
-//		System.out.println(findCompany);
-
-//		Integer collectComNum = interior.getInteriorNum();
 
 		User user = User.builder().userId(UUID.fromString(userId)).build();
 
@@ -243,7 +232,6 @@ public class InteriorSeviceImpl implements InteriorService {
 				}
 			}
 		}
-		System.out.println(review.getReviewNum());
 		return review.getReviewNum();
 	}
 
@@ -258,13 +246,21 @@ public class InteriorSeviceImpl implements InteriorService {
 	public Integer interiorRequest(String userId, InteriorRequestDto requestDto) throws Exception {
 		InteriorRequest request = requestDto.toEntity();
 		User user = User.builder().userId(UUID.fromString(userId)).build();
-		Interior interior = Interior.builder().interiorNum(1).build(); // test용 interiorNum 1 대입
 
+		Interior interior = Interior.builder().interiorNum(request.getInterior().getInteriorNum()).build();
 		request.setUser(user);
 		request.setInterior(interior);
 		interiorRequestRepository.save(request);
+		Optional<Interior> oInterior = interiorRepository.findById(interior.getInteriorNum());
+		//알림 기능 추가
+		requestDto.setCompanyId(oInterior.get().getCompany().getCompanyId());
+		requestDto.setUserId(UUID.fromString(userId));
+		System.out.println(requestDto);
+		fcmMessageService.sendInteriorRequest(requestDto);
+
 		return request.getRequestNum();
 	}
+
 
 	@Override
 	public InteriorRequestDto requestDetail(Integer num) throws Exception {
@@ -338,6 +334,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		review.setLocation(reviewDto.getLocation());
 		review.setStyle(reviewDto.getStyle());
 		review.setType(reviewDto.getType());
+		review.setDate(reviewDto.getDate());
 
 		interiorReviewRepository.save(review);
 
@@ -376,21 +373,6 @@ public class InteriorSeviceImpl implements InteriorService {
 				.orElseThrow(() -> new Exception("인테리어 후기 글번호 오류"));
 		interiorReviewRepository.deleteById(num);
 	}
-
-	/*
-	 * return interiorRequestDtoList;
-	 * 
-	 * public Page<InteriorRequestDto> interiorRequestListForUserMypage(int page,
-	 * int size, UUID userId) throws Exception { Optional<User> user =
-	 * userRepository.findById(userId);
-	 * 
-	 * Pageable pageable = PageRequest.of(page - 1, size,
-	 * Sort.by(Sort.Direction.DESC, "createdAt")); Page<InteriorRequestDto> pageInfo
-	 * = interiorRequestRepository.findAllByUser(user, pageable)
-	 * .map(InteriorRequest::toDto);
-	 * 
-	 * return pageInfo; }
-	 */
 
 	@Override
 	public List<SampleDto> interiorSampleList(PageInfo pageInfo, UUID companyId) throws Exception {
@@ -486,15 +468,4 @@ public class InteriorSeviceImpl implements InteriorService {
 		return pageInfo;
 
 	}
-
-//	@Override
-//	public Page<ReviewDto> reviewListForUserMypage(int page, int size, UUID userId) throws Exception {
-//		Optional<User> user = userRepository.findById(userId);
-//
-//		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-//		Page<ReviewDto> pageInfo = interiorReviewRepository.findAllByUser(user, pageable).map(InteriorReview::toDto);
-//
-//		return pageInfo;
-//	}
-
 }

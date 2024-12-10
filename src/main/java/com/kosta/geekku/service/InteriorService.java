@@ -24,7 +24,7 @@ public interface InteriorService {
 
 	boolean toggleBookmark(String userId, Integer interiorNum) throws Exception;
 
-	Integer interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId) throws Exception;
+	Map<Object,Object> interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId) throws Exception;
 
 	InteriorDto interiorCompanyDetail(UUID companyId) throws Exception;
 
@@ -35,6 +35,7 @@ public interface InteriorService {
 	SampleDto sampleDetail(Integer num) throws Exception;
 
 	Integer interiorRequest(String userId, InteriorRequestDto requestDto) throws Exception;
+
 
 	InteriorRequestDto requestDetail(Integer num) throws Exception;
 

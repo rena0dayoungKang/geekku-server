@@ -2,7 +2,6 @@ package com.kosta.geekku.controller;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -26,10 +25,11 @@ import com.kosta.geekku.dto.CommunityBookmarkDto;
 import com.kosta.geekku.dto.EstateBookMarkDto;
 import com.kosta.geekku.dto.InteriorBookMarkDto;
 import com.kosta.geekku.dto.UserDto;
+import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.Role;
+import com.kosta.geekku.entity.User;
 import com.kosta.geekku.service.BookmarkService;
 import com.kosta.geekku.service.UserService;
-import com.kosta.geekku.util.PageInfo;
 
 @RestController
 public class UserController {
@@ -53,6 +53,25 @@ public class UserController {
 			return new ResponseEntity<UserDto>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+//	@PostMapping("/glogout")
+//	public ResponseEntity<String> logout(Authentication authentication) {
+//		System.out.println(authentication);
+//		System.out.println("logout");
+//		try {
+//			User user = ((PrincipalDetails) authentication.getPrincipal()).getUser(); 
+//			if(user!=null) {
+//				userService.logout(user.getUserId());
+//			} else {
+//				Company company = ((PrincipalDetails) authentication.getPrincipal()).getCompany();
+//				userService.logout(company.getCompanyId());
+//			}
+//			return new ResponseEntity<String>("true", HttpStatus.OK);
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+//		}
+//	}
 
 	@PostMapping("/joinPerson")
 	public ResponseEntity<String> joinPeron(@ModelAttribute UserDto userDto) {
@@ -129,18 +148,18 @@ public class UserController {
 			return new ResponseEntity<List<UserDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-    @PostMapping("/findUserByPhone")
-    public ResponseEntity<List<UserDto>> findUserByPhone(@RequestBody Map<String, String> param) {
-        try {
-            String phone = param.get("phone");
-            List<UserDto> userDtoList = userService.findIdByPhone(phone);
-            return new ResponseEntity<List<UserDto>>(userDtoList, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<List<UserDto>>(HttpStatus.BAD_REQUEST);
-        }
-    }
+
+	@PostMapping("/findUserByPhone")
+	public ResponseEntity<List<UserDto>> findUserByPhone(@RequestBody Map<String, String> param) {
+		try {
+			String phone = param.get("phone");
+			List<UserDto> userDtoList = userService.findIdByPhone(phone);
+			return new ResponseEntity<List<UserDto>>(userDtoList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<UserDto>>(HttpStatus.BAD_REQUEST);
+		}
+	}
 
 	@GetMapping("/checkNickname")
 	public ResponseEntity<Boolean> checkNickname(@RequestParam String nickname) {
@@ -193,7 +212,8 @@ public class UserController {
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
 		try {
 			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
-			Slice<InteriorBookMarkDto> myInteriorBookmarkList = bookmarkService.mypageInteriorbookmarkList(page, userId);
+			Slice<InteriorBookMarkDto> myInteriorBookmarkList = bookmarkService.mypageInteriorbookmarkList(page,
+					userId);
 
 			return new ResponseEntity<Slice<InteriorBookMarkDto>>(myInteriorBookmarkList, HttpStatus.OK);
 		} catch (Exception e) {
@@ -201,14 +221,15 @@ public class UserController {
 			return new ResponseEntity<Slice<InteriorBookMarkDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	// 개인회원 마이페이지 - 집들이 북마크 내역
 	@GetMapping("/user/mypagebookmarkCommunity")
 	public ResponseEntity<Slice<CommunityBookmarkDto>> myCommunityBookmarkList(Authentication authentication,
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
 		try {
 			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
-			Slice<CommunityBookmarkDto> myCommunityBookmarkList = bookmarkService.mypageCommunitybookmarkList(page, userId);
+			Slice<CommunityBookmarkDto> myCommunityBookmarkList = bookmarkService.mypageCommunitybookmarkList(page,
+					userId);
 
 			return new ResponseEntity<Slice<CommunityBookmarkDto>>(myCommunityBookmarkList, HttpStatus.OK);
 		} catch (Exception e) {
