@@ -2,7 +2,6 @@ package com.kosta.geekku.controller;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -26,10 +25,11 @@ import com.kosta.geekku.dto.CommunityBookmarkDto;
 import com.kosta.geekku.dto.EstateBookMarkDto;
 import com.kosta.geekku.dto.InteriorBookMarkDto;
 import com.kosta.geekku.dto.UserDto;
+import com.kosta.geekku.entity.Company;
 import com.kosta.geekku.entity.Role;
+import com.kosta.geekku.entity.User;
 import com.kosta.geekku.service.BookmarkService;
 import com.kosta.geekku.service.UserService;
-import com.kosta.geekku.util.PageInfo;
 
 @RestController
 public class UserController {
@@ -53,6 +53,25 @@ public class UserController {
 			return new ResponseEntity<UserDto>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+//	@PostMapping("/glogout")
+//	public ResponseEntity<String> logout(Authentication authentication) {
+//		System.out.println(authentication);
+//		System.out.println("logout");
+//		try {
+//			User user = ((PrincipalDetails) authentication.getPrincipal()).getUser(); 
+//			if(user!=null) {
+//				userService.logout(user.getUserId());
+//			} else {
+//				Company company = ((PrincipalDetails) authentication.getPrincipal()).getCompany();
+//				userService.logout(company.getCompanyId());
+//			}
+//			return new ResponseEntity<String>("true", HttpStatus.OK);
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+//		}
+//	}
 
 	@PostMapping("/joinPerson")
 	public ResponseEntity<String> joinPeron(@ModelAttribute UserDto userDto) {

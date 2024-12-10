@@ -45,10 +45,13 @@ public class CommunityServiceImpl implements CommunityService {
 	@Value("${upload.path}")
 	private String uploadPath;
 
+
 	@Override
 	public Page<CommunityDto> getCommunityList(Pageable pageable) {
-	    return communityRepository.findAll(pageable).map(community -> community.toDto());
+	    return communityRepository.findAllByOrderByCreatedAtDesc(pageable)
+	                              .map(community -> community.toDto());
 	}
+
 
 	@Override
 	public Integer createCommunity(CommunityDto communityDto) {
@@ -70,9 +73,15 @@ public class CommunityServiceImpl implements CommunityService {
 
 	@Override
 	public Page<CommunityDto> getFilteredCommunityList(CommunityFilterDto filterDto, Pageable pageable) {
-		Specification<Community> specification = CommunitySpecification.filterBy(filterDto);
-		return communityRepository.findAll(specification, pageable).map(Community::toDto);
+	    Specification<Community> specification = CommunitySpecification.filterBy(filterDto);
+	    Pageable sortedPageable = PageRequest.of(
+	        pageable.getPageNumber(),
+	        pageable.getPageSize(),
+	        Sort.by(Sort.Direction.DESC, "createdAt")
+	    );
+	    return communityRepository.findAll(specification, sortedPageable).map(Community::toDto);
 	}
+
 
 	@Transactional
 	@Override

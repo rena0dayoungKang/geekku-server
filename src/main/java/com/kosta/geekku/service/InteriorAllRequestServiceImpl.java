@@ -18,6 +18,7 @@ import com.kosta.geekku.dto.InteriorAllDto;
 import com.kosta.geekku.dto.InteriorAnswerDto;
 import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.entity.Company;
+import com.kosta.geekku.entity.Interior;
 import com.kosta.geekku.entity.InteriorAllAnswer;
 import com.kosta.geekku.entity.InteriorAllRequest;
 import com.kosta.geekku.entity.User;
@@ -40,7 +41,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	private final InteriorAllAnswerRepository interiorAllAnswerRepository;
 	private final UserRepository userRepository;
 	private final CompanyRepository companyRepository;
-
+	private final FcmMessageService fcmMessageService;
 	@Transactional
 	@Override
 	public Integer interiorAllWrite(InteriorAllDto interiorAllDto, UUID userId) throws Exception {
@@ -49,7 +50,6 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 		User user = userRepository.findById(userId).orElseThrow(() -> new Exception("일반회원 찾기 오류"));
 		interiorAll.setUser(user);
 		interiorAllRepository.save(interiorAll);
-
 		return interiorAll.getRequestAllNum();
 	}
 

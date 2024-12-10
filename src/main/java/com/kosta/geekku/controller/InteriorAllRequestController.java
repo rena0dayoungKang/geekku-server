@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.InteriorAllDto;
 import com.kosta.geekku.dto.InteriorAnswerDto;
+import com.kosta.geekku.entity.InteriorAllRequest;
+import com.kosta.geekku.repository.InteriorAllRequestRepository;
+import com.kosta.geekku.service.FcmMessageService;
 import com.kosta.geekku.service.InteriorAllRequestService;
 import com.kosta.geekku.util.PageInfo;
 
@@ -30,12 +31,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class InteriorAllRequestController {
 	private final InteriorAllRequestService interiorAllService;
+	private final FcmMessageService fcmMessageService;
+	private final InteriorAllRequestRepository interiorAllRequestRepository;
+	
 
 	@PostMapping("/user/interiorAllWrite")
 	public ResponseEntity<String> interiorAllWrite(Authentication authentication, InteriorAllDto interiorAllDto) {
 		try {
-			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
+			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId(); 
 			Integer interiorAllNum = interiorAllService.interiorAllWrite(interiorAllDto, userId);
+			System.out.println(interiorAllDto);
 			return new ResponseEntity<String>(String.valueOf(interiorAllNum), HttpStatus.OK);
 
 		} catch (Exception e) {
@@ -90,13 +95,26 @@ public class InteriorAllRequestController {
 	}
 
 	// 방꾸 답변
+	/** 알림 해야함 */
 	@PostMapping("/company/interiorAnswerWrite")
 	public ResponseEntity<String> interiorAnswerWrite(Authentication authentication,
 			InteriorAnswerDto interiorAnswerDto) {
 		try {
 			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
+			
 			Integer interiorAnswerNum = interiorAllService.interiorAnswerWrite(interiorAnswerDto, companyId);
 			interiorAnswerDto.setAnswerAllNum(interiorAnswerNum);
+			
+			// userId 조회
+	        InteriorAllRequest request = interiorAllRequestRepository.findByRequestAllNum(interiorAnswerDto.getRequestAllNum());
+	        if (request == null) {
+	            throw new IllegalArgumentException("유효하지 않은 requestAllNum입니다.");
+	        }
+	        
+	        interiorAnswerDto.setUserId(request.getUser().getUserId());
+
+			System.out.println(interiorAnswerDto);
+			fcmMessageService.sendInteriorAllAnswer(interiorAnswerDto);//	알림 추가
 			return new ResponseEntity<String>(String.valueOf(interiorAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

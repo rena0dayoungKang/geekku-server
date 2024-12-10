@@ -66,7 +66,8 @@ public class CommunityController {
 		return ResponseEntity.ok(communityList);
 	}
 
-	// 게시글 조회수 조회
+	
+	/** @deprecated getCommunityDetail에서 카운트하게 수정함 */
 	@GetMapping("/communityList/count")
 	public ResponseEntity<Map<String, Long>> getCommunityListCount() {
 		long totalCount = communityRepository.count(); // 커뮤니티 테이블의 총 개수
@@ -75,6 +76,7 @@ public class CommunityController {
 		return ResponseEntity.ok(response);
 	}
 
+	
 	// 커뮤니티 조회수 증가
 	@PostMapping("/increaseViewCount/{communityNum}")
 	public ResponseEntity<?> increaseViewCount(@PathVariable Integer communityNum) {
@@ -87,6 +89,7 @@ public class CommunityController {
 		}
 	}
 
+	
 	// 커뮤니티 글 상세 조회
 	@PostMapping("/communityDetail/{num}")
 	public ResponseEntity<Map<String, Object>> communityDetail(@PathVariable Integer num,
@@ -113,6 +116,7 @@ public class CommunityController {
 		}
 	}
 
+	
 	@GetMapping("/communityCall/{num}")
 	public ResponseEntity<Map<String, Object>> communityCall(@PathVariable Integer num) {
 		try {
@@ -125,9 +129,10 @@ public class CommunityController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
+
 	
 	// 필터링 조회
-	@PostMapping("/communityList2") // 예시 http://localhost:8080/communityList2/ + json 조건
+	@PostMapping("/communityListFiltered")
 	public ResponseEntity<Page<CommunityDto>> getFilteredCommunities(@RequestBody CommunityFilterDto filterDto,
 			@RequestParam(value = "page", defaultValue = "0") int page,
 			@RequestParam(value = "size", defaultValue = "10") int size) {
@@ -136,6 +141,7 @@ public class CommunityController {
 		return ResponseEntity.ok(filteredList);
 	}
 
+	
 	// 커뮤니티 글 작성
 	@PostMapping("/user/communityCreate")
 	public ResponseEntity<Integer> createCommunity(@RequestParam("title") String title,
@@ -158,25 +164,27 @@ public class CommunityController {
 		}
 	}
 
+	
 	// 커뮤니티 글 수정
 	@PutMapping(value = "/user/communityUpdate/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<?> updateCommunity(@PathVariable Integer id, 
-			CommunityDto communityDto, @RequestPart(value = "coverImage", required = false) MultipartFile file) {
-	    try {
-	        communityService.updateCommunity(id, communityDto, file);
-	        return ResponseEntity.ok("수정 완료");
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수정 실패");
-	    }
+	public ResponseEntity<?> updateCommunity(@PathVariable Integer id, CommunityDto communityDto,
+			@RequestPart(value = "coverImage", required = false) MultipartFile file) {
+		try {
+			communityService.updateCommunity(id, communityDto, file);
+			return ResponseEntity.ok("수정 완료");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수정 실패");
+		}
 	}
 
+	
 	// 커뮤니티 북마크
 	@PostMapping("/user/communityBookmark") // 예시
 	public ResponseEntity<String> toggleCommunityBookmark(Authentication authentication,
 			@RequestParam Integer communityNum) {
 		try {
-			String userId = ((PrincipalDetails)authentication.getPrincipal()).getUser().getUserId().toString();
+			String userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString();
 			boolean isBookmarked = communityService.toggleCommunityBookmark(userId, communityNum);
 			if (isBookmarked) {
 				return ResponseEntity.ok("북마크가 활성화되었습니다.");
@@ -189,6 +197,7 @@ public class CommunityController {
 		}
 	}
 
+	
 	// 댓글 조회 (특정 커뮤니티의 댓글 목록)
 	@GetMapping("/communityComment/{communityNum}")
 	public ResponseEntity<List<CommunityCommentDto>> getCommunityComments(@PathVariable Integer communityNum) {
@@ -201,6 +210,7 @@ public class CommunityController {
 		}
 	}
 
+	
 	// 커뮤니티 댓글 작성
 	@PostMapping("/user/communityCommentWrite")
 	public ResponseEntity<String> createComment(@RequestParam("communityId") Integer communityId,
@@ -215,6 +225,7 @@ public class CommunityController {
 		}
 	}
 
+	
 	// 커뮤니티 댓글 삭제
 	@DeleteMapping("/user/test9/{commentId}")
 	public ResponseEntity<String> deleteComment(@PathVariable Integer commentId) {
@@ -227,6 +238,7 @@ public class CommunityController {
 		}
 	}
 
+	
 	// 커뮤니티 프로필 조회를 위한 개인 정보 조회(아이디 닉네임 이메일)
 	@GetMapping("/personProfile/{userId}")
 	public ResponseEntity<?> getUserProfile(@PathVariable String userId) {
@@ -239,6 +251,7 @@ public class CommunityController {
 		}
 	}
 
+	
 	// 해당 유저가 작성한 커뮤니티 게시글을 가져오는 API
 	@GetMapping("/personCommunities/{userId}")
 	public ResponseEntity<?> getUserCommunities(@PathVariable String userId) {
@@ -251,46 +264,26 @@ public class CommunityController {
 		}
 	}
 
-	// 내가 쓴 커뮤니티 글 조회
-//	@GetMapping("/test12/{userId}")
-//	public ResponseEntity<Page<CommunityDto>> getCommunityListByUserId(
-//			 @PathVariable String userId,
-//		        @RequestParam(value = "page", defaultValue = "0") int page,
-//		        @RequestParam(value = "size", defaultValue = "10") int size) {
-//		    try {
-//		        Pageable pageable = PageRequest.of(page, size); // 페이징 처리
-//		        Page<CommunityDto> communityPosts = communityService.getPostsByUserId(userId, pageable);
-//		        return ResponseEntity.ok(communityPosts);
-//		    } catch (Exception e) {
-//		        e.printStackTrace();
-//		        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//		    }
-//		}
 	
-	// 로그인한 유저의 커뮤니티 게시글 가져오기
-	@GetMapping("/myCommunities")
-	public ResponseEntity<?> getMyCommunities(Authentication authentication) {
-		if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 필요");
+	/** @deprecated 내가 쓴 커뮤니티 글 조회 */
+/*	
+ 	@GetMapping("/test12/{userId}")
+	public ResponseEntity<Page<CommunityDto>> getCommunityListByUserId(
+			 @PathVariable String userId,
+		        @RequestParam(value = "page", defaultValue = "0") int page,
+		        @RequestParam(value = "size", defaultValue = "10") int size) {
+		    try {
+		        Pageable pageable = PageRequest.of(page, size); // 페이징 처리
+		        Page<CommunityDto> communityPosts = communityService.getPostsByUserId(userId, pageable);
+		        return ResponseEntity.ok(communityPosts);
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		    }
 		}
-		if (!(authentication.getPrincipal() instanceof PrincipalDetails)) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증 객체가 올바르지 않습니다.");
-		}
-		try {
-			PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
-			if (principal.getUser() == null || principal.getUser().getUserId() == null) {
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("사용자 정보가 누락되었습니다.");
-			}
-			UUID userId = principal.getUser().getUserId();
-			System.out.println("User ID: " + userId);
-			List<CommunityDto> communities = communityService.getUserCommunities(userId.toString());
-			return ResponseEntity.ok(communities);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
-		}
-	}
+*/
 
+	
 	// 커뮤니티 이미지 조회
 	@GetMapping("/communityImage/{imageName}")
 	public void getImage(@PathVariable String imageName, HttpServletResponse response) {
@@ -302,8 +295,8 @@ public class CommunityController {
 				return;
 			}
 			InputStream ins = new FileInputStream(file);
-			response.setContentType("image/png"); // 이미지 MIME 타입 설정 (필요시 이미지 형식 변경)
-			FileCopyUtils.copy(ins, response.getOutputStream()); // 파일을 OutputStream으로 복사
+			response.setContentType("image/png"); 
+			FileCopyUtils.copy(ins, response.getOutputStream());
 			ins.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -311,6 +304,7 @@ public class CommunityController {
 		}
 	}
 
+	
 	// 커뮤니티 글 삭제
 	@DeleteMapping("/user/communityDelete/{communityNum}")
 	public ResponseEntity<?> deleteCommunity(@PathVariable Integer communityNum) {

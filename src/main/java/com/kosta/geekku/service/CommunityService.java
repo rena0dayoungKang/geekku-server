@@ -14,46 +14,39 @@ import com.kosta.geekku.dto.CommunityFilterDto;
 import com.kosta.geekku.entity.User;
 
 public interface CommunityService {
-    // 커뮤니티 리스트 조회 + 페이징
-    Page<CommunityDto> getCommunityList(Pageable pageable);
-    // 커뮤니티 글 작성
-    Integer createCommunity(CommunityDto communityDto);
-    // 커뮤니티 글 상세 조회
-    CommunityDto getCommunityDetail(Integer communityNum);//여기 수정 중 (Integer communityNum, String userId)
-    // 필터링 + 페이징 기능된 리스트 조회
-    Page<CommunityDto> getFilteredCommunityList(CommunityFilterDto filterDto, Pageable pageable);
-    
-    // 커뮤니티 글 작성(임시)
-    // void createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage, String userId) throws Exception;
-    Integer createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage,
-            String userId, String address1, String address2, String familyType,
-            String interiorType, Integer money, Date periodStartDate, Date periodEndDate,Integer size, String style);
-    // 커뮤니티 글 수정
-    void updateCommunity(Integer id, CommunityDto communityDto, MultipartFile coverImage) throws Exception;
-    
-    // 커뮤니티 북마크 등록
-    boolean toggleCommunityBookmark(String userId, Integer communityNum) throws Exception;
-    
-    // 커뮤니티 댓글 조회
-    List<CommunityCommentDto> getCommentsByCommunityId(Integer communityNum) throws Exception;
-    
-    // 커뮤니티 댓글 작성
-    void createComment(Integer communityId, String userId, String content) throws Exception;
-    // 커뮤니티 댓글 삭제
-    void deleteComment(Integer commentId) throws Exception;
-    
-    User getUserProfile(String user) throws Exception;
-    
-    List<CommunityDto> getUserCommunities(String userId) throws Exception;
 
-    // 메인화면 - 집들이 조회수 순 3개
-    List<CommunityDto> getCommunityListForMain() throws Exception;
-    
-    //커뮤니티 조회수 증가
-    void increaseViewCount(Integer communityNum) throws Exception;
-    
-    //커뮤니티 글 삭제
-    void deleteCommunity(Integer communityNum) throws Exception;
-    Boolean getCommunityBookmark(String userId, Integer communityNum) throws Exception;
+	Page<CommunityDto> getCommunityList(Pageable pageable);
+
+	Integer createCommunity(CommunityDto communityDto);
+
+	CommunityDto getCommunityDetail(Integer communityNum);
+
+	Page<CommunityDto> getFilteredCommunityList(CommunityFilterDto filterDto, Pageable pageable);
+
+	Integer createCommunityWithCoverImage(String title, String content, String type, MultipartFile coverImage,
+			String userId, String address1, String address2, String familyType, String interiorType, Integer money,
+			Date periodStartDate, Date periodEndDate, Integer size, String style);
+
+	void updateCommunity(Integer id, CommunityDto communityDto, MultipartFile coverImage) throws Exception;
+
+	boolean toggleCommunityBookmark(String userId, Integer communityNum) throws Exception;
+
+	List<CommunityCommentDto> getCommentsByCommunityId(Integer communityNum) throws Exception;
+
+	void createComment(Integer communityId, String userId, String content) throws Exception;
+
+	void deleteComment(Integer commentId) throws Exception;
+
+	User getUserProfile(String user) throws Exception;
+
+	List<CommunityDto> getUserCommunities(String userId) throws Exception;
+
+	List<CommunityDto> getCommunityListForMain() throws Exception;
+
+	void increaseViewCount(Integer communityNum) throws Exception;
+
+	void deleteCommunity(Integer communityNum) throws Exception;
+
+	Boolean getCommunityBookmark(String userId, Integer communityNum) throws Exception;
 
 }
