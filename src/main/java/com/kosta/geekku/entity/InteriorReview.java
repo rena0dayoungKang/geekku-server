@@ -62,7 +62,11 @@ public class InteriorReview {
 	private Timestamp createdAt;
 	
 	public ReviewDto toDto() {
-		ReviewDto reviewDto = ReviewDto.builder().reviewNum(reviewNum).userId(user.getUserId())
+		ReviewDto reviewDto = ReviewDto.builder()
+				.reviewNum(reviewNum)
+				.userId(user.getUserId())
+				.name(user.getName())
+				.nickName(user.getNickname())
 				.companyName(interior.getCompany().getCompanyName()).type(type)
 				.date(date)
 				.style(style).size(size)

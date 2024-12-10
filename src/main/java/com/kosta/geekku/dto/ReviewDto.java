@@ -19,6 +19,8 @@ import lombok.NoArgsConstructor;
 public class ReviewDto {
 	private Integer reviewNum;
 	private UUID userId;
+	private String name;
+	private String nickName;
 	private String companyName;
 	private String date;
 	private String type;

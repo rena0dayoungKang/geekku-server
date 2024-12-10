@@ -33,7 +33,8 @@ public class CompanyDto {
 	private Integer certificationImageNum;
 	private String certificationImagePath;
 	private Timestamp createdAt;
-	
+	private boolean regStatus;
+
 	//부동산일경우
 	private String estateNumber; 
 	
@@ -55,7 +56,8 @@ public class CompanyDto {
 								.companyName(companyName)
 								.companyAddress(companyAddress)
 								.estateNumber(estateNumber)
-								.createdAt(null)
+								.regStatus(regStatus)
+								.createdAt(createdAt)
 								.build();
 		return company;
 	}
