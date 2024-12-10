@@ -148,18 +148,18 @@ public class UserController {
 			return new ResponseEntity<List<UserDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-    @PostMapping("/findUserByPhone")
-    public ResponseEntity<List<UserDto>> findUserByPhone(@RequestBody Map<String, String> param) {
-        try {
-            String phone = param.get("phone");
-            List<UserDto> userDtoList = userService.findIdByPhone(phone);
-            return new ResponseEntity<List<UserDto>>(userDtoList, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<List<UserDto>>(HttpStatus.BAD_REQUEST);
-        }
-    }
+
+	@PostMapping("/findUserByPhone")
+	public ResponseEntity<List<UserDto>> findUserByPhone(@RequestBody Map<String, String> param) {
+		try {
+			String phone = param.get("phone");
+			List<UserDto> userDtoList = userService.findIdByPhone(phone);
+			return new ResponseEntity<List<UserDto>>(userDtoList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<UserDto>>(HttpStatus.BAD_REQUEST);
+		}
+	}
 
 	@GetMapping("/checkNickname")
 	public ResponseEntity<Boolean> checkNickname(@RequestParam String nickname) {
@@ -212,7 +212,8 @@ public class UserController {
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
 		try {
 			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
-			Slice<InteriorBookMarkDto> myInteriorBookmarkList = bookmarkService.mypageInteriorbookmarkList(page, userId);
+			Slice<InteriorBookMarkDto> myInteriorBookmarkList = bookmarkService.mypageInteriorbookmarkList(page,
+					userId);
 
 			return new ResponseEntity<Slice<InteriorBookMarkDto>>(myInteriorBookmarkList, HttpStatus.OK);
 		} catch (Exception e) {
@@ -220,14 +221,15 @@ public class UserController {
 			return new ResponseEntity<Slice<InteriorBookMarkDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	// 개인회원 마이페이지 - 집들이 북마크 내역
 	@GetMapping("/user/mypagebookmarkCommunity")
 	public ResponseEntity<Slice<CommunityBookmarkDto>> myCommunityBookmarkList(Authentication authentication,
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
 		try {
 			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
-			Slice<CommunityBookmarkDto> myCommunityBookmarkList = bookmarkService.mypageCommunitybookmarkList(page, userId);
+			Slice<CommunityBookmarkDto> myCommunityBookmarkList = bookmarkService.mypageCommunitybookmarkList(page,
+					userId);
 
 			return new ResponseEntity<Slice<CommunityBookmarkDto>>(myCommunityBookmarkList, HttpStatus.OK);
 		} catch (Exception e) {

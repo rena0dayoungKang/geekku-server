@@ -157,13 +157,10 @@ public class InteriorController {
 	@PostMapping("/user/interiorReviewWrite")
 	public ResponseEntity<String> interiorReviewRegister(Authentication authentication, ReviewDto reviewDto,
 			@RequestParam(name = "file", required = false) MultipartFile[] files) {
-		System.out.println(reviewDto);
-		System.out.println(files);
 		try {
-			String id = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString(); // 재확인
+			String id = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString();
 			Integer reviewNum = interiorService.reviewRegister(id, reviewDto,
 					files == null ? null : Arrays.asList(files));
-			System.out.println(reviewNum);
 			return new ResponseEntity<String>(String.valueOf(reviewNum), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
@@ -273,10 +270,11 @@ public class InteriorController {
 			System.out.println(param);
 			Map<String, Object> detailInfo = interiorService.interiorDetail(Integer.parseInt(param.get("num")));
 			System.out.println(detailInfo);
-			
-			System.out.println("-----------test id=="+param.get("id"));
-			if(param.get("id") != null ) {
-				boolean bookmark = interiorService.checkBookmark(param.get("id"), Integer.parseInt(param.get("num"))) != null;
+
+			System.out.println("-----------test id==" + param.get("id"));
+			if (param.get("id") != null) {
+				boolean bookmark = interiorService.checkBookmark(param.get("id"),
+						Integer.parseInt(param.get("num"))) != null;
 				detailInfo.put("bookmark", bookmark);
 				System.out.println("========================bookmarkTest===================");
 				System.out.println(bookmark);
@@ -287,7 +285,6 @@ public class InteriorController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
 
 	// 개인 마이페이지 - 1:1 인테리어 문의내역 리스트
 	@GetMapping("/user/myPageUserInteriorRequestList")

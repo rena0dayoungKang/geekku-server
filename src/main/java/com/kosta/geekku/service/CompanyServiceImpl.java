@@ -278,7 +278,7 @@ public class CompanyServiceImpl implements CompanyService {
                         .address1(answer.getOnestop().getAddress1())
                         .address2(answer.getOnestop().getAddress2())
                         .type(answer.getOnestop().getType())
-                        .onestopNum(answer.getOnestop().getOnestopNum())
+						.onestopNum(answer.getOnestop().getOnestopNum())
                         .build());
     }
 

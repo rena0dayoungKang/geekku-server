@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.kosta.geekku.entity.Interior;
 import com.kosta.geekku.entity.InteriorReview;
 import com.kosta.geekku.entity.User;
@@ -21,6 +23,7 @@ public class ReviewDto {
 	private Integer reviewNum;
 	private UUID userId;
 	private String companyName;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate date;
 	private String type;
 	private String style;
