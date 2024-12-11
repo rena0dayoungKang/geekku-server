@@ -259,6 +259,9 @@ public class CompanyServiceImpl implements CompanyService {
 	                    .address1(answer.getHouse().getAddress1())
 	                    .address2(answer.getHouse().getAddress2())
 	                    .type(answer.getHouse().getType())
+	                    .nickname(answer.getHouse().getUser().getNickname())
+	                    .name(answer.getHouse().getUser().getName())
+	                    .userProfileImage(answer.getHouse().getUser().getProfileImage())
 	                    .build());
 	}
 
@@ -269,6 +272,7 @@ public class CompanyServiceImpl implements CompanyService {
                         .title(answer.getOnestop().getTitle())
                         .content(answer.getContent())
                         .createdAt(answer.getCreatedAt())
+                        .nickname(answer.getOnestop().getUser().getNickname())
                         .companyId(answer.getCompany().getCompanyId())
                         .companyName(answer.getCompany().getCompanyName())
                         .companyPhone(answer.getCompany().getPhone())
@@ -279,6 +283,8 @@ public class CompanyServiceImpl implements CompanyService {
                         .address2(answer.getOnestop().getAddress2())
                         .type(answer.getOnestop().getType())
 						.onestopNum(answer.getOnestop().getOnestopNum())
+						.name(answer.getOnestop().getUser().getName())
+						.userProfileImage(answer.getOnestop().getUser().getProfileImage())
                         .build());
     }
 

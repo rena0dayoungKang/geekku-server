@@ -1,15 +1,13 @@
 package com.kosta.geekku.controller;
 
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.Date;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,12 +32,10 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.CommunityCommentDto;
 import com.kosta.geekku.dto.CommunityDto;
 import com.kosta.geekku.dto.CommunityFilterDto;
-import com.kosta.geekku.dto.UserDto;
 import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.CommunityRepository;
 import com.kosta.geekku.service.CommunityService;
@@ -212,25 +207,48 @@ public class CommunityController {
 
 	
 	// 커뮤니티 댓글 작성
+//	@PostMapping("/user/communityCommentWrite")
+//	public ResponseEntity<String> createComment(@RequestParam("communityId") Integer communityId,
+//			@RequestParam("userId") String userId, @RequestParam("content") String content) {
+//
+//		try {
+//			communityService.createComment(communityId, userId, content);
+//			return new ResponseEntity<>("댓글 작성에 성공했습니다.", HttpStatus.CREATED);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return new ResponseEntity<>("댓글 작성에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+//	}
+	
+	// 커뮤니티 댓글 작성 후 전체 댓글 반환
+	// 커뮤니티 댓글 작성 후 전체 댓글 반환
 	@PostMapping("/user/communityCommentWrite")
-	public ResponseEntity<String> createComment(@RequestParam("communityId") Integer communityId,
-			@RequestParam("userId") String userId, @RequestParam("content") String content) {
+	public ResponseEntity<?> createCommentAndFetchAll(
+	        @RequestParam("communityId") Integer communityId,
+	        @RequestParam("userId") String userId,
+	        @RequestParam("content") String content) {
 
-		try {
-			communityService.createComment(communityId, userId, content);
-			return new ResponseEntity<>("댓글 작성에 성공했습니다.", HttpStatus.CREATED);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<>("댓글 작성에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	    try {
+	        // 댓글 작성 및 전체 댓글 리스트 반환
+	        List<CommunityCommentDto> comments = communityService.createComment(communityId, userId, content);
+	        return new ResponseEntity<>(comments, HttpStatus.CREATED); // 전체 댓글 리스트 반환
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        // 실패 시 빈 배열 반환
+	        return new ResponseEntity<>(Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR);
+	        // 또는 에러 객체를 반환하려면 아래와 같이 할 수 있습니다:
+	        // return new ResponseEntity<>(Map.of("error", "댓글 작성에 실패했습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
+
+
 
 	
 	// 커뮤니티 댓글 삭제
-	@DeleteMapping("/user/test9/{commentId}")
-	public ResponseEntity<String> deleteComment(@PathVariable Integer commentId) {
+	@DeleteMapping("/user/commentDelete/{commentNum}")
+	public ResponseEntity<String> deleteComment(@PathVariable Integer commentNum) {
 		try {
-			communityService.deleteComment(commentId);
+			communityService.deleteComment(commentNum);
 			return new ResponseEntity<>("댓글이 성공적으로 삭제되었습니다", HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

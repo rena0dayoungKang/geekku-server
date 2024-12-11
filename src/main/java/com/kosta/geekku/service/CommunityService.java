@@ -33,7 +33,7 @@ public interface CommunityService {
 
 	List<CommunityCommentDto> getCommentsByCommunityId(Integer communityNum) throws Exception;
 
-	void createComment(Integer communityId, String userId, String content) throws Exception;
+	List<CommunityCommentDto> createComment(Integer communityId, String userId, String content) throws Exception;
 
 	void deleteComment(Integer commentId) throws Exception;
 

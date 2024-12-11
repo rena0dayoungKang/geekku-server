@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.kosta.geekku.entity.Interior;
@@ -45,16 +46,23 @@ public class InteriorDslRepository {
 				.fetchOne();
 	}
 
-	public List<Interior> interiorListAll() throws Exception {
+	public List<Interior> interiorListAll(Integer offset, Integer limit) throws Exception {
 		QInterior interior = QInterior.interior;
-		return jpaQueryFactory.selectFrom(interior).orderBy(interior.createdAt.desc()).fetch();
+		return jpaQueryFactory.selectFrom(interior)
+				.orderBy(interior.createdAt.desc())
+				.offset(offset)
+				.limit(limit)
+				.fetch();
 	}
 
-	public List<Interior> interiorListByLoc(String possibleLocation) throws Exception {
+	public List<Interior> interiorListByLoc(String possibleLocation, Integer offset, Integer limit) throws Exception {
 		QInterior interior = QInterior.interior;
 		return jpaQueryFactory.selectFrom(interior)
 				.where(interior.possibleLocation.contains(possibleLocation))
-				.orderBy(interior.createdAt.desc()).fetch();
+				.orderBy(interior.createdAt.desc())
+				.offset(offset)
+				.limit(limit)
+				.fetch();
 	}
 
 	public Integer findInteriorBookmark(UUID userId, Integer interiorNum) throws Exception {
