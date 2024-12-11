@@ -95,9 +95,9 @@ public class InteriorSeviceImpl implements InteriorService {
 		List<InteriorDto> interiorDtoList = null;
 		Page<Interior> interiorPage = null;
 		Long allCnt = 0L;
-		Pageable pageable = PageRequest.of(pageInfo.getCurPage()-1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Pageable pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
 //		Integer offset = (pageInfo.getCurPage()-1) * limit;
-		
+
 		if (possibleLocation.equals("전체")) {
 			interiorPage = interiorRepository.findAll(pageable);
 //			interiorDtoList = interiorDslRepository.interiorListAll(pageable).stream().map(i -> i.toDto())
@@ -105,7 +105,7 @@ public class InteriorSeviceImpl implements InteriorService {
 //			allCnt = interiorDslRepository.interiorCountAll();
 		} else {
 			interiorPage = interiorRepository.findByPossibleLocationContains(possibleLocation, pageable);
-			
+
 //			interiorDtoList = interiorDslRepository.interiorListByLoc(possibleLocation, offset, limit).stream().map(i -> i.toDto())
 //					.collect(Collectors.toList());
 //			allCnt = interiorDslRepository.interiorCountByLoc(possibleLocation);
@@ -114,36 +114,43 @@ public class InteriorSeviceImpl implements InteriorService {
 		System.out.println("=============================");
 		System.out.println(interiorPage.getTotalPages());
 		System.out.println(interiorPage.getTotalElements());
-		pageInfo.setTotalCount(1L*interiorPage.getTotalElements());
+		pageInfo.setTotalCount(1L * interiorPage.getTotalElements());
 		pageInfo.setAllPage(interiorPage.getTotalPages());
-		//pageInfo.setTotalCount(allCnt);
+		// pageInfo.setTotalCount(allCnt);
 		return interiorDtoList;
 	}
-	
+
 	@Override
-	public List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location, PageInfo pageInfo, Integer limit)
-			throws Exception {
+	public List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location,
+			PageInfo pageInfo, Integer limit) throws Exception {
 		List<SampleDto> sampleDtoList = null;
+		Page<InteriorSample> samplePage = null;
 //		Page<InteriorSample> samplePage = null;
 //		Long allCnt = 0L;
-		Pageable pageable = PageRequest.of(pageInfo.getCurPage()-1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
-		
-		Page<InteriorSample> samplePage = interiorSampleRepository.findByTypeInAndStyleInAndSizeInAndLocationIn(
-				Arrays.asList(type), Arrays.asList(style),  Arrays.asList(size),  Arrays.asList(location), pageable);
+		Pageable pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+		if (type == null && style == null && size == null && location == null) {
+			samplePage = interiorSampleRepository.findAll(pageable);
+		} else {
+			samplePage = interiorSampleRepository.findByTypeInOrStyleInOrSizeInOrLocationIn(Arrays.asList(type),
+					Arrays.asList(style), Arrays.asList(size), Arrays.asList(location), pageable);
+		}
+
+		sampleDtoList = samplePage.getContent().stream().map(s -> s.toDto()).collect(Collectors.toList());
+		System.out.println("----------------" + samplePage);
+		System.out.println("============" + sampleDtoList);
 		pageInfo.setAllPage(samplePage.getTotalPages());
-		pageInfo.setTotalCount(samplePage.getTotalElements());
-		
-		
-		return samplePage.getContent().stream().map(s->s.toDto()).collect(Collectors.toList());
+		pageInfo.setTotalCount(1L * samplePage.getTotalElements());
+
+		return sampleDtoList;
 
 //		samplePage = interiorDslRepository.sampleListByFilter(date, type, style, size, location,pageable);
-		
+
 //		sampleDtoList = interiorDslRepository.sampleListByFilter(date, type, style, size, location).stream()
 //				.map(s -> s.toDto()).collect(Collectors.toList());
 //		allCnt = interiorDslRepository.sampleCountByFilter(date, type, style, size, location);
 //		return sampleDtoList;
 	}
-
 
 	@Override
 	public Integer checkBookmark(String userId, Integer interiorNum) throws Exception {

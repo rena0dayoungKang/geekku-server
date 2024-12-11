@@ -69,7 +69,7 @@ public class InteriorController {
 			System.out.println(page);
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			List<InteriorDto> interiorList = interiorService.interiorList(possibleLocation,pageInfo,limit);
+			List<InteriorDto> interiorList = interiorService.interiorList(possibleLocation, pageInfo, limit);
 			System.out.println(interiorList);
 
 			Map<String, Object> listInfo = new HashMap<>();
@@ -82,7 +82,7 @@ public class InteriorController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/sampleList")
 	public ResponseEntity<Map<String, Object>> sampleList(@RequestParam(name = "date", required = false) String date,
 			@RequestParam(name = "types", required = false) String[] types,
@@ -94,13 +94,16 @@ public class InteriorController {
 		try {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			List<SampleDto> sampleList = interiorService.sampleList(date, types, styles, sizes, location,pageInfo,limit);
-			
-			
+			List<SampleDto> sampleList = interiorService.sampleList(date, types, styles, sizes, location, pageInfo,
+					limit);
+
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("sampleList", sampleList);
 			listInfo.put("allCnt", pageInfo.getTotalCount());
 			listInfo.put("allPage", pageInfo.getAllPage());
+			System.out.println(sampleList);
+			System.out.println(pageInfo.getTotalCount());
+			System.out.println(pageInfo.getAllPage());
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -278,8 +281,6 @@ public class InteriorController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-
-
 
 	@PostMapping("/interiorDetail")
 	public ResponseEntity<Map<String, Object>> interiorDetail(@RequestBody Map<String, String> param) {

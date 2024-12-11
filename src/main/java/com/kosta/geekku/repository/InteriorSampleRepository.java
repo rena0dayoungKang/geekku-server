@@ -10,6 +10,6 @@ import com.kosta.geekku.entity.InteriorSample;
 
 public interface InteriorSampleRepository extends JpaRepository<InteriorSample, Integer> {
 	List<InteriorSample> findByInterior_InteriorNum(Integer interiorNum);
-	
-	Page<InteriorSample> findByTypeInAndStyleInAndSizeInAndLocationIn(List<String> types, List<String> styles, List<String> sizes, List<String> locs, Pageable pageable);
+	Page<InteriorSample> findAll(Pageable pageable);
+	Page<InteriorSample> findByTypeInOrStyleInOrSizeInOrLocationIn(List<String> types, List<String> styles, List<String> sizes, List<String> locs, Pageable pageable);
 }
