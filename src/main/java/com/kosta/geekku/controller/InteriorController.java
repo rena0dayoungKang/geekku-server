@@ -88,35 +88,40 @@ public class InteriorController {
 	}
 
 	@PostMapping("/company/interiorRegister")
-	public ResponseEntity<Map<Object,Object>> interiorRegister(Authentication authentication, InteriorDto interiorDto,
+	public ResponseEntity<Map<Object, Object>> interiorRegister(Authentication authentication, InteriorDto interiorDto,
 			@RequestParam(name = "coverImg", required = false) MultipartFile coverImage) {
 		try {
 			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
-			Map<Object,Object> interiorNum = interiorService.interiorRegister(interiorDto, coverImage, companyId);
-			return new ResponseEntity<Map<Object,Object>>(interiorNum, HttpStatus.OK);
+			Map<Object, Object> interiorNum = interiorService.interiorRegister(interiorDto, coverImage, companyId);
+			return new ResponseEntity<Map<Object, Object>>(interiorNum, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Map<Object,Object>>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<Object, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	// 인테리어 업체 정보 수정
 	@PostMapping("/company/interiorModify")
 	public ResponseEntity<String> interiorModify(Authentication authentication, InteriorDto interiorDto,
-			@RequestParam(name = "file", required = false) MultipartFile file) {
+			@RequestParam(name = "file", required = false) MultipartFile coverImage) {
 		System.out.println(interiorDto);
 		try {
+			if (coverImage != null && !coverImage.isEmpty()) {
+				// MultipartFile을 byte[]로 변환
+				interiorDto.setCoverImage(coverImage.getBytes());
+			}
 			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // UUID 추출
 //			System.out.println(companyId);
 
-			Map<String, Object> res = interiorService.updateInteriorCompany(companyId, interiorDto, file);
-			System.out.println(file);
+			Map<String, Object> res = interiorService.updateInteriorCompany(companyId, interiorDto, coverImage);
+			System.out.println(coverImage);
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
+
 	}
 
 	@PostMapping("/company/interiorSampleRegister")
@@ -217,8 +222,8 @@ public class InteriorController {
 			String id = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId().toString(); // 재확인
 //			System.out.println(id);
 
-	        Integer requestNum = interiorService.interiorRequest(id, requestDto);
-	        
+			Integer requestNum = interiorService.interiorRequest(id, requestDto);
+
 			return new ResponseEntity<String>(String.valueOf(requestNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

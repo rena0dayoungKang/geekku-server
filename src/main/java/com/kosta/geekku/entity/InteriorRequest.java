@@ -60,6 +60,7 @@ public class InteriorRequest {
 				.companyId(interior.getCompany().getCompanyId())
 				.interiorNum(interior.getInteriorNum())
 				.period(period)
+				.phone(phone)
 				.type(type)
 				.status(status)
 				.size(size)

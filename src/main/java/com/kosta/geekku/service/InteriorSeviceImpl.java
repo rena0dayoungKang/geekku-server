@@ -131,30 +131,29 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	@Transactional
 	@Override
-	public Map<Object,Object> interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId)
+	public Map<Object, Object> interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId)
 			throws Exception {
 		Interior interior = interiorRepository.findByCompany_companyId(companyId);
 
 		if (interior != null) {
 			throw new Exception("이미 등록한 인테리어 회사입니다.");
 		}
-		
+
 		Interior nInterior = interiorDto.toEntity();
 		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
 		company.setRegStatus(true);
 		nInterior.setCompany(company);
 
-		
 		if (coverImage != null && !coverImage.isEmpty()) {
 			nInterior.setCoverImage(coverImage.getBytes());
 		}
 
 		interiorRepository.save(nInterior);
 
-		Map<Object,Object> total = new HashMap<>();
+		Map<Object, Object> total = new HashMap<>();
 		total.put("regStatus", company.isRegStatus());
 		total.put("interiorNum", nInterior.getInteriorNum());
-		
+
 		return total;
 	}
 
@@ -200,7 +199,10 @@ public class InteriorSeviceImpl implements InteriorService {
 
 		InteriorReview review = reviewDto.toEntity();
 
-		Company company = companyRepository.findByCompanyNameContaining(reviewDto.getCompanyName()); // 리뷰 등록할 때 회사이름 일부만 작성했을수도 있기때문에 포함된 회사 조회
+		Company company = companyRepository.findByCompanyNameContaining(reviewDto.getCompanyName()); // 리뷰 등록할 때 회사이름
+																										// 일부만 작성했을수도
+																										// 있기때문에 포함된 회사
+																										// 조회
 		UUID findCompany = company.getCompanyId();
 		Interior findInteriorNum = interiorRepository.findByCompany_companyId(findCompany);
 		Integer num = findInteriorNum.getInteriorNum();
@@ -252,7 +254,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		request.setInterior(interior);
 		interiorRequestRepository.save(request);
 		Optional<Interior> oInterior = interiorRepository.findById(interior.getInteriorNum());
-		//알림 기능 추가
+		// 알림 기능 추가
 		requestDto.setCompanyId(oInterior.get().getCompany().getCompanyId());
 		requestDto.setUserId(UUID.fromString(userId));
 		System.out.println(requestDto);
@@ -260,7 +262,6 @@ public class InteriorSeviceImpl implements InteriorService {
 
 		return request.getRequestNum();
 	}
-
 
 	@Override
 	public InteriorRequestDto requestDetail(Integer num) throws Exception {
@@ -400,12 +401,20 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public Map<String, Object> updateInteriorCompany(UUID companyId, InteriorDto interiorDto, MultipartFile file) {
+	public Map<String, Object> updateInteriorCompany(UUID companyId, InteriorDto interiorDto, MultipartFile coverImage)
+			throws Exception {
 		Interior interior = interiorRepository.findByCompany_companyId(companyId);
+		try {
+			byte[] imageBytes = interiorDto.getCoverImage(); // DTO에서 byte[] 가져오기
 
-		// User user = userRepository.findById(userId).orElseThrow(() -> new
-		// Exception("사용자를 찾을 수 없습니다"));
-		// Interior interior = interiorDto.toEntity();
+			if (imageBytes != null) {
+				// byte[] 처리 (예: 데이터베이스에 저장)
+				System.out.println("Image size: " + imageBytes.length);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error processing image", e);
+		}
 
 		if (interiorDto.getIntro() != null)
 			interior.setIntro(interiorDto.getIntro());
@@ -425,15 +434,15 @@ public class InteriorSeviceImpl implements InteriorService {
 		if (interiorDto.getRepairDate() != null)
 			interior.setRepairDate(interiorDto.getRepairDate());
 
-		if (file != null && !file.isEmpty()) {
-			interior.setCoverImage(interiorDto.getCoverImage());
+		if (coverImage != null && !coverImage.isEmpty())
+
+		{
+			interior.setCoverImage(coverImage.getBytes());
 		}
 
 		interior.setPossiblePart(interiorDto.isPossiblePart());
 
 		interiorRepository.save(interior);
-
-		System.out.println("int" + interior);
 
 		Map<String, Object> res = new HashMap<>();
 		res.put("interior", interior.toDto());

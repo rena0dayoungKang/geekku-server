@@ -1,6 +1,7 @@
 package com.kosta.geekku.dto;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -37,21 +38,11 @@ public class ReviewDto {
 	private Timestamp createdAt;
 	private Integer interiorNum;
 
-	
 	public InteriorReview toEntity() {
-		InteriorReview review = InteriorReview.builder()
-				.reviewNum(reviewNum)
-				.companyName(getCompanyName())
-				.date(date)
-				.type(type)
-				.style(style)
-				.size(size)
-				.location(location)
-				.content(content)
-				.createdAt(createdAt)
+		InteriorReview review = InteriorReview.builder().reviewNum(reviewNum).companyName(getCompanyName()).date(date)
+				.type(type).style(style).size(size).location(location).content(content).createdAt(createdAt)
 				.user(User.builder().userId(getUserId()).build())
-				.interior(Interior.builder().interiorNum(getInteriorNum()).build())
-				.build();
+				.interior(Interior.builder().interiorNum(getInteriorNum()).build()).build();
 		return review;
 	}
 }
