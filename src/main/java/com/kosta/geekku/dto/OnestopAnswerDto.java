@@ -35,6 +35,8 @@ public class OnestopAnswerDto {
 	private String type;
 	private String username;
 	private String nickname;
+	private String name;
+	private byte[] userProfileImage;
 
 	private OnestopDto onestop;
 
