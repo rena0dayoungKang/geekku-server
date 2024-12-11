@@ -128,7 +128,7 @@ public class InteriorSeviceImpl implements InteriorService {
 //		Long allCnt = 0L;
 		Pageable pageable = PageRequest.of(pageInfo.getCurPage()-1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
 		
-		Page<InteriorSample> samplePage = interiorSampleRepository.findByTypeInAndStyleInAndSizeInLocationIn(
+		Page<InteriorSample> samplePage = interiorSampleRepository.findByTypeInAndStyleInAndSizeInAndLocationIn(
 				Arrays.asList(type), Arrays.asList(style),  Arrays.asList(size),  Arrays.asList(location), pageable);
 		pageInfo.setAllPage(samplePage.getTotalPages());
 		pageInfo.setTotalCount(samplePage.getTotalElements());
