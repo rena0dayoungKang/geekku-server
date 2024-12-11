@@ -1,7 +1,5 @@
 package com.kosta.geekku.controller;
 
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -9,7 +7,6 @@ import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,12 +31,10 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.CommunityCommentDto;
 import com.kosta.geekku.dto.CommunityDto;
 import com.kosta.geekku.dto.CommunityFilterDto;
-import com.kosta.geekku.dto.UserDto;
 import com.kosta.geekku.entity.User;
 import com.kosta.geekku.repository.CommunityRepository;
 import com.kosta.geekku.service.CommunityService;

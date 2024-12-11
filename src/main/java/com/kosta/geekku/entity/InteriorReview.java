@@ -1,6 +1,7 @@
 package com.kosta.geekku.entity;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ public class InteriorReview {
 	// private UUID userId; //join column User - userId
 	
 	private String companyName;
-	private String date;
+	private LocalDate date;
 	private String type;
 	private String style;
 	private Integer size;
