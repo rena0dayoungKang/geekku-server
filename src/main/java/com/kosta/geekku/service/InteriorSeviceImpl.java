@@ -2,6 +2,7 @@ package com.kosta.geekku.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,20 +91,59 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public List<InteriorDto> interiorList(String possibleLocation) throws Exception {
+	public List<InteriorDto> interiorList(String possibleLocation, PageInfo pageInfo, Integer limit) throws Exception {
 		List<InteriorDto> interiorDtoList = null;
+		Page<Interior> interiorPage = null;
 		Long allCnt = 0L;
+		Pageable pageable = PageRequest.of(pageInfo.getCurPage()-1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+//		Integer offset = (pageInfo.getCurPage()-1) * limit;
+		
 		if (possibleLocation.equals("전체")) {
-			interiorDtoList = interiorDslRepository.interiorListAll().stream().map(i -> i.toDto())
-					.collect(Collectors.toList());
-			allCnt = interiorDslRepository.interiorCountAll();
+			interiorPage = interiorRepository.findAll(pageable);
+//			interiorDtoList = interiorDslRepository.interiorListAll(pageable).stream().map(i -> i.toDto())
+//					.collect(Collectors.toList());
+//			allCnt = interiorDslRepository.interiorCountAll();
 		} else {
-			interiorDtoList = interiorDslRepository.interiorListByLoc(possibleLocation).stream().map(i -> i.toDto())
-					.collect(Collectors.toList());
-			allCnt = interiorDslRepository.interiorCountByLoc(possibleLocation);
+			interiorPage = interiorRepository.findByPossibleLocationContains(possibleLocation, pageable);
+			
+//			interiorDtoList = interiorDslRepository.interiorListByLoc(possibleLocation, offset, limit).stream().map(i -> i.toDto())
+//					.collect(Collectors.toList());
+//			allCnt = interiorDslRepository.interiorCountByLoc(possibleLocation);
 		}
+		interiorDtoList = interiorPage.getContent().stream().map(i -> i.toDto()).collect(Collectors.toList());
+		System.out.println("=============================");
+		System.out.println(interiorPage.getTotalPages());
+		System.out.println(interiorPage.getTotalElements());
+		pageInfo.setTotalCount(1L*interiorPage.getTotalElements());
+		pageInfo.setAllPage(interiorPage.getTotalPages());
+		//pageInfo.setTotalCount(allCnt);
 		return interiorDtoList;
 	}
+	
+	@Override
+	public List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location, PageInfo pageInfo, Integer limit)
+			throws Exception {
+		List<SampleDto> sampleDtoList = null;
+//		Page<InteriorSample> samplePage = null;
+//		Long allCnt = 0L;
+		Pageable pageable = PageRequest.of(pageInfo.getCurPage()-1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+		
+		Page<InteriorSample> samplePage = interiorSampleRepository.findByTypeInAndStyleInAndSizeInLocationIn(
+				Arrays.asList(type), Arrays.asList(style),  Arrays.asList(size),  Arrays.asList(location), pageable);
+		pageInfo.setAllPage(samplePage.getTotalPages());
+		pageInfo.setTotalCount(samplePage.getTotalElements());
+		
+		
+		return samplePage.getContent().stream().map(s->s.toDto()).collect(Collectors.toList());
+
+//		samplePage = interiorDslRepository.sampleListByFilter(date, type, style, size, location,pageable);
+		
+//		sampleDtoList = interiorDslRepository.sampleListByFilter(date, type, style, size, location).stream()
+//				.map(s -> s.toDto()).collect(Collectors.toList());
+//		allCnt = interiorDslRepository.sampleCountByFilter(date, type, style, size, location);
+//		return sampleDtoList;
+	}
+
 
 	@Override
 	public Integer checkBookmark(String userId, Integer interiorNum) throws Exception {
@@ -266,17 +306,6 @@ public class InteriorSeviceImpl implements InteriorService {
 	public InteriorRequestDto requestDetail(Integer num) throws Exception {
 		InteriorRequest request = interiorRequestRepository.findById(num).orElseThrow(() -> new Exception("문의 번호 오류"));
 		return request.toDto();
-	}
-
-	@Override
-	public List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location)
-			throws Exception {
-		List<SampleDto> sampleDtoList = null;
-		Long allCnt = 0L;
-		sampleDtoList = interiorDslRepository.sampleListByFilter(date, type, style, size, location).stream()
-				.map(s -> s.toDto()).collect(Collectors.toList());
-		allCnt = interiorDslRepository.sampleCountByFilter(date, type, style, size, location);
-		return sampleDtoList;
 	}
 
 	@Override
