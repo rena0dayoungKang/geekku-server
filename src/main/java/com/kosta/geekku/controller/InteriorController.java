@@ -136,20 +136,25 @@ public class InteriorController {
 	// 인테리어 업체 정보 수정
 	@PostMapping("/company/interiorModify")
 	public ResponseEntity<String> interiorModify(Authentication authentication, InteriorDto interiorDto,
-			@RequestParam(name = "file", required = false) MultipartFile file) {
+			@RequestParam(name = "file", required = false) MultipartFile coverImage) {
 		System.out.println(interiorDto);
 		try {
+			if (coverImage != null && !coverImage.isEmpty()) {
+				// MultipartFile을 byte[]로 변환
+				interiorDto.setCoverImage(coverImage.getBytes());
+			}
 			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // UUID 추출
 //			System.out.println(companyId);
 
-			Map<String, Object> res = interiorService.updateInteriorCompany(companyId, interiorDto, file);
-			System.out.println(file);
+			Map<String, Object> res = interiorService.updateInteriorCompany(companyId, interiorDto, coverImage);
+			System.out.println(coverImage);
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
+
 	}
 
 	@PostMapping("/company/interiorSampleRegister")
