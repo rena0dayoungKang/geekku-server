@@ -31,8 +31,8 @@ import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequestDto;
 import com.kosta.geekku.dto.ReviewDto;
 import com.kosta.geekku.dto.SampleDto;
-import com.kosta.geekku.service.FcmMessageService;
 import com.kosta.geekku.service.InteriorService;
+import com.kosta.geekku.util.PageInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -61,13 +61,46 @@ public class InteriorController {
 
 	@GetMapping("/interiorList")
 	public ResponseEntity<Map<String, Object>> interiorList(
-			@RequestParam(value = "possibleLocation", required = false) String possibleLocation) {
+			@RequestParam(value = "possibleLocation", required = false) String possibleLocation,
+			@RequestParam(value = "page", defaultValue = "1") Integer page,
+			@RequestParam(value = "limit", defaultValue = "9") Integer limit) {
 		try {
 			System.out.println(possibleLocation);
-			List<InteriorDto> interiorList = interiorService.interiorList(possibleLocation);
+			System.out.println(page);
+			PageInfo pageInfo = new PageInfo();
+			pageInfo.setCurPage(page);
+			List<InteriorDto> interiorList = interiorService.interiorList(possibleLocation,pageInfo,limit);
 			System.out.println(interiorList);
+
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("interiorList", interiorList);
+			listInfo.put("allCnt", pageInfo.getTotalCount());
+			listInfo.put("allPage", pageInfo.getAllPage());
+			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/sampleList")
+	public ResponseEntity<Map<String, Object>> sampleList(@RequestParam(name = "date", required = false) String date,
+			@RequestParam(name = "types", required = false) String[] types,
+			@RequestParam(name = "styles", required = false) String[] styles,
+			@RequestParam(name = "sizes", required = false) String[] sizes,
+			@RequestParam(name = "location", required = false) String[] location,
+			@RequestParam(value = "page", defaultValue = "1") Integer page,
+			@RequestParam(value = "limit", defaultValue = "9") Integer limit) {
+		try {
+			PageInfo pageInfo = new PageInfo();
+			pageInfo.setCurPage(page);
+			List<SampleDto> sampleList = interiorService.sampleList(date, types, styles, sizes, location,pageInfo,limit);
+			
+			
+			Map<String, Object> listInfo = new HashMap<>();
+			listInfo.put("sampleList", sampleList);
+			listInfo.put("allCnt", pageInfo.getTotalCount());
+			listInfo.put("allPage", pageInfo.getAllPage());
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -246,28 +279,7 @@ public class InteriorController {
 		}
 	}
 
-	@GetMapping("/sampleList")
-	public ResponseEntity<Map<String, Object>> sampleList(@RequestParam(name = "date", required = false) String date,
-			@RequestParam(name = "types", required = false) String[] types,
-			@RequestParam(name = "styles", required = false) String[] styles,
-			@RequestParam(name = "sizes", required = false) String[] sizes,
-			@RequestParam(name = "location", required = false) String[] location) {
-		try {
-			List<SampleDto> sampleList = interiorService.sampleList(date, types, styles, sizes, location);
-			System.out.println(sampleList);
-			System.out.println(types);
-			System.out.println(styles);
-			System.out.println(date);
-			System.out.println(sizes);
-			System.out.println(location);
-			Map<String, Object> listInfo = new HashMap<>();
-			listInfo.put("sampleList", sampleList);
-			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
-		}
-	}
+
 
 	@PostMapping("/interiorDetail")
 	public ResponseEntity<Map<String, Object>> interiorDetail(@RequestBody Map<String, String> param) {

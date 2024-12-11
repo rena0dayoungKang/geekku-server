@@ -18,7 +18,7 @@ public interface InteriorService {
 
 	List<SampleDto> sampleListForMain() throws Exception;
 
-	List<InteriorDto> interiorList(String possibleLocation) throws Exception;
+	List<InteriorDto> interiorList(String possibleLocation,PageInfo page, Integer limit) throws Exception;
 
 	Integer checkBookmark(String userId, Integer interiorNum) throws Exception;
 
@@ -39,7 +39,7 @@ public interface InteriorService {
 
 	InteriorRequestDto requestDetail(Integer num) throws Exception;
 
-	List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location)
+	List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location,PageInfo page, Integer limit)
 			throws Exception;
 
 	Map<String, Object> interiorDetail(Integer interiorNum) throws Exception;

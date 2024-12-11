@@ -116,6 +116,7 @@ public class OnestopController {
 			Integer onestopAnswerNum = onestopService.onestopAnswerWrite(onestopAnswerDto, companyId);
 			onestopAnswerDto.setAnswerOnestopNum(onestopAnswerNum);
 			// fcmMessageService.sendOnestopAnswer(onestopAnswerDto);
+			System.out.println(onestopAnswerDto);
 			return new ResponseEntity<String>(String.valueOf(onestopAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

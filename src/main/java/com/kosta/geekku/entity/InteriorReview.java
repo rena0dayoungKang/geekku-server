@@ -43,6 +43,7 @@ public class InteriorReview {
 	// private UUID userId; //join column User - userId
 
 	private String companyName;
+
 	private LocalDate  date;
 	private String type;
 	private String style;
