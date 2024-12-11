@@ -112,6 +112,8 @@ public class InteriorSeviceImpl implements InteriorService {
 	@Override
 	@Transactional
 	public boolean toggleBookmark(String userId, Integer interiorNum) throws Exception {
+		System.out.println(userId);
+		System.out.println(interiorNum);
 		InteriorBookmark interiorBookmark = interiorBookmarkRepository.findByInterior_InteriorNumAndUserId(interiorNum,
 				UUID.fromString(userId));
 		System.out.println(interiorBookmark);
@@ -292,14 +294,16 @@ public class InteriorSeviceImpl implements InteriorService {
 				.orElseThrow(() -> new Exception("인테리어 번호 오류"));
 		List<InteriorSample> sampleDetail = interiorSampleRepository.findByInterior_InteriorNum(interiorNum);
 		List<InteriorReview> reviewDetail = interiorReviewRepository.findByInterior_interiorNum(interiorNum);
-
+		
+		
+		
 		Integer sampleCount = sampleDetail.size();
 		Integer reviewCount = reviewDetail.size();
-
+		
 		InteriorDto interiorInfo = interiorDetail.toDto();
 		List<SampleDto> sampleInfo = sampleDetail.stream().map(s -> s.toDto()).collect(Collectors.toList());
 		List<ReviewDto> reviewInfo = reviewDetail.stream().map(r -> r.toDto()).collect(Collectors.toList());
-
+		
 		detailInfo.put("sampleCount", sampleCount);
 		detailInfo.put("reviewCount", reviewCount);
 		detailInfo.put("interiorDetail", interiorInfo);

@@ -85,6 +85,19 @@ public class InteriorController {
 		}
 	}
 
+	@PostMapping("/interiorDetail")
+	public ResponseEntity<Map<String, Object>> interiorDetail(@RequestBody Map<String, String> param) {
+		try {
+			System.out.println(param);
+			Map<String, Object> detailInfo = interiorService.interiorDetail(Integer.parseInt(param.get("num")));
+			System.out.println(detailInfo);
+			return new ResponseEntity<Map<String, Object>>(detailInfo, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
 	@PostMapping("/company/interiorRegister")
 	public ResponseEntity<String> interiorRegister(Authentication authentication, InteriorDto interiorDto,
 			@RequestParam(name = "coverImg", required = false) MultipartFile coverImage) {
@@ -266,20 +279,6 @@ public class InteriorController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-
-	@PostMapping("/interiorDetail")
-	public ResponseEntity<Map<String, Object>> interiorDetail(@RequestBody Map<String, String> param) {
-		try {
-			System.out.println(param);
-			Map<String, Object> detailInfo = interiorService.interiorDetail(Integer.parseInt(param.get("num")));
-			System.out.println(detailInfo);
-			return new ResponseEntity<Map<String, Object>>(detailInfo, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
-		}
-	}
-	
 
 	// 개인 마이페이지 - 1:1 인테리어 문의내역 리스트
 	@GetMapping("/user/myPageUserInteriorRequestList")
