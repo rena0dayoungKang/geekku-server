@@ -65,7 +65,7 @@ public class InteriorReview {
 
 	public ReviewDto toDto() {
 		ReviewDto reviewDto = ReviewDto.builder().reviewNum(reviewNum).userId(user.getUserId()).name(user.getName())
-				.nickName(user.getNickname()).companyName(interior.getCompany().getCompanyName()).type(type).date(date)
+				.nickName(user.getNickname()).profileImage(user.getProfileImage()).companyName(interior.getCompany().getCompanyName()).type(type).date(date)
 				.style(style).size(size).location(location).content(content).createdAt(createdAt)
 				.interiorNum(interior.getInteriorNum()).build();
 

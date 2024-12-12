@@ -24,6 +24,7 @@ public class ReviewDto {
 	private UUID userId;
 	private String name;
 	private String nickName;
+	private byte[] profileImage;
 	private String companyName;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
