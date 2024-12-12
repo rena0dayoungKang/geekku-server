@@ -69,7 +69,7 @@ public class OnestopController {
 			List<OnestopDto> onestopList = onestopService.onestopList(pageInfo, type, keyword);
 
 			// 리스트를 내림차순으로 정렬
-			onestopList.sort(Comparator.comparing(OnestopDto::getCreatedAt).reversed());
+			//onestopList.sort(Comparator.comparing(OnestopDto::getCreatedAt).reversed());
 
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("onestopList", onestopList);

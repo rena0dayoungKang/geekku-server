@@ -20,7 +20,7 @@ public class InteriorRequestDto {
 	private Integer requestNum;
 	private UUID userId;
 	private Integer interiorNum;
-	private String period; 
+	private String period;
 	private String type;
 	private String status;
 	private String phone;
@@ -33,21 +33,14 @@ public class InteriorRequestDto {
 	private Timestamp createdAt;
 	private UUID companyId;
 	
+	private String companyName;
+
 	public InteriorRequest toEntity() {
-		InteriorRequest request = InteriorRequest.builder()
-				.requestNum(requestNum)
+		InteriorRequest request = InteriorRequest.builder().requestNum(requestNum)
 				.user(User.builder().userId(userId).name(name).nickname(nickname).build())
-				.interior(Interior.builder().interiorNum(interiorNum).build())
-				.name(name)
-				.period(period)
-				.type(type)
-				.status(status)
-				.phone(phone)
-				.size(size)
-				.allowTime(allowTime)
-				.content(content)
-				.createdAt(createdAt)
-				.build();
+				.interior(Interior.builder().interiorNum(interiorNum).build()).name(name)
+				.period(period).type(type).status(status).phone(phone).size(size).allowTime(allowTime).content(content)
+				.createdAt(createdAt).build();
 		return request;
 	}
 }

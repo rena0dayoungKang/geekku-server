@@ -19,6 +19,7 @@ public class OnestopDto {
 	//
 
 	private Integer onestopNum;
+	
 	private User user;
 	private String type;
 	private String address1;

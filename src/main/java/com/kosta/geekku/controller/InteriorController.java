@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,7 +70,7 @@ public class InteriorController {
 			System.out.println(page);
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			List<InteriorDto> interiorList = interiorService.interiorList(possibleLocation,pageInfo,limit);
+			List<InteriorDto> interiorList = interiorService.interiorList(possibleLocation, pageInfo, limit);
 			System.out.println(interiorList);
 
 			Map<String, Object> listInfo = new HashMap<>();
@@ -82,7 +83,7 @@ public class InteriorController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/sampleList")
 	public ResponseEntity<Map<String, Object>> sampleList(@RequestParam(name = "date", required = false) String date,
 			@RequestParam(name = "types", required = false) String[] types,
@@ -92,11 +93,17 @@ public class InteriorController {
 			@RequestParam(value = "page", defaultValue = "1") Integer page,
 			@RequestParam(value = "limit", defaultValue = "9") Integer limit) {
 		try {
+			System.out.println(date);
+			System.out.println("types:" + types);
+			System.out.println("styles:" + styles);
+			System.out.println("sizes:" + sizes);
+			System.out.println("location:" + location);
+
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			List<SampleDto> sampleList = interiorService.sampleList(date, types, styles, sizes, location,pageInfo,limit);
-			
-			
+			List<SampleDto> sampleList = interiorService.sampleList(date, types, styles, sizes, location, pageInfo,
+					limit);
+
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("sampleList", sampleList);
 			listInfo.put("allCnt", pageInfo.getTotalCount());
@@ -147,7 +154,6 @@ public class InteriorController {
 //			System.out.println(companyId);
 
 			Map<String, Object> res = interiorService.updateInteriorCompany(companyId, interiorDto, coverImage);
-			System.out.println(coverImage);
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 
 		} catch (Exception e) {
@@ -191,7 +197,33 @@ public class InteriorController {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	
+	@DeleteMapping("/company/interiorSampleDelete/{sampleNum}")
+	public ResponseEntity<String> interiorSampleDelete(Authentication authentication, @PathVariable Integer sampleNum) {
+		try {
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
+			interiorService.sampleDelete(sampleNum, companyId);
+			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping("/company/interiorSampleUpdate/{num}")
+	public ResponseEntity<String> interiorSampleUpdate(Authentication authentication, SampleDto sampleDto, @PathVariable Integer num,
+			@RequestPart(name = "coverImg", required = false) MultipartFile coverImage,
+			@RequestPart(name = "deleteImg", required = false) MultipartFile deleteImage) {
+		try {
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
+			Integer sampleNum = interiorService.sampleUpdate(sampleDto, coverImage, deleteImage, companyId, num);
+			return new ResponseEntity<String>(String.valueOf(sampleNum), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	@PostMapping("/user/interiorReviewWrite")
 	public ResponseEntity<String> interiorReviewRegister(Authentication authentication, ReviewDto reviewDto,
 			@RequestParam(name = "file", required = false) MultipartFile[] files) {
@@ -232,13 +264,11 @@ public class InteriorController {
 		}
 	}
 
-	@PostMapping("/sampleDetail")
-	public ResponseEntity<Map<String, Object>> sampleDetail(@RequestBody Map<String, String> param) {
+	@GetMapping("/sampleDetail/{num}")
+	public ResponseEntity<Map<String, Object>> sampleDetail(@PathVariable Integer num) {
 		try {
-			System.out.println("good");
-			System.out.println(param);
 			Map<String, Object> res = new HashMap<>();
-			SampleDto sampleDto = interiorService.sampleDetail(Integer.parseInt(param.get("num")));
+			SampleDto sampleDto = interiorService.sampleDetail(num);
 			res.put("sampleInfo", sampleDto);
 			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
 		} catch (Exception e) {
@@ -278,8 +308,6 @@ public class InteriorController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-
-
 
 	@PostMapping("/interiorDetail")
 	public ResponseEntity<Map<String, Object>> interiorDetail(@RequestBody Map<String, String> param) {

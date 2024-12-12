@@ -53,6 +53,7 @@ public class InteriorAllAnswer {
 	public InteriorAnswerDto toDto() {
 		InteriorAnswerDto interiorAnswerDto = InteriorAnswerDto.builder().answerAllNum(answerAllNum).title(title)
 				.content(content).createdAt(createdAt).requestAllNum(interiorAllRequest.getRequestAllNum())
+				.workType(interiorAllRequest.getType())
 				.companyId(company.getCompanyId()).companyAddress(company.getCompanyAddress())
 				.companyName(company.getCompanyName()).companyPhone(company.getPhone()).build();
 

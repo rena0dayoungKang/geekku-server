@@ -45,6 +45,8 @@ public class QCompany extends EntityPathBase<Company> {
 
     public final ArrayPath<byte[], Byte> profileImage = createArray("profileImage", byte[].class);
 
+    public final BooleanPath regStatus = createBoolean("regStatus");
+
     public final EnumPath<Role> role = createEnum("role", Role.class);
 
     public final BooleanPath status = createBoolean("status");

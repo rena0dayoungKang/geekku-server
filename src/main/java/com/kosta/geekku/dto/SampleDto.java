@@ -3,17 +3,17 @@ package com.kosta.geekku.dto;
 import java.sql.Timestamp;
 import java.util.UUID;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.kosta.geekku.entity.Interior;
 import com.kosta.geekku.entity.InteriorSample;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -23,7 +23,7 @@ public class SampleDto {
 	private String title;
 	private String type;
 	private String style;
-	private String size;
+	private Integer size;
 	private String location;
 	private String coverImage;
 	private String intro;
@@ -48,4 +48,15 @@ public class SampleDto {
 				.build();
 		return sample;
 	}
+
+
+	@Override
+	public String toString() {
+		return "SampleDto [sampleNum=" + sampleNum + ", interiorNum=" + interiorNum + ", title=" + title + ", type="
+				+ type + ", style=" + style + ", size=" + size + ", location=" + location + ", intro=" + intro
+				+ ", content=" + content + ", createdAt=" + createdAt + ", companyId=" + companyId + ", companyName="
+				+ companyName + "]";
+	}
+	
+	
 }

@@ -33,6 +33,7 @@ public class InteriorAnswerDto {
 	private String address1;
 	private String address2;
 	private String type;
+	private String workType;
 	private String username;
 	private String nickname;
 
