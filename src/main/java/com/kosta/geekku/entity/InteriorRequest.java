@@ -58,6 +58,7 @@ public class InteriorRequest {
 				.nickname(user.getNickname())
 				.profileImage(user.getProfileImage())
 				.companyId(interior.getCompany().getCompanyId())
+				.companyName(interior.getCompany().getCompanyName())
 				.interiorNum(interior.getInteriorNum())
 				.period(period)
 				.phone(phone)
