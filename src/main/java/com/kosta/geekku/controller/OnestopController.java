@@ -46,19 +46,6 @@ public class OnestopController {
 		}
 	}
 
-	/*
-	 * @PostMapping("/onestopModify") public ResponseEntity<Integer>
-	 * onestopModify(OnestopDto onestopDto)
-	 * 
-	 * @RequestPart(value = "delFile", required = false) Integer[] delFileNum,
-	 * 
-	 * @RequestPart(value = "file", required = false) MultipartFile[] fileList) {
-	 * try { onestopService.onestopModify(onestopDto); return new
-	 * ResponseEntity<Integer>(onestopDto.getOnestopNum(), HttpStatus.OK); } catch
-	 * (Exception e) { e.printStackTrace(); return new
-	 * ResponseEntity<Integer>(HttpStatus.BAD_REQUEST); } }
-	 */
-
 	@GetMapping("/onestopDetail/{num}")
 	public ResponseEntity<OnestopDto> onestopDetail(@PathVariable Integer num) {
 		try {
@@ -129,6 +116,7 @@ public class OnestopController {
 			Integer onestopAnswerNum = onestopService.onestopAnswerWrite(onestopAnswerDto, companyId);
 			onestopAnswerDto.setAnswerOnestopNum(onestopAnswerNum);
 			// fcmMessageService.sendOnestopAnswer(onestopAnswerDto);
+			System.out.println(onestopAnswerDto);
 			return new ResponseEntity<String>(String.valueOf(onestopAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -166,7 +154,21 @@ public class OnestopController {
 			return new ResponseEntity<String>("true", HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<String>("한번에꾸미기 답변 삭제 오류", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("한번에꾸하기 답변 삭제 오류", HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	// 중개업자 마이페이지 - 한번에 꾸하기 답변내역
+	@GetMapping("/company/mypageOnestopAnswerList")
+	public ResponseEntity<Page<OnestopAnswerDto>> onestopAnswerListForMypage(Authentication authentication,
+			@RequestParam(required = false, defaultValue = "1", value = "page") int page) {
+		try {
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
+			Page<OnestopAnswerDto> onestopAnswerList = onestopService.onestopAnswerListForMypage(page, companyId);
+			return new ResponseEntity<Page<OnestopAnswerDto>>(onestopAnswerList, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Page<OnestopAnswerDto>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 }

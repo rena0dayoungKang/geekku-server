@@ -20,9 +20,12 @@ import com.kosta.geekku.dto.InteriorDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -59,11 +62,15 @@ public class Interior {
 				.recentCount(recentCount)
 				.repairDate(repairDate)
 				.possibleLocation(possibleLocation)
+				.possiblePart(possiblePart)
 				.coverImage(coverImage)
 				.intro(intro)
 				.content(content)
 				.createdAt(createdAt)
-				.companyName(company.getCompanyName()).companyId(company.getCompanyId()).build();
+				.companyName(company.getCompanyName())
+				.companyId(company.getCompanyId())
+				.regStatus(company.isRegStatus())
+				.build();
 		
 		if(coverImage != null) {
 			try {
@@ -76,6 +83,14 @@ public class Interior {
 		}
 		
 		return interiorDto;
+	}
+
+	@Override
+	public String toString() {
+		return "Interior [interiorNum=" + interiorNum + ", company=" + company + ", possiblePart=" + possiblePart
+				+ ", period=" + period + ", recentCount=" + recentCount + ", repairDate=" + repairDate
+				+ ", possibleLocation=" + possibleLocation + ", intro=" + intro + ", content=" + content
+				+ ", createdAt=" + createdAt + "]";
 	}
 
 }

@@ -25,7 +25,9 @@ public class InteriorRequestDto {
 	private String status;
 	private String phone;
 	private String size;
-	private String name;	
+	private String name;
+	private String nickname;
+	private byte[] profileImage;
 	private String allowTime;
 	private String content;
 	private Timestamp createdAt;
@@ -34,14 +36,14 @@ public class InteriorRequestDto {
 	public InteriorRequest toEntity() {
 		InteriorRequest request = InteriorRequest.builder()
 				.requestNum(requestNum)
-				.user(User.builder().userId(userId).build())
+				.user(User.builder().userId(userId).name(name).nickname(nickname).build())
 				.interior(Interior.builder().interiorNum(interiorNum).build())
+				.name(name)
 				.period(period)
 				.type(type)
 				.status(status)
 				.phone(phone)
 				.size(size)
-				.name(name)
 				.allowTime(allowTime)
 				.content(content)
 				.createdAt(createdAt)

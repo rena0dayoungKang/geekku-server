@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.kosta.geekku.entity.Interior;
@@ -39,19 +40,29 @@ public class InteriorDslRepository {
 
 	public Long interiorCountByLoc(String possibleLocation) throws Exception {
 		QInterior interior = QInterior.interior;
-		return jpaQueryFactory.select(interior.count()).from(interior)
-				.where(interior.possibleLocation.eq(possibleLocation)).fetchOne();
+		return jpaQueryFactory.select(interior.count())
+				.from(interior)
+				.where(interior.possibleLocation.contains(possibleLocation))
+				.fetchOne();
 	}
 
-	public List<Interior> interiorListAll() throws Exception {
+	public List<Interior> interiorListAll(Integer offset, Integer limit) throws Exception {
 		QInterior interior = QInterior.interior;
-		return jpaQueryFactory.selectFrom(interior).orderBy(interior.createdAt.desc()).fetch();
+		return jpaQueryFactory.selectFrom(interior)
+				.orderBy(interior.createdAt.desc())
+				.offset(offset)
+				.limit(limit)
+				.fetch();
 	}
 
-	public List<Interior> interiorListByLoc(String possibleLocation) throws Exception {
+	public List<Interior> interiorListByLoc(String possibleLocation, Integer offset, Integer limit) throws Exception {
 		QInterior interior = QInterior.interior;
-		return jpaQueryFactory.selectFrom(interior).where(interior.possibleLocation.eq(possibleLocation))
-				.orderBy(interior.createdAt.desc()).fetch();
+		return jpaQueryFactory.selectFrom(interior)
+				.where(interior.possibleLocation.contains(possibleLocation))
+				.orderBy(interior.createdAt.desc())
+				.offset(offset)
+				.limit(limit)
+				.fetch();
 	}
 
 	public Integer findInteriorBookmark(UUID userId, Integer interiorNum) throws Exception {
@@ -59,7 +70,7 @@ public class InteriorDslRepository {
 
 		return jpaQueryFactory.select(interiorBookmark.bookmarkInteriorNum)
 				.from(interiorBookmark)
-				.where(interiorBookmark.userId.eq(userId).and(interiorBookmark.interiorNum.eq(interiorNum)))
+				.where(interiorBookmark.userId.eq(userId).and(interiorBookmark.interior.interiorNum.eq(interiorNum)))
 				.fetchOne();
 	}
 

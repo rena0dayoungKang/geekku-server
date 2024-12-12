@@ -243,7 +243,7 @@ public class CompanyServiceImpl implements CompanyService {
 
 	@Override
 	public Page<HouseAnswerDto> getAnswersByCompanyId(UUID companyId, Pageable pageable) {
-	    return houseAnswerRepository.findByCompanyId(companyId, pageable)
+	    return houseAnswerRepository.findByCompanyIdOrderByCreatedAtDesc(companyId, pageable)
 	            .map(answer -> HouseAnswerDto.builder()
 	                    .answerHouseNum(answer.getAnswerHouseNum())
 	                    .title(answer.getTitle())
@@ -259,16 +259,20 @@ public class CompanyServiceImpl implements CompanyService {
 	                    .address1(answer.getHouse().getAddress1())
 	                    .address2(answer.getHouse().getAddress2())
 	                    .type(answer.getHouse().getType())
+	                    .nickname(answer.getHouse().getUser().getNickname())
+	                    .name(answer.getHouse().getUser().getName())
+	                    .userProfileImage(answer.getHouse().getUser().getProfileImage())
 	                    .build());
 	}
 
 	public Page<OnestopAnswerDto> getOnestopAnswersByCompanyId(UUID companyId, Pageable pageable) {
-        return onestopAnswerRepository.findByCompanyId(companyId, pageable)
+        return onestopAnswerRepository.findByCompanyIdOrderByCreatedAtDesc(companyId, pageable)
                 .map(answer -> OnestopAnswerDto.builder()
                         .answerOnestopNum(answer.getAnswerOnestopNum())
-                        .title(answer.getTitle())
+                        .title(answer.getOnestop().getTitle())
                         .content(answer.getContent())
                         .createdAt(answer.getCreatedAt())
+                        .nickname(answer.getOnestop().getUser().getNickname())
                         .companyId(answer.getCompany().getCompanyId())
                         .companyName(answer.getCompany().getCompanyName())
                         .companyPhone(answer.getCompany().getPhone())
@@ -278,6 +282,9 @@ public class CompanyServiceImpl implements CompanyService {
                         .address1(answer.getOnestop().getAddress1())
                         .address2(answer.getOnestop().getAddress2())
                         .type(answer.getOnestop().getType())
+						.onestopNum(answer.getOnestop().getOnestopNum())
+						.name(answer.getOnestop().getUser().getName())
+						.userProfileImage(answer.getOnestop().getUser().getProfileImage())
                         .build());
     }
 

@@ -2,16 +2,20 @@ package com.kosta.geekku.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -63,6 +67,7 @@ public class InteriorSeviceImpl implements InteriorService {
 	private final InteriorRequestDslRepository interiorRequestDslRepository;
 	private final InteriorReviewImageRepository interiorReviewImageRepository;
 	private final CompanyRepository companyRepository;
+	private final FcmMessageService fcmMessageService;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -89,19 +94,288 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public List<InteriorDto> interiorList(String possibleLocation) throws Exception {
+	public List<InteriorDto> interiorList(String possibleLocation, PageInfo pageInfo, Integer limit) throws Exception {
 		List<InteriorDto> interiorDtoList = null;
+		Page<Interior> interiorPage = null;
 		Long allCnt = 0L;
+		Pageable pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+//		Integer offset = (pageInfo.getCurPage()-1) * limit;
+
 		if (possibleLocation.equals("전체")) {
-			interiorDtoList = interiorDslRepository.interiorListAll().stream().map(i -> i.toDto())
-					.collect(Collectors.toList());
-			allCnt = interiorDslRepository.interiorCountAll();
+			interiorPage = interiorRepository.findAll(pageable);
+//			interiorDtoList = interiorDslRepository.interiorListAll(pageable).stream().map(i -> i.toDto())
+//					.collect(Collectors.toList());
+//			allCnt = interiorDslRepository.interiorCountAll();
 		} else {
-			interiorDtoList = interiorDslRepository.interiorListByLoc(possibleLocation).stream().map(i -> i.toDto())
-					.collect(Collectors.toList());
-			allCnt = interiorDslRepository.interiorCountByLoc(possibleLocation);
+			interiorPage = interiorRepository.findByPossibleLocationContains(possibleLocation, pageable);
+
+//			interiorDtoList = interiorDslRepository.interiorListByLoc(possibleLocation, offset, limit).stream().map(i -> i.toDto())
+//					.collect(Collectors.toList());
+//			allCnt = interiorDslRepository.interiorCountByLoc(possibleLocation);
 		}
+		interiorDtoList = interiorPage.getContent().stream().map(i -> i.toDto()).collect(Collectors.toList());
+		System.out.println("=============================");
+		System.out.println(interiorPage.getTotalPages());
+		System.out.println(interiorPage.getTotalElements());
+		pageInfo.setTotalCount(1L * interiorPage.getTotalElements());
+		pageInfo.setAllPage(interiorPage.getTotalPages());
+		// pageInfo.setTotalCount(allCnt);
 		return interiorDtoList;
+	}
+
+//
+//	@Override
+//	public List<SampleDto> sampleList(String date, String[] types, String[] styles, String[] sizes, String[] location,
+//			PageInfo pageInfo, Integer limit) throws Exception {
+//		List<SampleDto> sampleDtoList = null;
+//		Page<InteriorSample> samplePage = null;
+////		Page<InteriorSample> samplePage = null;
+////		Long allCnt = 0L;
+//		Pageable pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+//
+//		if (types == null && styles == null && sizes == null && location == null) {
+//			samplePage = interiorSampleRepository.findAll(pageable);
+//		} else {
+////			samplePage = interiorSampleRepository.findByTypeInOrStyleInOrSizeInOrLocationIn(Arrays.asList(type),
+////					Arrays.asList(style), Arrays.asList(size), Arrays.asList(location), pageable);
+//			
+//			samplePage = interiorSampleRepository.findByTypeInOrStyleInOrSizeInOrLocationIn(types,styles,sizes,location, pageable);
+//
+//		}
+//
+//		sampleDtoList = samplePage.getContent().stream().map(s -> s.toDto()).collect(Collectors.toList());
+//		System.out.println("----------------" + samplePage);
+//		System.out.println("============" + sampleDtoList);
+//		pageInfo.setAllPage(samplePage.getTotalPages());
+//		pageInfo.setTotalCount(1L * samplePage.getTotalElements());
+//
+//		return sampleDtoList;
+//
+////		samplePage = interiorDslRepository.sampleListByFilter(date, type, style, size, location,pageable);
+//
+////		sampleDtoList = interiorDslRepository.sampleListByFilter(date, type, style, size, location).stream()
+////				.map(s -> s.toDto()).collect(Collectors.toList());
+////		allCnt = interiorDslRepository.sampleCountByFilter(date, type, style, size, location);
+////		return sampleDtoList;
+//	}
+//	@Override
+//	public List<SampleDto> sampleList(String date, String[] types, String[] styles, String[] sizes, String[] location,
+//	                                  PageInfo pageInfo, Integer limit) throws Exception {
+//	    Pageable pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+//	    List<InteriorSample> filteredSamples = new ArrayList<>();
+//
+//	    // 날짜 정렬 조건
+//	    if ("latest".equals(date)) {
+//	        pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+//	    } else if ("oldest".equals(date)) {
+//	        pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.ASC, "createdAt"));
+//	    }
+//
+//	    // 필터 조건이 없으면 전체 데이터 가져오기
+//	    Page<InteriorSample> samplePage=null;
+//	    if ((types == null || types.length == 0) && (styles == null || styles.length == 0)
+//	            && (sizes == null || sizes.length == 0) && (location == null || location.length == 0)) {
+//	        samplePage = interiorSampleRepository.findAll(pageable);  // 페이지 처리된 샘플 리스트
+//	    } else {
+//	        // 필터 조건에 맞는 샘플을 필터링
+//	        Set<InteriorSample> sampleSet = new HashSet<>();
+//
+//	        // 타입에 맞는 샘플을 가져오기
+//	        if (types != null && types.length > 0) {
+//	            sampleSet.addAll(interiorSampleRepository.findByTypeIn(types, pageable).getContent());
+//	        }
+//
+//	        // 스타일에 맞는 샘플을 가져오기
+//	        if (styles != null && styles.length > 0) {
+//	            sampleSet.addAll(interiorSampleRepository.findByStyleIn(styles, pageable).getContent());
+//	        }
+//
+//	        // 사이즈에 맞는 샘플을 가져오기
+//	        if (sizes != null && sizes.length > 0) {
+//	            sampleSet.addAll(interiorSampleRepository.findBySizeIn(sizes, pageable).getContent());
+//	        }
+//
+//	        // 위치에 맞는 샘플을 가져오기
+//	        if (location != null && location.length > 0) {
+//	            sampleSet.addAll(interiorSampleRepository.findByLocationIn(location, pageable).getContent());
+//	        }
+//
+//	        // Set에서 List로 변환
+//	        filteredSamples.addAll(sampleSet);
+//	        // Page 객체를 사용하지 않으면, 페이지네이션을 제대로 처리할 수 없음
+//	        samplePage = new PageImpl<>(filteredSamples, pageable, filteredSamples.size());
+//	    }
+//
+//	    // Page 객체에서 필요한 정보 추출
+//	    pageInfo.setAllPage(samplePage.getTotalPages());
+//	    pageInfo.setTotalCount(samplePage.getTotalElements());
+//
+//	    // DTO로 변환하여 반환
+//	    return samplePage.getContent().stream().map(s -> s.toDto()).collect(Collectors.toList());
+//	}
+//	@Override
+//	public List<SampleDto> sampleList(String date, String[] types, String[] styles, String[] sizes, String[] location,
+//	                                  PageInfo pageInfo, Integer limit) throws Exception {
+//	    // Pageable 설정
+//	    Pageable pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+//	    List<InteriorSample> filteredSamples = new ArrayList<>();
+//	    Page<InteriorSample> samplePage=null;
+//
+//	    // 날짜 정렬 조건 설정
+//	    if ("latest".equals(date)) {
+//	        pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+//	    } else if ("oldest".equals(date)) {
+//	        pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.ASC, "createdAt"));
+//	    }
+//
+//	    // 필터 조건이 없으면 전체 데이터 가져오기
+//	    if ((types == null || types.length == 0) && (styles == null || styles.length == 0)
+//	            && (sizes == null || sizes.length == 0) && (location == null || location.length == 0)) {
+//	        samplePage = interiorSampleRepository.findAll(pageable);  // 페이지 처리된 샘플 리스트
+//	    } else {
+//	        // 필터 조건에 맞는 샘플을 필터링
+//	        List<InteriorSample> filteredByTypes = new ArrayList<>();
+//	        List<InteriorSample> filteredByStyles = new ArrayList<>();
+//	        List<InteriorSample> filteredBySizes = new ArrayList<>();
+//	        List<InteriorSample> filteredByLocation = new ArrayList<>();
+//
+//	        // 조건에 맞는 샘플을 각각 가져오기
+//	        if (types != null && types.length > 0) {
+//	            filteredByTypes = interiorSampleRepository.findByTypeIn(types, pageable).getContent();
+//	        }
+//
+//	        if (styles != null && styles.length > 0) {
+//	            filteredByStyles = interiorSampleRepository.findByStyleIn(styles, pageable).getContent();
+//	        }
+//
+//	        if (sizes != null && sizes.length > 0) {
+//	            filteredBySizes = interiorSampleRepository.findBySizeIn(sizes, pageable).getContent();
+//	        }
+//
+//	        if (location != null && location.length > 0) {
+//	            filteredByLocation = interiorSampleRepository.findByLocationIn(location, pageable).getContent();
+//	        }
+//
+//	        // 조건에 맞는 샘플들을 교집합으로 필터링
+//	        if (!filteredByTypes.isEmpty()) {
+//	            filteredSamples = new ArrayList<>(filteredByTypes);
+//	        }
+//
+//	        if (!filteredByStyles.isEmpty()) {
+//	            filteredSamples.retainAll(filteredByStyles); // 교집합 처리
+//	        }
+//
+//	        if (!filteredBySizes.isEmpty()) {
+//	            filteredSamples.retainAll(filteredBySizes); // 교집합 처리
+//	        }
+//
+//	        if (!filteredByLocation.isEmpty()) {
+//	            filteredSamples.retainAll(filteredByLocation); // 교집합 처리
+//	        }
+//
+//	        // Page 객체를 사용하여 페이징 처리
+//	        samplePage = new PageImpl<>(filteredSamples, pageable, filteredSamples.size());
+//	    }
+//
+//	    // Page 객체에서 필요한 정보 추출
+//	    pageInfo.setAllPage(samplePage.getTotalPages());
+//	    pageInfo.setTotalCount(samplePage.getTotalElements());
+//
+//	    // DTO로 변환하여 반환
+//	    return samplePage.getContent().stream().map(s -> s.toDto()).collect(Collectors.toList());
+//	}
+	@Override
+	public List<SampleDto> sampleList(String date, String[] types, String[] styles, String[] sizes, String[] location,
+	                                  PageInfo pageInfo, Integer limit) throws Exception {
+	    // Pageable 설정
+	    Pageable pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+	    List<InteriorSample> filteredSamples = new ArrayList<>();
+	    Page<InteriorSample> samplePage=null;
+
+	    // 날짜 정렬 조건 설정
+	    if ("latest".equals(date)) {
+	        pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+	    } else if ("oldest".equals(date)) {
+	        pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.ASC, "createdAt"));
+	    }
+
+	    // 필터 조건이 없으면 전체 데이터 가져오기
+	    if ((types == null || types.length == 0) && (styles == null || styles.length == 0)
+	            && (sizes == null || sizes.length == 0) && (location == null || location.length == 0)) {
+	        samplePage = interiorSampleRepository.findAll(pageable);  // 페이지 처리된 샘플 리스트
+	    } else {
+	        // 조건에 맞는 샘플들 필터링
+	        List<InteriorSample> filteredByTypes = null;
+	        List<InteriorSample> filteredByStyles = null;
+	        List<InteriorSample> filteredBySizes = null;
+	        List<InteriorSample> filteredByLocation = null;
+
+	        // 타입에 맞는 샘플 가져오기
+	        if (types != null && types.length > 0) {
+	            filteredByTypes = interiorSampleRepository.findByTypeIn(types, pageable).getContent();
+	        }
+
+	        // 스타일에 맞는 샘플 가져오기
+	        if (styles != null && styles.length > 0) {
+	            filteredByStyles = interiorSampleRepository.findByStyleIn(styles, pageable).getContent();
+	        }
+
+	        // 사이즈에 맞는 샘플 가져오기
+	        if (sizes != null && sizes.length > 0) {
+	            filteredBySizes = interiorSampleRepository.findBySizeIn(sizes, pageable).getContent();
+	        }
+
+	        // 위치에 맞는 샘플 가져오기
+	        if (location != null && location.length > 0) {
+	            filteredByLocation = interiorSampleRepository.findByLocationIn(location, pageable).getContent();
+	        }
+
+	        // 조건에 맞는 샘플들이 하나라도 선택되었을 경우
+	        if ((filteredByTypes != null && !filteredByTypes.isEmpty()) ||
+	            (filteredByStyles != null && !filteredByStyles.isEmpty()) ||
+	            (filteredBySizes != null && !filteredBySizes.isEmpty()) ||
+	            (filteredByLocation != null && !filteredByLocation.isEmpty())) {
+
+	            // 각 조건에 맞는 샘플들 중에서 교집합을 구하기 위해 기본 샘플 리스트 설정
+	            filteredSamples.addAll(filteredByTypes != null ? filteredByTypes : new ArrayList<>());
+	            filteredSamples.addAll(filteredByStyles != null ? filteredByStyles : new ArrayList<>());
+	            filteredSamples.addAll(filteredBySizes != null ? filteredBySizes : new ArrayList<>());
+	            filteredSamples.addAll(filteredByLocation != null ? filteredByLocation : new ArrayList<>());
+
+	            // 교집합 구하기 위해 retainAll 사용
+	            if (filteredByTypes != null && !filteredByTypes.isEmpty()) {
+	                filteredSamples.retainAll(filteredByTypes);  // 'types'에 해당하는 교집합만 남김
+	            }
+	            if (filteredByStyles != null && !filteredByStyles.isEmpty()) {
+	                filteredSamples.retainAll(filteredByStyles);  // 'styles'에 해당하는 교집합만 남김
+	            }
+	            if (filteredBySizes != null && !filteredBySizes.isEmpty()) {
+	                filteredSamples.retainAll(filteredBySizes);  // 'sizes'에 해당하는 교집합만 남김
+	            }
+	            if (filteredByLocation != null && !filteredByLocation.isEmpty()) {
+	                filteredSamples.retainAll(filteredByLocation);  // 'location'에 해당하는 교집합만 남김
+	            }
+
+	            // 교집합이 비었으면 빈 리스트 반환
+	            if (filteredSamples.isEmpty()) {
+	                samplePage = new PageImpl<>(filteredSamples, pageable, 0);  // 빈 리스트 반환
+	            } else {
+	                // 교집합이 있으면 페이지 처리
+	                samplePage = new PageImpl<>(filteredSamples, pageable, filteredSamples.size());
+	            }
+	        } else {
+	            // 조건이 하나도 선택되지 않으면 빈 리스트 반환
+	            filteredSamples = new ArrayList<>();
+	            samplePage = new PageImpl<>(filteredSamples, pageable, 0);  // 빈 리스트 반환
+	        }
+	    }
+
+	    // 페이지 정보 설정
+	    pageInfo.setAllPage(samplePage.getTotalPages());
+	    pageInfo.setTotalCount(samplePage.getTotalElements());
+
+	    // DTO로 변환하여 반환
+	    return samplePage.getContent().stream().map(s -> s.toDto()).collect(Collectors.toList());
 	}
 
 	@Override
@@ -112,12 +386,8 @@ public class InteriorSeviceImpl implements InteriorService {
 	@Override
 	@Transactional
 	public boolean toggleBookmark(String userId, Integer interiorNum) throws Exception {
-		System.out.println(userId);
-		System.out.println(interiorNum);
 		InteriorBookmark interiorBookmark = interiorBookmarkRepository.findByInterior_InteriorNumAndUserId(interiorNum,
 				UUID.fromString(userId));
-		System.out.println(interiorBookmark);
-		
 		Interior interior = interiorRepository.findById(interiorNum).orElseThrow(() -> new Exception("인테리어 번호 오류"));
 		System.out.println(interior);
 //		Integer bookmarkNum = interiorDslRepository.findInteriorBookmark(UUID.fromString(userId), interiorNum);
@@ -134,7 +404,7 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	@Transactional
 	@Override
-	public Integer interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId)
+	public Map<Object, Object> interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId)
 			throws Exception {
 		Interior interior = interiorRepository.findByCompany_companyId(companyId);
 
@@ -144,6 +414,7 @@ public class InteriorSeviceImpl implements InteriorService {
 
 		Interior nInterior = interiorDto.toEntity();
 		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
+		company.setRegStatus(true);
 		nInterior.setCompany(company);
 
 		if (coverImage != null && !coverImage.isEmpty()) {
@@ -152,7 +423,11 @@ public class InteriorSeviceImpl implements InteriorService {
 
 		interiorRepository.save(nInterior);
 
-		return nInterior.getInteriorNum();
+		Map<Object, Object> total = new HashMap<>();
+		total.put("regStatus", company.isRegStatus());
+		total.put("interiorNum", nInterior.getInteriorNum());
+
+		return total;
 	}
 
 	@Override
@@ -201,26 +476,11 @@ public class InteriorSeviceImpl implements InteriorService {
 																										// 일부만 작성했을수도
 																										// 있기때문에 포함된 회사
 																										// 조회
-
 		UUID findCompany = company.getCompanyId();
-
-		System.out.println(findCompany);
-
 		Interior findInteriorNum = interiorRepository.findByCompany_companyId(findCompany);
-
 		Integer num = findInteriorNum.getInteriorNum();
 
-		System.out.println(num);
-
 		review.setInterior(findInteriorNum);
-
-//		Interior interior = interiorRepository.findByCompany_companyNameContaining(findCompany);
-//		
-//		Integer findInteriorNum = interior.getInteriorNum();
-
-//		System.out.println(findCompany);
-
-//		Integer collectComNum = interior.getInteriorNum();
 
 		User user = User.builder().userId(UUID.fromString(userId)).build();
 
@@ -247,7 +507,6 @@ public class InteriorSeviceImpl implements InteriorService {
 				}
 			}
 		}
-		System.out.println(review.getReviewNum());
 		return review.getReviewNum();
 	}
 
@@ -262,11 +521,18 @@ public class InteriorSeviceImpl implements InteriorService {
 	public Integer interiorRequest(String userId, InteriorRequestDto requestDto) throws Exception {
 		InteriorRequest request = requestDto.toEntity();
 		User user = User.builder().userId(UUID.fromString(userId)).build();
-		Interior interior = Interior.builder().interiorNum(1).build(); // test용 interiorNum 1 대입
 
+		Interior interior = Interior.builder().interiorNum(request.getInterior().getInteriorNum()).build();
 		request.setUser(user);
 		request.setInterior(interior);
 		interiorRequestRepository.save(request);
+		Optional<Interior> oInterior = interiorRepository.findById(interior.getInteriorNum());
+		// 알림 기능 추가
+		requestDto.setCompanyId(oInterior.get().getCompany().getCompanyId());
+		requestDto.setUserId(UUID.fromString(userId));
+		System.out.println(requestDto);
+		fcmMessageService.sendInteriorRequest(requestDto);
+
 		return request.getRequestNum();
 	}
 
@@ -277,33 +543,20 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location)
-			throws Exception {
-		List<SampleDto> sampleDtoList = null;
-		Long allCnt = 0L;
-		sampleDtoList = interiorDslRepository.sampleListByFilter(date, type, style, size, location).stream()
-				.map(s -> s.toDto()).collect(Collectors.toList());
-		allCnt = interiorDslRepository.sampleCountByFilter(date, type, style, size, location);
-		return sampleDtoList;
-	}
-
-	@Override
 	public Map<String, Object> interiorDetail(Integer interiorNum) throws Exception {
 		Map<String, Object> detailInfo = new HashMap<>();
 		Interior interiorDetail = interiorRepository.findById(interiorNum)
 				.orElseThrow(() -> new Exception("인테리어 번호 오류"));
 		List<InteriorSample> sampleDetail = interiorSampleRepository.findByInterior_InteriorNum(interiorNum);
 		List<InteriorReview> reviewDetail = interiorReviewRepository.findByInterior_interiorNum(interiorNum);
-		
-		
-		
+
 		Integer sampleCount = sampleDetail.size();
 		Integer reviewCount = reviewDetail.size();
-		
+
 		InteriorDto interiorInfo = interiorDetail.toDto();
 		List<SampleDto> sampleInfo = sampleDetail.stream().map(s -> s.toDto()).collect(Collectors.toList());
 		List<ReviewDto> reviewInfo = reviewDetail.stream().map(r -> r.toDto()).collect(Collectors.toList());
-		
+
 		detailInfo.put("sampleCount", sampleCount);
 		detailInfo.put("reviewCount", reviewCount);
 		detailInfo.put("interiorDetail", interiorInfo);
@@ -344,6 +597,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		review.setLocation(reviewDto.getLocation());
 		review.setStyle(reviewDto.getStyle());
 		review.setType(reviewDto.getType());
+		review.setDate(reviewDto.getDate());
 
 		interiorReviewRepository.save(review);
 
@@ -383,21 +637,6 @@ public class InteriorSeviceImpl implements InteriorService {
 		interiorReviewRepository.deleteById(num);
 	}
 
-	/*
-	 * return interiorRequestDtoList;
-	 * 
-	 * public Page<InteriorRequestDto> interiorRequestListForUserMypage(int page,
-	 * int size, UUID userId) throws Exception { Optional<User> user =
-	 * userRepository.findById(userId);
-	 * 
-	 * Pageable pageable = PageRequest.of(page - 1, size,
-	 * Sort.by(Sort.Direction.DESC, "createdAt")); Page<InteriorRequestDto> pageInfo
-	 * = interiorRequestRepository.findAllByUser(user, pageable)
-	 * .map(InteriorRequest::toDto);
-	 * 
-	 * return pageInfo; }
-	 */
-
 	@Override
 	public List<SampleDto> interiorSampleList(PageInfo pageInfo, UUID companyId) throws Exception {
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
@@ -424,18 +663,27 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public Map<String, Object> updateInteriorCompany(UUID companyId, InteriorDto interiorDto, MultipartFile file) {
+	public Map<String, Object> updateInteriorCompany(UUID companyId, InteriorDto interiorDto, MultipartFile coverImage)
+			throws Exception {
 		Interior interior = interiorRepository.findByCompany_companyId(companyId);
+		try {
+			byte[] imageBytes = interiorDto.getCoverImage(); // DTO에서 byte[] 가져오기
 
-		// User user = userRepository.findById(userId).orElseThrow(() -> new
-		// Exception("사용자를 찾을 수 없습니다"));
-		// Interior interior = interiorDto.toEntity();
+			if (imageBytes != null) {
+				// byte[] 처리 (예: 데이터베이스에 저장)
+				System.out.println("Image size: " + imageBytes.length);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error processing image", e);
+		}
 
 		if (interiorDto.getIntro() != null)
 			interior.setIntro(interiorDto.getIntro());
 
 		if (interiorDto.getContent() != null)
 			interior.setContent(interiorDto.getContent());
+
 		if (interiorDto.getPossibleLocation() != null)
 			interior.setPossibleLocation(interiorDto.getPossibleLocation());
 
@@ -448,13 +696,15 @@ public class InteriorSeviceImpl implements InteriorService {
 		if (interiorDto.getRepairDate() != null)
 			interior.setRepairDate(interiorDto.getRepairDate());
 
-		if (file != null && !file.isEmpty()) {
-			interior.setCoverImage(interiorDto.getCoverImage());
+		if (coverImage != null && !coverImage.isEmpty())
+
+		{
+			interior.setCoverImage(coverImage.getBytes());
 		}
 
-		interiorRepository.save(interior);
+		interior.setPossiblePart(interiorDto.isPossiblePart());
 
-		System.out.println("int" + interior);
+		interiorRepository.save(interior);
 
 		Map<String, Object> res = new HashMap<>();
 		res.put("interior", interior.toDto());
@@ -489,15 +739,4 @@ public class InteriorSeviceImpl implements InteriorService {
 		return pageInfo;
 
 	}
-
-//	@Override
-//	public Page<ReviewDto> reviewListForUserMypage(int page, int size, UUID userId) throws Exception {
-//		Optional<User> user = userRepository.findById(userId);
-//
-//		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-//		Page<ReviewDto> pageInfo = interiorReviewRepository.findAllByUser(user, pageable).map(InteriorReview::toDto);
-//
-//		return pageInfo;
-//	}
-
 }

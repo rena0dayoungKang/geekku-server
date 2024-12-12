@@ -42,7 +42,7 @@ public class CompanyController {
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
-
+	
 	@PostMapping("/joinCompany")
 	public ResponseEntity<String> joinCompany(CompanyDto companyDto,
 			@RequestParam(name = "file", required = false) MultipartFile file) {
@@ -172,13 +172,13 @@ public class CompanyController {
 	        try {
 	            Pageable pageable = PageRequest.of(page - 1, size);
 	            Page<OnestopAnswerDto> onestopAnswers = companyService.getOnestopAnswersByCompanyId(companyId, pageable);
-
 	            // 응답 데이터를 Map으로 정리
 	            Map<String, Object> response = new HashMap<>();
 	            response.put("currentPage", onestopAnswers.getNumber() + 1);
 	            response.put("totalPages", onestopAnswers.getTotalPages());
 	            response.put("totalItems", onestopAnswers.getTotalElements());
 	            response.put("content", onestopAnswers.getContent()); 
+	            System.out.println(response);
 
 	            return ResponseEntity.ok(response);
 	        } catch (Exception e) {

@@ -18,13 +18,14 @@ public interface InteriorService {
 
 	List<SampleDto> sampleListForMain() throws Exception;
 
-	List<InteriorDto> interiorList(String possibleLocation) throws Exception;
+	List<InteriorDto> interiorList(String possibleLocation,PageInfo page, Integer limit) throws Exception;
 
 	Integer checkBookmark(String userId, Integer interiorNum) throws Exception;
 
 	boolean toggleBookmark(String userId, Integer interiorNum) throws Exception;
 
-	Integer interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId) throws Exception;
+	Map<Object, Object> interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId)
+			throws Exception;
 
 	InteriorDto interiorCompanyDetail(UUID companyId) throws Exception;
 
@@ -38,7 +39,7 @@ public interface InteriorService {
 
 	InteriorRequestDto requestDetail(Integer num) throws Exception;
 
-	List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location)
+	List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location,PageInfo page, Integer limit)
 			throws Exception;
 
 	Map<String, Object> interiorDetail(Integer interiorNum) throws Exception;
@@ -67,6 +68,7 @@ public interface InteriorService {
 
 	ReviewDto getReview(Integer reviewNum) throws Exception;
 
-	Map<String, Object> updateInteriorCompany(UUID companyId, InteriorDto interiorDto, MultipartFile file);
+	Map<String, Object> updateInteriorCompany(UUID companyId, InteriorDto interiorDto, MultipartFile coverImage)
+			throws Exception;
 
 }

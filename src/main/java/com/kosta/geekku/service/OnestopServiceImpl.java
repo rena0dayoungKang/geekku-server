@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kosta.geekku.dto.HouseAnswerDto;
 import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
 import com.kosta.geekku.entity.Company;
@@ -83,17 +84,6 @@ public class OnestopServiceImpl implements OnestopService {
 		return onestop.toDto();
 	}
 
-	/*
-	 * @Override public Integer onestopModify(OnestopDto onestopDto) throws
-	 * Exception { Onestop onestop =
-	 * onestopRepository.findById(onestopDto.getOnestopNum()) .orElseThrow(() -> new
-	 * Exception("글번호 오류")); System.out.println(onestop.getOnestopNum());
-	 * onestop.setTitle(onestopDto.getTitle());
-	 * onestop.setContent(onestopDto.getContent()); onestopRepository.save(onestop);
-	 * 
-	 * return onestop.getOnestopNum(); }
-	 */
-
 	@Override
 	@Transactional
 	public void onestopDelete(Integer onestopNum) throws Exception {
@@ -107,7 +97,9 @@ public class OnestopServiceImpl implements OnestopService {
 		Onestop onestop = onestopRepository.findById(onestopAnswerDto.getOnestopNum())
 				.orElseThrow(() -> new Exception("한번에꾸하기 글 번호 오류"));
 		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
+
 		OnestopAnswer onestopAnswer = onestopAnswerDto.toEntity();
+		onestopAnswer.setOnestop(onestop);
 		onestopAnswer.setCompany(company);
 		onestopAnswerRepository.save(onestopAnswer);
 
@@ -117,12 +109,13 @@ public class OnestopServiceImpl implements OnestopService {
 
 	@Transactional
 	@Override
-	public List<OnestopAnswerDto> onestopAnswerList(PageInfo pageInfo, Integer onestopNum) throws Exception {
-		Onestop onestop = onestopRepository.findById(onestopNum).orElseThrow(() -> new Exception("집꾸 글번호 오류"));
+	public List<OnestopAnswerDto> onestopAnswerList(PageInfo pageInfo, Integer oneStopNum) throws Exception {
+		Onestop onestop = onestopRepository.findById(oneStopNum).orElseThrow(() -> new Exception("한번에꾸하기 글번호 오류"));
 		PageRequest pageRequest = PageRequest.of(pageInfo.getCurPage() - 1, 10);
 
-		List<OnestopAnswerDto> onestopAnswerDtoList = onestopDslRepository.onestopAnswerListByPaging(pageRequest)
-				.stream().map(a -> a.toDto()).collect(Collectors.toList());
+		List<OnestopAnswerDto> onestopAnswerDtoList = onestopDslRepository
+				.onestopAnswerListByPaging(pageRequest, oneStopNum).stream().map(a -> a.toDto())
+				.collect(Collectors.toList());
 		Long cnt = onestopDslRepository.findOnestopCount();
 
 		Integer allPage = (int) (Math.ceil(cnt.doubleValue() / pageRequest.getPageSize()));
@@ -132,6 +125,7 @@ public class OnestopServiceImpl implements OnestopService {
 		pageInfo.setAllPage(allPage);
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
+		pageInfo.setTotalCount(cnt);
 
 		return onestopAnswerDtoList;
 	}
@@ -145,12 +139,12 @@ public class OnestopServiceImpl implements OnestopService {
 	}
 
 	@Override
-	public Slice<OnestopAnswerDto> onestopAnswerListForMypage(int page, UUID companyId) throws Exception {
+	public Page<OnestopAnswerDto> onestopAnswerListForMypage(int page, UUID companyId) throws Exception {
 
 		Optional<Company> company = companyRepository.findById(companyId);
 
 		Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
-		Slice<OnestopAnswerDto> pageInfo = onestopAnswerRepository.findAllByCompany(company, pageable)
+		Page<OnestopAnswerDto> pageInfo = onestopAnswerRepository.findAllByCompany(company, pageable)
 				.map(OnestopAnswer::toDto);
 
 		return pageInfo;
@@ -164,6 +158,20 @@ public class OnestopServiceImpl implements OnestopService {
 		Page<OnestopDto> pageInfo = onestopRepository.findAllByUser(user, pageable).map(Onestop::toDto);
 
 		return pageInfo;
+	}
+
+	// 원스탑
+	@Override
+	public Page<OnestopAnswerDto> getAnswersByCompanyId(UUID companyId, Pageable pageable) throws Exception {
+		return onestopAnswerRepository.findByCompanyIdOrderByCreatedAtDesc(companyId, pageable)
+				.map(answer -> OnestopAnswerDto.builder().title(answer.getTitle()).content(answer.getContent())
+						.createdAt(answer.getCreatedAt()).companyId(answer.getCompany().getCompanyId())
+						.companyName(answer.getCompany().getCompanyName()).companyPhone(answer.getCompany().getPhone())
+						.viewCount(answer.getOnestop().getViewCount()).userId(answer.getOnestop().getUser().getUserId())
+						.username(answer.getOnestop().getUser().getUsername())
+						.nickname(answer.getOnestop().getUser().getNickname())
+						.address1(answer.getOnestop().getAddress1()).address2(answer.getOnestop().getAddress2())
+						.onestopNum(answer.getOnestop().getOnestopNum()).type(answer.getOnestop().getType()).build());
 	}
 
 }

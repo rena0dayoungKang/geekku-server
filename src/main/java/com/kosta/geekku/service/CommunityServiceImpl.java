@@ -45,10 +45,13 @@ public class CommunityServiceImpl implements CommunityService {
 	@Value("${upload.path}")
 	private String uploadPath;
 
+
 	@Override
 	public Page<CommunityDto> getCommunityList(Pageable pageable) {
-	    return communityRepository.findAll(pageable).map(community -> community.toDto());
+	    return communityRepository.findAllByOrderByCreatedAtDesc(pageable)
+	                              .map(community -> community.toDto());
 	}
+
 
 	@Override
 	public Integer createCommunity(CommunityDto communityDto) {
@@ -70,9 +73,15 @@ public class CommunityServiceImpl implements CommunityService {
 
 	@Override
 	public Page<CommunityDto> getFilteredCommunityList(CommunityFilterDto filterDto, Pageable pageable) {
-		Specification<Community> specification = CommunitySpecification.filterBy(filterDto);
-		return communityRepository.findAll(specification, pageable).map(Community::toDto);
+	    Specification<Community> specification = CommunitySpecification.filterBy(filterDto);
+	    Pageable sortedPageable = PageRequest.of(
+	        pageable.getPageNumber(),
+	        pageable.getPageSize(),
+	        Sort.by(Sort.Direction.DESC, "createdAt")
+	    );
+	    return communityRepository.findAll(specification, sortedPageable).map(Community::toDto);
 	}
+
 
 	@Transactional
 	@Override
@@ -234,7 +243,7 @@ public class CommunityServiceImpl implements CommunityService {
 
 	@Transactional
 	@Override
-	public void createComment(Integer communityId, String userId, String content) throws Exception {
+	public List<CommunityCommentDto> createComment(Integer communityId, String userId, String content) throws Exception {
 		// 커뮤니티 게시글 확인
 		Community community = communityRepository.findById(communityId)
 				.orElseThrow(() -> new Exception("해당 커뮤니티 글을 찾을 수 없습니다."));
@@ -245,13 +254,16 @@ public class CommunityServiceImpl implements CommunityService {
 		CommunityComment comment = CommunityComment.builder().community(community).user(user).content(content).build();
 
 		communityCommentRepository.save(comment);
+		return communityCommentRepository.findByCommunityCommunityNum(communityId).stream()
+	            .map(CommunityComment::toDto) // 엔티티를 DTO로 변환
+	            .collect(Collectors.toList());
 	}
 
 	@Transactional
 	@Override
-	public void deleteComment(Integer commentId) throws Exception {
+	public void deleteComment(Integer commentNum) throws Exception {
 		// 댓글 존재 여부 확인
-		CommunityComment comment = communityCommentRepository.findById(commentId)
+		CommunityComment comment = communityCommentRepository.findById(commentNum)
 				.orElseThrow(() -> new Exception("해당 댓글을 찾을 수 없습니다."));
 		// 댓글 삭제
 		communityCommentRepository.delete(comment);

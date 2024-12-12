@@ -11,9 +11,12 @@ import com.kosta.geekku.entity.InteriorSample;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -48,4 +51,15 @@ public class SampleDto {
 				.build();
 		return sample;
 	}
+
+
+	@Override
+	public String toString() {
+		return "SampleDto [sampleNum=" + sampleNum + ", interiorNum=" + interiorNum + ", title=" + title + ", type="
+				+ type + ", style=" + style + ", size=" + size + ", location=" + location + ", intro=" + intro
+				+ ", content=" + content + ", createdAt=" + createdAt + ", companyId=" + companyId + ", companyName="
+				+ companyName + "]";
+	}
+	
+	
 }
