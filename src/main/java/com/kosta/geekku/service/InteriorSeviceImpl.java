@@ -2,6 +2,7 @@ package com.kosta.geekku.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,20 +91,59 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public List<InteriorDto> interiorList(String possibleLocation) throws Exception {
+	public List<InteriorDto> interiorList(String possibleLocation, PageInfo pageInfo, Integer limit) throws Exception {
 		List<InteriorDto> interiorDtoList = null;
+		Page<Interior> interiorPage = null;
 		Long allCnt = 0L;
+		Pageable pageable = PageRequest.of(pageInfo.getCurPage()-1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+//		Integer offset = (pageInfo.getCurPage()-1) * limit;
+		
 		if (possibleLocation.equals("전체")) {
-			interiorDtoList = interiorDslRepository.interiorListAll().stream().map(i -> i.toDto())
-					.collect(Collectors.toList());
-			allCnt = interiorDslRepository.interiorCountAll();
+			interiorPage = interiorRepository.findAll(pageable);
+//			interiorDtoList = interiorDslRepository.interiorListAll(pageable).stream().map(i -> i.toDto())
+//					.collect(Collectors.toList());
+//			allCnt = interiorDslRepository.interiorCountAll();
 		} else {
-			interiorDtoList = interiorDslRepository.interiorListByLoc(possibleLocation).stream().map(i -> i.toDto())
-					.collect(Collectors.toList());
-			allCnt = interiorDslRepository.interiorCountByLoc(possibleLocation);
+			interiorPage = interiorRepository.findByPossibleLocationContains(possibleLocation, pageable);
+			
+//			interiorDtoList = interiorDslRepository.interiorListByLoc(possibleLocation, offset, limit).stream().map(i -> i.toDto())
+//					.collect(Collectors.toList());
+//			allCnt = interiorDslRepository.interiorCountByLoc(possibleLocation);
 		}
+		interiorDtoList = interiorPage.getContent().stream().map(i -> i.toDto()).collect(Collectors.toList());
+		System.out.println("=============================");
+		System.out.println(interiorPage.getTotalPages());
+		System.out.println(interiorPage.getTotalElements());
+		pageInfo.setTotalCount(1L*interiorPage.getTotalElements());
+		pageInfo.setAllPage(interiorPage.getTotalPages());
+		//pageInfo.setTotalCount(allCnt);
 		return interiorDtoList;
 	}
+	
+	@Override
+	public List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location, PageInfo pageInfo, Integer limit)
+			throws Exception {
+		List<SampleDto> sampleDtoList = null;
+//		Page<InteriorSample> samplePage = null;
+//		Long allCnt = 0L;
+		Pageable pageable = PageRequest.of(pageInfo.getCurPage()-1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+		
+		Page<InteriorSample> samplePage = interiorSampleRepository.findByTypeInAndStyleInAndSizeInAndLocationIn(
+				Arrays.asList(type), Arrays.asList(style),  Arrays.asList(size),  Arrays.asList(location), pageable);
+		pageInfo.setAllPage(samplePage.getTotalPages());
+		pageInfo.setTotalCount(samplePage.getTotalElements());
+		
+		
+		return samplePage.getContent().stream().map(s->s.toDto()).collect(Collectors.toList());
+
+//		samplePage = interiorDslRepository.sampleListByFilter(date, type, style, size, location,pageable);
+		
+//		sampleDtoList = interiorDslRepository.sampleListByFilter(date, type, style, size, location).stream()
+//				.map(s -> s.toDto()).collect(Collectors.toList());
+//		allCnt = interiorDslRepository.sampleCountByFilter(date, type, style, size, location);
+//		return sampleDtoList;
+	}
+
 
 	@Override
 	public Integer checkBookmark(String userId, Integer interiorNum) throws Exception {
@@ -131,30 +171,29 @@ public class InteriorSeviceImpl implements InteriorService {
 
 	@Transactional
 	@Override
-	public Map<Object,Object> interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId)
+	public Map<Object, Object> interiorRegister(InteriorDto interiorDto, MultipartFile coverImage, UUID companyId)
 			throws Exception {
 		Interior interior = interiorRepository.findByCompany_companyId(companyId);
 
 		if (interior != null) {
 			throw new Exception("이미 등록한 인테리어 회사입니다.");
 		}
-		
+
 		Interior nInterior = interiorDto.toEntity();
 		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
 		company.setRegStatus(true);
 		nInterior.setCompany(company);
 
-		
 		if (coverImage != null && !coverImage.isEmpty()) {
 			nInterior.setCoverImage(coverImage.getBytes());
 		}
 
 		interiorRepository.save(nInterior);
 
-		Map<Object,Object> total = new HashMap<>();
+		Map<Object, Object> total = new HashMap<>();
 		total.put("regStatus", company.isRegStatus());
 		total.put("interiorNum", nInterior.getInteriorNum());
-		
+
 		return total;
 	}
 
@@ -200,7 +239,10 @@ public class InteriorSeviceImpl implements InteriorService {
 
 		InteriorReview review = reviewDto.toEntity();
 
-		Company company = companyRepository.findByCompanyNameContaining(reviewDto.getCompanyName()); // 리뷰 등록할 때 회사이름 일부만 작성했을수도 있기때문에 포함된 회사 조회
+		Company company = companyRepository.findByCompanyNameContaining(reviewDto.getCompanyName()); // 리뷰 등록할 때 회사이름
+																										// 일부만 작성했을수도
+																										// 있기때문에 포함된 회사
+																										// 조회
 		UUID findCompany = company.getCompanyId();
 		Interior findInteriorNum = interiorRepository.findByCompany_companyId(findCompany);
 		Integer num = findInteriorNum.getInteriorNum();
@@ -252,7 +294,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		request.setInterior(interior);
 		interiorRequestRepository.save(request);
 		Optional<Interior> oInterior = interiorRepository.findById(interior.getInteriorNum());
-		//알림 기능 추가
+		// 알림 기능 추가
 		requestDto.setCompanyId(oInterior.get().getCompany().getCompanyId());
 		requestDto.setUserId(UUID.fromString(userId));
 		System.out.println(requestDto);
@@ -261,22 +303,10 @@ public class InteriorSeviceImpl implements InteriorService {
 		return request.getRequestNum();
 	}
 
-
 	@Override
 	public InteriorRequestDto requestDetail(Integer num) throws Exception {
 		InteriorRequest request = interiorRequestRepository.findById(num).orElseThrow(() -> new Exception("문의 번호 오류"));
 		return request.toDto();
-	}
-
-	@Override
-	public List<SampleDto> sampleList(String date, String[] type, String[] style, String[] size, String[] location)
-			throws Exception {
-		List<SampleDto> sampleDtoList = null;
-		Long allCnt = 0L;
-		sampleDtoList = interiorDslRepository.sampleListByFilter(date, type, style, size, location).stream()
-				.map(s -> s.toDto()).collect(Collectors.toList());
-		allCnt = interiorDslRepository.sampleCountByFilter(date, type, style, size, location);
-		return sampleDtoList;
 	}
 
 	@Override
@@ -400,12 +430,20 @@ public class InteriorSeviceImpl implements InteriorService {
 	}
 
 	@Override
-	public Map<String, Object> updateInteriorCompany(UUID companyId, InteriorDto interiorDto, MultipartFile file) {
+	public Map<String, Object> updateInteriorCompany(UUID companyId, InteriorDto interiorDto, MultipartFile coverImage)
+			throws Exception {
 		Interior interior = interiorRepository.findByCompany_companyId(companyId);
+		try {
+			byte[] imageBytes = interiorDto.getCoverImage(); // DTO에서 byte[] 가져오기
 
-		// User user = userRepository.findById(userId).orElseThrow(() -> new
-		// Exception("사용자를 찾을 수 없습니다"));
-		// Interior interior = interiorDto.toEntity();
+			if (imageBytes != null) {
+				// byte[] 처리 (예: 데이터베이스에 저장)
+				System.out.println("Image size: " + imageBytes.length);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error processing image", e);
+		}
 
 		if (interiorDto.getIntro() != null)
 			interior.setIntro(interiorDto.getIntro());
@@ -425,15 +463,15 @@ public class InteriorSeviceImpl implements InteriorService {
 		if (interiorDto.getRepairDate() != null)
 			interior.setRepairDate(interiorDto.getRepairDate());
 
-		if (file != null && !file.isEmpty()) {
-			interior.setCoverImage(interiorDto.getCoverImage());
+		if (coverImage != null && !coverImage.isEmpty())
+
+		{
+			interior.setCoverImage(coverImage.getBytes());
 		}
 
 		interior.setPossiblePart(interiorDto.isPossiblePart());
 
 		interiorRepository.save(interior);
-
-		System.out.println("int" + interior);
 
 		Map<String, Object> res = new HashMap<>();
 		res.put("interior", interior.toDto());

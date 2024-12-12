@@ -36,17 +36,10 @@ public class InteriorDto {
 	public Interior toEntity() {
 		Interior interior = Interior.builder().interiorNum(interiorNum)
 //				.company(Company.builder().companyId(getCompanyId()).companyName(getCompanyName()).build())
-				.company(Company.builder().companyName(getCompanyName()).build())
-				.possiblePart(possiblePart)
-				.period(period)
-				.recentCount(recentCount)
-				.repairDate(repairDate)
-				.possibleLocation(possibleLocation)
-				.possiblePart(possiblePart)
-				.coverImage(coverImage)
-				.intro(intro)
-				.content(content)
-				.createdAt(createdAt).build();
+				.company(Company.builder().companyName(getCompanyName()).build()).possiblePart(possiblePart)
+				.period(period).recentCount(recentCount).repairDate(repairDate).possibleLocation(possibleLocation)
+				.possiblePart(possiblePart).coverImage(coverImage).intro(intro).content(content).createdAt(createdAt)
+				.build();
 		if (createdAt != null) {
 			interior.setCreatedAt(createdAt);
 		}
@@ -60,6 +53,5 @@ public class InteriorDto {
 				+ ", repairDate=" + repairDate + ", possibleLocation=" + possibleLocation + ", intro=" + intro
 				+ ", content=" + content + ", createdAt=" + createdAt + ", regStatus=" + regStatus + "]";
 	}
-	
-	
+
 }
