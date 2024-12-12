@@ -111,9 +111,6 @@ public class InteriorSeviceImpl implements InteriorService {
 //			allCnt = interiorDslRepository.interiorCountByLoc(possibleLocation);
 		}
 		interiorDtoList = interiorPage.getContent().stream().map(i -> i.toDto()).collect(Collectors.toList());
-		System.out.println("=============================");
-		System.out.println(interiorPage.getTotalPages());
-		System.out.println(interiorPage.getTotalElements());
 		pageInfo.setTotalCount(1L*interiorPage.getTotalElements());
 		pageInfo.setAllPage(interiorPage.getTotalPages());
 		//pageInfo.setTotalCount(allCnt);
@@ -505,5 +502,18 @@ public class InteriorSeviceImpl implements InteriorService {
 
 		return pageInfo;
 
+	}
+
+	@Override
+	public void sampleDelete(Integer sampleNum, UUID companyId) throws Exception {
+		InteriorSample sample = interiorSampleRepository.findById(sampleNum).orElseThrow(() -> new Exception("시공사례 글번호 오류"));
+		
+		// upload_path에 저장된 coverImage 파일 삭제
+		if (sample.getCoverImage() != null) {
+			File delFile = new File(uploadPath + "sampleImage/" + sample.getCoverImage());
+			delFile.delete();
+		}
+		
+	    interiorSampleRepository.deleteById(sampleNum);
 	}
 }

@@ -26,6 +26,10 @@ public class QCommunity extends EntityPathBase<Community> {
 
     public final StringPath address2 = createString("address2");
 
+    public final ListPath<CommunityComment, QCommunityComment> commentList = this.<CommunityComment, QCommunityComment>createList("commentList", CommunityComment.class, QCommunityComment.class, PathInits.DIRECT2);
+
+    public final ListPath<CommunityBookmark, QCommunityBookmark> communityBookmarkList = this.<CommunityBookmark, QCommunityBookmark>createList("communityBookmarkList", CommunityBookmark.class, QCommunityBookmark.class, PathInits.DIRECT2);
+
     public final NumberPath<Integer> communityNum = createNumber("communityNum", Integer.class);
 
     public final StringPath content = createString("content");
