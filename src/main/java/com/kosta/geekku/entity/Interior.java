@@ -2,7 +2,9 @@ package com.kosta.geekku.entity;
 
 import java.sql.Timestamp;
 import java.util.Base64;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -54,7 +57,7 @@ public class Interior {
 	private String content; // 소개글 1000자제한
 	@CreationTimestamp
 	private Timestamp createdAt;
-
+	
 	public InteriorDto toDto() {
 		InteriorDto interiorDto = InteriorDto.builder().interiorNum(interiorNum)
 				.possiblePart(possiblePart)

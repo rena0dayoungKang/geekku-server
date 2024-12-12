@@ -112,10 +112,9 @@ public class InteriorSeviceImpl implements InteriorService {
 //			allCnt = interiorDslRepository.interiorCountByLoc(possibleLocation);
 		}
 		interiorDtoList = interiorPage.getContent().stream().map(i -> i.toDto()).collect(Collectors.toList());
-		System.out.println("=============================");
-		System.out.println(interiorPage.getTotalPages());
-		System.out.println(interiorPage.getTotalElements());
-		pageInfo.setTotalCount(1L * interiorPage.getTotalElements());
+
+		pageInfo.setTotalCount(1L*interiorPage.getTotalElements());
+
 		pageInfo.setAllPage(interiorPage.getTotalPages());
 		// pageInfo.setTotalCount(allCnt);
 		return interiorDtoList;
@@ -769,5 +768,52 @@ public class InteriorSeviceImpl implements InteriorService {
 
 		return pageInfo;
 
+	}
+
+	@Override
+	public void sampleDelete(Integer sampleNum, UUID companyId) throws Exception {
+		InteriorSample sample = interiorSampleRepository.findById(sampleNum).orElseThrow(() -> new Exception("시공사례 글번호 오류"));
+		
+		// upload_path에 저장된 coverImage 파일 삭제
+		if (sample.getCoverImage() != null) {
+			File delFile = new File(uploadPath + "sampleImage/" + sample.getCoverImage());
+			delFile.delete();
+		}
+		
+	    interiorSampleRepository.deleteById(sampleNum);
+	}
+
+	@Override
+	public Integer sampleUpdate(SampleDto sampleDto, MultipartFile coverImage, MultipartFile deleteImage,
+			UUID companyId, Integer num) throws Exception {
+		
+		InteriorSample sample = interiorSampleRepository.findById(num).orElseThrow(() -> new Exception("시공사례 글번호 오류"));
+		sample.setContent(sampleDto.getContent());
+		sample.setType(sampleDto.getType());
+		sample.setTitle(sampleDto.getTitle());
+		sample.setStyle(sampleDto.getStyle());
+		sample.setSize(sampleDto.getSize());
+		sample.setLocation(sampleDto.getLocation());
+		interiorSampleRepository.save(sample);
+		
+		// 기존 coverImage 파일 삭제하는 경우
+		if (deleteImage != null) {			
+			File delFile = new File(uploadPath + "sampleImage/" + deleteImage.getOriginalFilename());
+			if (delFile != null) delFile.delete();
+		}
+		
+		// 수정된 coverImage파일 추가
+		if (coverImage != null && !coverImage.isEmpty()) {
+			String fileName = coverImage.getOriginalFilename();
+			String filePath = uploadPath + "sampleImage/";
+
+			File file = new File(filePath + fileName);
+			coverImage.transferTo(file);
+			sample.setCoverImage(file.getName());
+		}
+
+		interiorSampleRepository.save(sample);
+		
+		return sample.getSampleNum();
 	}
 }

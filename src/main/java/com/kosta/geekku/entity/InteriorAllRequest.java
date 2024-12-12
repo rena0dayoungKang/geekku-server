@@ -61,7 +61,7 @@ public class InteriorAllRequest {
 	@CreationTimestamp
 	private Timestamp createAt;
 
-	@OneToMany(mappedBy = "interiorAll", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "interiorAll", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<InteriorAllRequest> interiorAll = new ArrayList<>();
 
 	public InteriorAllDto toDto() {

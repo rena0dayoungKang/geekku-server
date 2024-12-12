@@ -73,7 +73,7 @@ public class Estate {
 	@CreationTimestamp
 	private Timestamp createdAt;
 
-	@OneToMany(mappedBy = "estate", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "estate", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<EstateImage> imageList = new ArrayList<>();
 	
     @OneToMany(mappedBy = "estate", cascade = CascadeType.REMOVE, orphanRemoval = true)

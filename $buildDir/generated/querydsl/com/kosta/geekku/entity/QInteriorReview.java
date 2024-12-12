@@ -28,6 +28,8 @@ public class QInteriorReview extends EntityPathBase<InteriorReview> {
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 
+    public final DatePath<java.time.LocalDate> date = createDate("date", java.time.LocalDate.class);
+
     public final ListPath<InteriorReviewImage, QInteriorReviewImage> imagesList = this.<InteriorReviewImage, QInteriorReviewImage>createList("imagesList", InteriorReviewImage.class, QInteriorReviewImage.class, PathInits.DIRECT2);
 
     public final QInterior interior;

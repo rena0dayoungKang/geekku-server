@@ -42,6 +42,8 @@ public class QEstate extends EntityPathBase<Estate> {
 
     public final NumberPath<Integer> depositPrice = createNumber("depositPrice", Integer.class);
 
+    public final ListPath<EstateBookmark, QEstateBookmark> estateBookmarkList = this.<EstateBookmark, QEstateBookmark>createList("estateBookmarkList", EstateBookmark.class, QEstateBookmark.class, PathInits.DIRECT2);
+
     public final NumberPath<Integer> estateNum = createNumber("estateNum", Integer.class);
 
     public final NumberPath<Integer> floor = createNumber("floor", Integer.class);

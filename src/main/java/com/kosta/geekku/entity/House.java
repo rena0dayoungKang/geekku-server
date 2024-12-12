@@ -63,7 +63,7 @@ public class House {
 	@CreationTimestamp
 	private Timestamp createdAt;
 	
-	@OneToMany(mappedBy = "house", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "house", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<HouseAnswer> houseAnswerList = new ArrayList<>();
 	
 	public HouseDto toDto() {
