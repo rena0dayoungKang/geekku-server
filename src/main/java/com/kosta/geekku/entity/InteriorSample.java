@@ -49,7 +49,7 @@ public class InteriorSample {
 	private String title;
 	private String type; // 주거형태
 	private String style;
-	private String size;
+	private Integer size;
 	private String location;
 	private String coverImage;
 	@Column(columnDefinition = "LONGTEXT")

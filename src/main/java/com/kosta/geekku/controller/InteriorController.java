@@ -84,8 +84,7 @@ public class InteriorController {
 	}
 
 	@GetMapping("/sampleList")
-	public ResponseEntity<Map<String, Object>> sampleList(
-			@RequestParam(name = "date", required = false) String date,
+	public ResponseEntity<Map<String, Object>> sampleList(@RequestParam(name = "date", required = false) String date,
 			@RequestParam(name = "types", required = false) String[] types,
 			@RequestParam(name = "styles", required = false) String[] styles,
 			@RequestParam(name = "sizes", required = false) String[] sizes,
@@ -94,11 +93,11 @@ public class InteriorController {
 			@RequestParam(value = "limit", defaultValue = "9") Integer limit) {
 		try {
 			System.out.println(date);
-			System.out.println("types:"+types);
-			System.out.println("styles:"+styles);
-			System.out.println("sizes:"+sizes);
-			System.out.println("location:"+location);
-			
+			System.out.println("types:" + types);
+			System.out.println("styles:" + styles);
+			System.out.println("sizes:" + sizes);
+			System.out.println("location:" + location);
+
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
 			List<SampleDto> sampleList = interiorService.sampleList(date, types, styles, sizes, location, pageInfo,
@@ -108,9 +107,6 @@ public class InteriorController {
 			listInfo.put("sampleList", sampleList);
 			listInfo.put("allCnt", pageInfo.getTotalCount());
 			listInfo.put("allPage", pageInfo.getAllPage());
-			System.out.println(sampleList);
-			System.out.println(pageInfo.getTotalCount());
-			System.out.println(pageInfo.getAllPage());
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -157,7 +153,6 @@ public class InteriorController {
 //			System.out.println(companyId);
 
 			Map<String, Object> res = interiorService.updateInteriorCompany(companyId, interiorDto, coverImage);
-			System.out.println(coverImage);
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 
 		} catch (Exception e) {

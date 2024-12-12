@@ -4,11 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -286,96 +284,129 @@ public class InteriorSeviceImpl implements InteriorService {
 //	}
 	@Override
 	public List<SampleDto> sampleList(String date, String[] types, String[] styles, String[] sizes, String[] location,
-	                                  PageInfo pageInfo, Integer limit) throws Exception {
-	    // Pageable 설정
-	    Pageable pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
-	    List<InteriorSample> filteredSamples = new ArrayList<>();
-	    Page<InteriorSample> samplePage=null;
+			PageInfo pageInfo, Integer limit) throws Exception {
+		// Pageable 설정
+		Pageable pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+		List<InteriorSample> filteredSamples = new ArrayList<>();
+		Page<InteriorSample> samplePage = null;
 
-	    // 날짜 정렬 조건 설정
-	    if ("latest".equals(date)) {
-	        pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
-	    } else if ("oldest".equals(date)) {
-	        pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.ASC, "createdAt"));
-	    }
+		// 날짜 정렬 조건 설정
+		if ("latest".equals(date)) {
+			pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+		} else if ("oldest".equals(date)) {
+			pageable = PageRequest.of(pageInfo.getCurPage() - 1, limit, Sort.by(Sort.Direction.ASC, "createdAt"));
+		}
 
-	    // 필터 조건이 없으면 전체 데이터 가져오기
-	    if ((types == null || types.length == 0) && (styles == null || styles.length == 0)
-	            && (sizes == null || sizes.length == 0) && (location == null || location.length == 0)) {
-	        samplePage = interiorSampleRepository.findAll(pageable);  // 페이지 처리된 샘플 리스트
-	    } else {
-	        // 조건에 맞는 샘플들 필터링
-	        List<InteriorSample> filteredByTypes = null;
-	        List<InteriorSample> filteredByStyles = null;
-	        List<InteriorSample> filteredBySizes = null;
-	        List<InteriorSample> filteredByLocation = null;
+		// 필터 조건이 없으면 전체 데이터 가져오기
+		if ((types == null || types.length == 0) && (styles == null || styles.length == 0)
+				&& (sizes == null || sizes.length == 0) && (location == null || location.length == 0)) {
+			samplePage = interiorSampleRepository.findAll(pageable); // 페이지 처리된 샘플 리스트
+		} else {
+			// 조건에 맞는 샘플들 필터링
+			List<InteriorSample> filteredByTypes = null;
+			List<InteriorSample> filteredByStyles = null;
+			List<InteriorSample> filteredBySizes = null;
+			List<InteriorSample> filteredByLocation = null;
 
-	        // 타입에 맞는 샘플 가져오기
-	        if (types != null && types.length > 0) {
-	            filteredByTypes = interiorSampleRepository.findByTypeIn(types, pageable).getContent();
-	        }
+			// 타입에 맞는 샘플 가져오기
+			if (types != null && types.length > 0) {
+				filteredByTypes = interiorSampleRepository.findByTypeIn(types, pageable).getContent();
+			}
 
-	        // 스타일에 맞는 샘플 가져오기
-	        if (styles != null && styles.length > 0) {
-	            filteredByStyles = interiorSampleRepository.findByStyleIn(styles, pageable).getContent();
-	        }
+			// 스타일에 맞는 샘플 가져오기
+			if (styles != null && styles.length > 0) {
+				filteredByStyles = interiorSampleRepository.findByStyleIn(styles, pageable).getContent();
+			}
 
-	        // 사이즈에 맞는 샘플 가져오기
-	        if (sizes != null && sizes.length > 0) {
-	            filteredBySizes = interiorSampleRepository.findBySizeIn(sizes, pageable).getContent();
-	        }
+			// 사이즈에 맞는 샘플 가져오기
+//	        if (sizes != null && sizes.length > 0) {
+//	        	
+//	            filteredBySizes = interiorSampleRepository.findBySizeIn(sizes, pageable).getContent();
+//	        }
+			if (sizes != null && sizes.length > 0) {
+				List<Integer> sizeRangeList = new ArrayList<>();
 
-	        // 위치에 맞는 샘플 가져오기
-	        if (location != null && location.length > 0) {
-	            filteredByLocation = interiorSampleRepository.findByLocationIn(location, pageable).getContent();
-	        }
+				for (String size : sizes) {
+					if (size.contains("평대")) {
+						// "20평대" -> 20~29
+						Integer lowerBound = Integer.parseInt(size.substring(0, size.indexOf("평")));
+						Integer upperBound = lowerBound + 9;
+						for (int i = lowerBound; i <= upperBound; i++) {
+							sizeRangeList.add(i);
+						}
+					} else if (size.contains("미만")) {
+						// "10평미만" -> 1~9
+						Integer upperBound = Integer.parseInt(size.substring(0, size.indexOf("평")));
+						for (int i = 1; i < upperBound; i++) {
+							sizeRangeList.add(i);
+						}
+					} else if (size.contains("이상")) {
+						// "50평 이상" -> 50~상한값(100 예시)
+						Integer lowerBound = Integer.parseInt(size.substring(0, size.indexOf("평")));
+						for (int i = lowerBound; i <= 100; i++) { // 상한값을 적절히 설정
+							sizeRangeList.add(i);
+						}
+					}
+				}
+				System.out.println("============"+sizeRangeList);
+				// List<Integer> -> Integer[]
+				Integer[] sizeArray = sizeRangeList.toArray(new Integer[0]);
 
-	        // 조건에 맞는 샘플들이 하나라도 선택되었을 경우
-	        if ((filteredByTypes != null && !filteredByTypes.isEmpty()) ||
-	            (filteredByStyles != null && !filteredByStyles.isEmpty()) ||
-	            (filteredBySizes != null && !filteredBySizes.isEmpty()) ||
-	            (filteredByLocation != null && !filteredByLocation.isEmpty())) {
+				// Repository 메서드 호출
+				filteredBySizes = interiorSampleRepository.findBySizeIn(sizeArray, pageable).getContent();
+			}
 
-	            // 각 조건에 맞는 샘플들 중에서 교집합을 구하기 위해 기본 샘플 리스트 설정
-	            filteredSamples.addAll(filteredByTypes != null ? filteredByTypes : new ArrayList<>());
-	            filteredSamples.addAll(filteredByStyles != null ? filteredByStyles : new ArrayList<>());
-	            filteredSamples.addAll(filteredBySizes != null ? filteredBySizes : new ArrayList<>());
-	            filteredSamples.addAll(filteredByLocation != null ? filteredByLocation : new ArrayList<>());
+			// 위치에 맞는 샘플 가져오기
+			if (location != null && location.length > 0) {
+				filteredByLocation = interiorSampleRepository.findByLocationIn(location, pageable).getContent();
+			}
 
-	            // 교집합 구하기 위해 retainAll 사용
-	            if (filteredByTypes != null && !filteredByTypes.isEmpty()) {
-	                filteredSamples.retainAll(filteredByTypes);  // 'types'에 해당하는 교집합만 남김
-	            }
-	            if (filteredByStyles != null && !filteredByStyles.isEmpty()) {
-	                filteredSamples.retainAll(filteredByStyles);  // 'styles'에 해당하는 교집합만 남김
-	            }
-	            if (filteredBySizes != null && !filteredBySizes.isEmpty()) {
-	                filteredSamples.retainAll(filteredBySizes);  // 'sizes'에 해당하는 교집합만 남김
-	            }
-	            if (filteredByLocation != null && !filteredByLocation.isEmpty()) {
-	                filteredSamples.retainAll(filteredByLocation);  // 'location'에 해당하는 교집합만 남김
-	            }
+			// 조건에 맞는 샘플들이 하나라도 선택되었을 경우
+			if ((filteredByTypes != null && !filteredByTypes.isEmpty())
+					|| (filteredByStyles != null && !filteredByStyles.isEmpty())
+					|| (filteredBySizes != null && !filteredBySizes.isEmpty())
+					|| (filteredByLocation != null && !filteredByLocation.isEmpty())) {
 
-	            // 교집합이 비었으면 빈 리스트 반환
-	            if (filteredSamples.isEmpty()) {
-	                samplePage = new PageImpl<>(filteredSamples, pageable, 0);  // 빈 리스트 반환
-	            } else {
-	                // 교집합이 있으면 페이지 처리
-	                samplePage = new PageImpl<>(filteredSamples, pageable, filteredSamples.size());
-	            }
-	        } else {
-	            // 조건이 하나도 선택되지 않으면 빈 리스트 반환
-	            filteredSamples = new ArrayList<>();
-	            samplePage = new PageImpl<>(filteredSamples, pageable, 0);  // 빈 리스트 반환
-	        }
-	    }
+				// 각 조건에 맞는 샘플들 중에서 교집합을 구하기 위해 기본 샘플 리스트 설정
+				filteredSamples.addAll(filteredByTypes != null ? filteredByTypes : new ArrayList<>());
+				filteredSamples.addAll(filteredByStyles != null ? filteredByStyles : new ArrayList<>());
+				filteredSamples.addAll(filteredBySizes != null ? filteredBySizes : new ArrayList<>());
+				filteredSamples.addAll(filteredByLocation != null ? filteredByLocation : new ArrayList<>());
 
-	    // 페이지 정보 설정
-	    pageInfo.setAllPage(samplePage.getTotalPages());
-	    pageInfo.setTotalCount(samplePage.getTotalElements());
+				// 교집합 구하기 위해 retainAll 사용
+				if (filteredByTypes != null && !filteredByTypes.isEmpty()) {
+					filteredSamples.retainAll(filteredByTypes); // 'types'에 해당하는 교집합만 남김
+				}
+				if (filteredByStyles != null && !filteredByStyles.isEmpty()) {
+					filteredSamples.retainAll(filteredByStyles); // 'styles'에 해당하는 교집합만 남김
+				}
+				if (filteredBySizes != null && !filteredBySizes.isEmpty()) {
+					filteredSamples.retainAll(filteredBySizes); // 'sizes'에 해당하는 교집합만 남김
+				}
+				if (filteredByLocation != null && !filteredByLocation.isEmpty()) {
+					filteredSamples.retainAll(filteredByLocation); // 'location'에 해당하는 교집합만 남김
+				}
 
-	    // DTO로 변환하여 반환
-	    return samplePage.getContent().stream().map(s -> s.toDto()).collect(Collectors.toList());
+				// 교집합이 비었으면 빈 리스트 반환
+				if (filteredSamples.isEmpty()) {
+					samplePage = new PageImpl<>(filteredSamples, pageable, 0); // 빈 리스트 반환
+				} else {
+					// 교집합이 있으면 페이지 처리
+					samplePage = new PageImpl<>(filteredSamples, pageable, filteredSamples.size());
+				}
+			} else {
+				// 조건이 하나도 선택되지 않으면 빈 리스트 반환
+				filteredSamples = new ArrayList<>();
+				samplePage = new PageImpl<>(filteredSamples, pageable, 0); // 빈 리스트 반환
+			}
+		}
+
+		// 페이지 정보 설정
+		pageInfo.setAllPage(samplePage.getTotalPages());
+		pageInfo.setTotalCount(samplePage.getTotalElements());
+
+		// DTO로 변환하여 반환
+		return samplePage.getContent().stream().map(s -> s.toDto()).collect(Collectors.toList());
 	}
 
 	@Override
