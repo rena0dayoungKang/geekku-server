@@ -78,7 +78,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 					.map(b -> b.toDto()).collect(Collectors.toList());
 			System.out.println(interiorAllDtoList);
 			allCnt = interiorAllRequestDslRepository.findInteriorAllCount();
-		} else { // 寃��깋
+		} else { // 검색
 			interiorAllDtoList = interiorAllRequestDslRepository.searchInteriorAllListByPaging(pageRequest, type, word)
 					.stream().map(b -> b.toDto()).collect(Collectors.toList());
 			allCnt = interiorAllRequestDslRepository.searchInteriorAllCount(type, word);
@@ -91,6 +91,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 		pageInfo.setAllPage(allPage);
 		pageInfo.setStartPage(startPage);
 		pageInfo.setEndPage(endPage);
+		pageInfo.setTotalCount(allCnt);
 		return interiorAllDtoList;
 	}
 
