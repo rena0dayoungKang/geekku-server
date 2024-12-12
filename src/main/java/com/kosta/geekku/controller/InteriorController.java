@@ -70,7 +70,7 @@ public class InteriorController {
 			System.out.println(page);
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			List<InteriorDto> interiorList = interiorService.interiorList(possibleLocation,pageInfo,limit);
+			List<InteriorDto> interiorList = interiorService.interiorList(possibleLocation, pageInfo, limit);
 			System.out.println(interiorList);
 
 			Map<String, Object> listInfo = new HashMap<>();
@@ -83,7 +83,7 @@ public class InteriorController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/sampleList")
 	public ResponseEntity<Map<String, Object>> sampleList(@RequestParam(name = "date", required = false) String date,
 			@RequestParam(name = "types", required = false) String[] types,
@@ -93,11 +93,17 @@ public class InteriorController {
 			@RequestParam(value = "page", defaultValue = "1") Integer page,
 			@RequestParam(value = "limit", defaultValue = "9") Integer limit) {
 		try {
+			System.out.println(date);
+			System.out.println("types:" + types);
+			System.out.println("styles:" + styles);
+			System.out.println("sizes:" + sizes);
+			System.out.println("location:" + location);
+
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
-			List<SampleDto> sampleList = interiorService.sampleList(date, types, styles, sizes, location,pageInfo,limit);
-			
-			
+			List<SampleDto> sampleList = interiorService.sampleList(date, types, styles, sizes, location, pageInfo,
+					limit);
+
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("sampleList", sampleList);
 			listInfo.put("allCnt", pageInfo.getTotalCount());
@@ -148,7 +154,6 @@ public class InteriorController {
 //			System.out.println(companyId);
 
 			Map<String, Object> res = interiorService.updateInteriorCompany(companyId, interiorDto, coverImage);
-			System.out.println(coverImage);
 			return new ResponseEntity<String>(String.valueOf(true), HttpStatus.OK);
 
 		} catch (Exception e) {
@@ -303,8 +308,6 @@ public class InteriorController {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
-
-
 
 	@PostMapping("/interiorDetail")
 	public ResponseEntity<Map<String, Object>> interiorDetail(@RequestBody Map<String, String> param) {
