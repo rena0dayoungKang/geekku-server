@@ -62,7 +62,7 @@ public class Onestop {
 	@CreationTimestamp
 	private Timestamp createdAt;
 
-	@OneToMany(mappedBy = "onestop", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "onestop", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<OnestopAnswer> onestopAnswerList = new ArrayList<>();
 
 	public OnestopDto toDto() {

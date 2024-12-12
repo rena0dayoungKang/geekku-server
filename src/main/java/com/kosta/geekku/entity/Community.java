@@ -2,7 +2,10 @@ package com.kosta.geekku.entity;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
@@ -62,7 +66,11 @@ public class Community {
 	@ColumnDefault("0")
 	private Integer viewCount;
 	
+	@OneToMany(mappedBy = "community", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private List<CommunityComment> commentList = new ArrayList<>();
 	
+    @OneToMany(mappedBy = "community", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<CommunityBookmark> communityBookmarkList;
 	
 	public CommunityDto toDto() {
 		boolean isOwner = this.user != null && this.user.getUserId().equals(user.getUserId());

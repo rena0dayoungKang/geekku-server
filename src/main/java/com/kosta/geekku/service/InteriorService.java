@@ -30,6 +30,10 @@ public interface InteriorService {
 	InteriorDto interiorCompanyDetail(UUID companyId) throws Exception;
 
 	Integer sampleRegister(SampleDto sampleDto, MultipartFile coverImage, UUID companyId) throws Exception;
+	
+	void sampleDelete(Integer sampleNum, UUID companyId) throws Exception;
+	
+	Integer sampleUpdate(SampleDto sampleDto, MultipartFile coverImage, MultipartFile deleteImage, UUID companyId, Integer num) throws Exception;
 
 	Integer reviewRegister(String userId, ReviewDto reviewDto, List<MultipartFile> fileList) throws Exception;
 
