@@ -205,6 +205,20 @@ public class InteriorController {
 		}
 	}
 	
+	@PostMapping("/company/interiorSampleUpdate/{num}")
+	public ResponseEntity<String> interiorSampleUpdate(Authentication authentication, SampleDto sampleDto, @PathVariable Integer num,
+			@RequestPart(name = "coverImg", required = false) MultipartFile coverImage,
+			@RequestPart(name = "deleteImg", required = false) MultipartFile deleteImage) {
+		try {
+			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
+			Integer sampleNum = interiorService.sampleUpdate(sampleDto, coverImage, deleteImage, companyId, num);
+			return new ResponseEntity<String>(String.valueOf(sampleNum), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	@PostMapping("/user/interiorReviewWrite")
 	public ResponseEntity<String> interiorReviewRegister(Authentication authentication, ReviewDto reviewDto,
 			@RequestParam(name = "file", required = false) MultipartFile[] files) {
@@ -245,13 +259,11 @@ public class InteriorController {
 		}
 	}
 
-	@PostMapping("/sampleDetail")
-	public ResponseEntity<Map<String, Object>> sampleDetail(@RequestBody Map<String, String> param) {
+	@GetMapping("/sampleDetail/{num}")
+	public ResponseEntity<Map<String, Object>> sampleDetail(@PathVariable Integer num) {
 		try {
-			System.out.println("good");
-			System.out.println(param);
 			Map<String, Object> res = new HashMap<>();
-			SampleDto sampleDto = interiorService.sampleDetail(Integer.parseInt(param.get("num")));
+			SampleDto sampleDto = interiorService.sampleDetail(num);
 			res.put("sampleInfo", sampleDto);
 			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
 		} catch (Exception e) {
