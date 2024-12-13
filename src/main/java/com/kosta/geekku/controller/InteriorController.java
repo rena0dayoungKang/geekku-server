@@ -197,7 +197,7 @@ public class InteriorController {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@DeleteMapping("/company/interiorSampleDelete/{sampleNum}")
 	public ResponseEntity<String> interiorSampleDelete(Authentication authentication, @PathVariable Integer sampleNum) {
 		try {
@@ -209,10 +209,10 @@ public class InteriorController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/company/interiorSampleUpdate/{num}")
-	public ResponseEntity<String> interiorSampleUpdate(Authentication authentication, SampleDto sampleDto, @PathVariable Integer num,
-			@RequestPart(name = "coverImg", required = false) MultipartFile coverImage,
+	public ResponseEntity<String> interiorSampleUpdate(Authentication authentication, SampleDto sampleDto,
+			@PathVariable Integer num, @RequestPart(name = "coverImg", required = false) MultipartFile coverImage,
 			@RequestPart(name = "deleteImg", required = false) MultipartFile deleteImage) {
 		try {
 			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
@@ -223,7 +223,7 @@ public class InteriorController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/user/interiorReviewWrite")
 	public ResponseEntity<String> interiorReviewRegister(Authentication authentication, ReviewDto reviewDto,
 			@RequestParam(name = "file", required = false) MultipartFile[] files) {
