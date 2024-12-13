@@ -74,7 +74,7 @@ public class InteriorDslRepository {
 				.fetchOne();
 	}
 
-	public List<InteriorSample> sampleListByFilter(String date, String[] type, String[] style, String[] size,
+	public List<InteriorSample> sampleListByFilter(String date, String[] type, String[] style, Integer[] size,
 			String[] location) {
 		QInteriorSample sample = QInteriorSample.interiorSample;
 		BooleanBuilder filter = new BooleanBuilder();
@@ -105,7 +105,7 @@ public class InteriorDslRepository {
 		return query.fetch();
 	}
 
-	public Long sampleCountByFilter(String date, String[] type, String[] style, String[] size, String[] location)
+	public Long sampleCountByFilter(String date, String[] type, String[] style, Integer[] size, String[] location)
 			throws Exception {
 		QInteriorSample sample = QInteriorSample.interiorSample;
 		BooleanBuilder filter = new BooleanBuilder();

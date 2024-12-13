@@ -71,7 +71,7 @@ public class CompanyServiceImpl implements CompanyService {
 		// 사업자 등록증 이미지 첨부
 		Integer certificationImageNum = null;
 		if (file != null && !file.isEmpty()) {
-			String companyUploadPath = uploadPath + "/company/";
+			String companyUploadPath = uploadPath + "company/";
 			File uploadDir = new File(companyUploadPath);
 			if (!uploadDir.exists()) {
 				uploadDir.mkdir();

@@ -23,8 +23,8 @@ public class EstateNumberService {
 	private String vdomain;
 
 	public void vworldSettings() {
-		System.out.println("vworld api key init success");
-		System.out.println("vworld base-Url : " + baseUrl);
+		//System.out.println("vworld api key init success");
+		//System.out.println("vworld base-Url : " + baseUrl);
 	}
 
 	public String searchEstate(String bsnmCmpnm, String brkrNm, String jurirno, int pageNo, int size) throws Exception {
@@ -71,7 +71,7 @@ public class EstateNumberService {
 		}
 		rd.close();
 		conn.disconnect();
-		System.out.println(sb.toString());		
+		//System.out.println(sb.toString());		
 
 		return sb.toString();	//API응답반환
 	}

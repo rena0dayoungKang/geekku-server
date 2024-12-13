@@ -169,8 +169,10 @@ public class OnestopServiceImpl implements OnestopService {
 						.companyName(answer.getCompany().getCompanyName()).companyPhone(answer.getCompany().getPhone())
 						.viewCount(answer.getOnestop().getViewCount()).userId(answer.getOnestop().getUser().getUserId())
 						.username(answer.getOnestop().getUser().getUsername())
+						.name(answer.getOnestop().getUser().getName())
 						.nickname(answer.getOnestop().getUser().getNickname())
 						.address1(answer.getOnestop().getAddress1()).address2(answer.getOnestop().getAddress2())
+						.userProfileImage(answer.getOnestop().getUser().getProfileImage())
 						.onestopNum(answer.getOnestop().getOnestopNum()).type(answer.getOnestop().getType()).build());
 	}
 

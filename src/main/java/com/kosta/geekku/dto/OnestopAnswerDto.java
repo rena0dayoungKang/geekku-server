@@ -40,7 +40,6 @@ public class OnestopAnswerDto {
 
 	private OnestopDto onestop;
 
-	// Getters and Setters
 
 	public OnestopAnswer toEntity() {
 		return OnestopAnswer.builder().answerOnestopNum(answerOnestopNum).title(title).content(content)

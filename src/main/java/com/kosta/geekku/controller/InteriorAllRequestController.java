@@ -40,7 +40,7 @@ public class InteriorAllRequestController {
 		try {
 			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId();
 			Integer interiorAllNum = interiorAllService.interiorAllWrite(interiorAllDto, userId);
-			System.out.println(interiorAllDto);
+			//System.out.println(interiorAllDto);
 			return new ResponseEntity<String>(String.valueOf(interiorAllNum), HttpStatus.OK);
 
 		} catch (Exception e) {
@@ -114,7 +114,7 @@ public class InteriorAllRequestController {
 
 			interiorAnswerDto.setUserId(request.getUser().getUserId());
 
-			System.out.println(interiorAnswerDto);
+			//System.out.println(interiorAnswerDto);
 			fcmMessageService.sendInteriorAllAnswer(interiorAnswerDto);// 알림 추가
 			return new ResponseEntity<String>(String.valueOf(interiorAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
@@ -134,7 +134,7 @@ public class InteriorAllRequestController {
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("interiorAnswerList", interiorAnswerList);
 			listInfo.put("pageInfo", pageInfo);
-			System.out.println(interiorAnswerList);
+			//System.out.println(interiorAnswerList);
 
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {

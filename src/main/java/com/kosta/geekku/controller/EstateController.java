@@ -61,7 +61,7 @@ public class EstateController {
 			// 파일이 존재하지 않는 경우 처리
 			File file = new File(uploadPath, num);
 			if (!file.exists()) {
-				System.out.println("파일 존재하지 않음");
+				//System.out.println("파일 존재하지 않음");
 				return;
 			}
 			InputStream ins = new FileInputStream(file);

@@ -22,13 +22,11 @@ public class InteriorAllRequestDslRepository {
 	@Autowired
 	private JPAQueryFactory jpaQueryFactory;
 
-	// 議고쉶�닔
 	public Long findInteriorAllCount() throws Exception {
 		QInteriorAllRequest interiorAll = QInteriorAllRequest.interiorAllRequest;
 		return jpaQueryFactory.select(interiorAll.count()).from(interiorAll).fetchOne();
 	}
 
-	// 由ъ뒪�듃 �럹�씠吏뺤쿂由�
 	public List<InteriorAllRequest> findInteriorAllListByPaging(PageRequest pageRequest) throws Exception {
 		QInteriorAllRequest interiorAll = QInteriorAllRequest.interiorAllRequest;
 		return jpaQueryFactory.selectFrom(interiorAll).orderBy(interiorAll.requestAllNum.desc())
@@ -52,7 +50,6 @@ public class InteriorAllRequestDslRepository {
 		return cnt;
 	}
 
-	// �젣紐�, 吏��뿭, �떆怨듯��엯
 	public List<InteriorAllRequest> searchInteriorAllListByPaging(PageRequest pageRequest, String type, String word)
 			throws Exception {
 		QInteriorAllRequest interiorAll = QInteriorAllRequest.interiorAllRequest;
@@ -87,7 +84,6 @@ public class InteriorAllRequestDslRepository {
 		return interiorAllList;
 	}
 
-	// 諛⑷씀 �떟蹂�
 	public Long interiorAllAnswerCount() throws Exception {
 		QInteriorAllAnswer interiorAllAnswer = QInteriorAllAnswer.interiorAllAnswer;
 
