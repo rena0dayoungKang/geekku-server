@@ -87,13 +87,4 @@ public class Interior {
 		
 		return interiorDto;
 	}
-
-	@Override
-	public String toString() {
-		return "Interior [interiorNum=" + interiorNum + ", company=" + company + ", possiblePart=" + possiblePart
-				+ ", period=" + period + ", recentCount=" + recentCount + ", repairDate=" + repairDate
-				+ ", possibleLocation=" + possibleLocation + ", intro=" + intro + ", content=" + content
-				+ ", createdAt=" + createdAt + "]";
-	}
-
 }
