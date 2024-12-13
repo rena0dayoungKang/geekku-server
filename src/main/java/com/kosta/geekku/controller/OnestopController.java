@@ -22,7 +22,7 @@ import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
 import com.kosta.geekku.entity.Onestop;
 import com.kosta.geekku.repository.OnestopRepository;
-//import com.kosta.geekku.service.FcmMessageService;
+import com.kosta.geekku.service.FcmMessageService;
 import com.kosta.geekku.service.OnestopService;
 import com.kosta.geekku.util.PageInfo;
 
@@ -34,7 +34,7 @@ public class OnestopController {
 
 	private final OnestopService onestopService;
 	private final OnestopRepository onestopRepository;
-	// private final FcmMessageService fcmMessageService;
+    private final FcmMessageService fcmMessageService;
 
 	@PostMapping("/user/onestopWrite")
 	public ResponseEntity<String> onestopWrite(Authentication authentication, OnestopDto onestopDto) {
@@ -118,16 +118,12 @@ public class OnestopController {
 			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
 			Integer onestopAnswerNum = onestopService.onestopAnswerWrite(onestopAnswerDto, companyId);
 			onestopAnswerDto.setAnswerOnestopNum(onestopAnswerNum);
-			// fcmMessageService.sendOnestopAnswer(onestopAnswerDto);
-
-			//System.out.println(onestopAnswerDto);
-
 			Onestop onestop = onestopRepository.findByOnestopNum(onestopAnswerDto.getOnestopNum());
 			if (onestop == null) {
 				throw new IllegalArgumentException("유효하지 않은 onestop입니다.");
 			}
 			onestopAnswerDto.setUserId(onestop.getUser().getUserId());
-
+			fcmMessageService.sendOnestopAnswer(onestopAnswerDto);
 			return new ResponseEntity<String>(String.valueOf(onestopAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
