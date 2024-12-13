@@ -69,7 +69,7 @@ public class Onestop {
 		OnestopDto onestopDto = OnestopDto.builder().onestopNum(onestopNum).type(type).address1(address1)
 				.address2(address2).rentType(rentType).size(size).money(money).workType(workType)
 				.interiorType(interiorType).movePersons(movePersons).allowPhone(allowPhone).title(title)
-				.nickname(user.getNickname() != null ? user.getNickname() : user.getName()).userId(user.getUserId()).userPhone(allowPhone ? user.getPhone() : null)
+				.nickname(user.getNickname()).name(user.getName()).userId(user.getUserId()).userPhone(allowPhone ? user.getPhone() : null)
 				.content(content).viewCount(viewCount).createdAt(createdAt).build();
 
 		if (user.getProfileImage() != null) {

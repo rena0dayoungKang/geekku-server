@@ -82,7 +82,6 @@ public class InteriorUserController {
 			Pageable pageable = PageRequest.of(page - 1, size);
 			Page<InteriorAnswerDto> interiorAnswers = interiorAllRequestService.getInteriorAnswersByCompanyId(companyId,
 					pageable);
-
 			return ResponseEntity.ok(interiorAnswers);
 		} catch (Exception e) {
 			e.printStackTrace();

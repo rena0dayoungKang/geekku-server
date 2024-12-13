@@ -51,11 +51,27 @@ public class InteriorAllAnswer {
 	private Timestamp createdAt;
 
 	public InteriorAnswerDto toDto() {
-		InteriorAnswerDto interiorAnswerDto = InteriorAnswerDto.builder().answerAllNum(answerAllNum).title(title)
-				.content(content).createdAt(createdAt).requestAllNum(interiorAllRequest.getRequestAllNum())
-				.workType(interiorAllRequest.getType())
-				.companyId(company.getCompanyId()).companyAddress(company.getCompanyAddress())
-				.companyName(company.getCompanyName()).companyPhone(company.getPhone()).build();
+		InteriorAnswerDto interiorAnswerDto = InteriorAnswerDto.builder()
+				.answerAllNum(answerAllNum)
+				.title(title)
+				.content(content)
+				.createdAt(createdAt)
+				.requestAllNum(interiorAllRequest.getRequestAllNum())
+				.companyId(company.getCompanyId())
+				.companyAddress(company.getCompanyAddress())
+				.companyName(company.getCompanyName())
+				.companyPhone(company.getPhone())
+				.workType(interiorAllRequest.isWorkType())
+				.userId(interiorAllRequest.getUser().getUserId())
+				.username(interiorAllRequest.getUser().getUsername())
+				.name(interiorAllRequest.getUser().getName())
+				.nickname(interiorAllRequest.getUser().getNickname())
+				.userProfileImage(interiorAllRequest.getUser().getProfileImage())
+				.address1(interiorAllRequest.getAddress1())
+				.address2(interiorAllRequest.getAddress2())
+				.type(interiorAllRequest.getType())
+				.viewCount(interiorAllRequest.getViewCount())
+				.build();
 
 		if (company.getProfileImage() != null) {
 			try {

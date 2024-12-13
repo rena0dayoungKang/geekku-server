@@ -1,6 +1,7 @@
 package com.kosta.geekku.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,20 +45,32 @@ public class EstateServiceImpl implements EstateService {
 		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
 		estate.setCompany(company);
 		estateRepository.save(estate);
-
-		if (estateImageList != null && estateImageList.size() > 0) {
-			for (MultipartFile file : estateImageList) {
-				EstateImage estateImage = new EstateImage();
-				estateImage.setDirectory(uploadPath);
-				estateImage.setName(file.getOriginalFilename());
-				estateImage.setSize(file.getSize());
-				estateImage.setContentType(file.getContentType());
-				estateImage.setEstate(estate);
-				estateImageRepository.save(estateImage);
-
-				File upFile = new File(uploadPath, estateImage.getEstateImageNum() + "");
-				file.transferTo(upFile);
+		
+		try {
+			File uploadDir = new File(uploadPath + "estateImage/");
+			
+			if (!uploadDir.exists()) {
+				uploadDir.mkdirs();
 			}
+			
+			if (estateImageList != null && estateImageList.size() > 0) {
+				for (MultipartFile file : estateImageList) {
+					EstateImage estateImage = new EstateImage();
+					estateImage.setDirectory(uploadPath + "estateImage/");
+					estateImage.setName(file.getOriginalFilename());
+					estateImage.setSize(file.getSize());
+					estateImage.setContentType(file.getContentType());
+					estateImage.setEstate(estate);
+					estateImageRepository.save(estateImage);
+
+					File upFile = new File(uploadPath, estateImage.getEstateImageNum() + "");
+					file.transferTo(upFile);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("파일 저장 중 오류 발생: " + e.getMessage());
+			throw new RuntimeException("파일 저장에 실패했습니다. 경로를 확인하세요.");
 		}
 
 		return estate.getEstateNum();

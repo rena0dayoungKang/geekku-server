@@ -36,7 +36,7 @@ public class QInteriorSample extends EntityPathBase<InteriorSample> {
 
     public final NumberPath<Integer> sampleNum = createNumber("sampleNum", Integer.class);
 
-    public final StringPath size = createString("size");
+    public final NumberPath<Integer> size = createNumber("size", Integer.class);
 
     public final StringPath style = createString("style");
 
