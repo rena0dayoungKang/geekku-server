@@ -1,5 +1,6 @@
 package com.kosta.geekku.service;
 
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,8 +43,13 @@ public class UserServiceImpl implements UserService {
 	public void joinPerson(UserDto userDto) throws Exception {
 		User user = userDto.toEntity();
 
-		// 회원가입시 기본이미지 설정
-		byte[] defaultProfileImage = Files.readAllBytes(Paths.get("src/main/resources/static/img/profileImg.png"));
+		// 회원가입시 기본이미지 설정 (클래스패스 리소스 로딩 방식 적용)
+		ClassPathResource resource = new ClassPathResource("static/img/profileImg.png");
+		//byte[] defaultProfileImage = Files.readAllBytes(Paths.get("src/main/resources/static/img/profileImg.png"));
+		byte[] defaultProfileImage;
+		try (InputStream in = resource.getInputStream()) {
+			defaultProfileImage = in.readAllBytes();
+		}
 		user.setProfileImage(defaultProfileImage);
 
 		userRepository.save(user);
