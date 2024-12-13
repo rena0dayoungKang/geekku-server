@@ -42,7 +42,7 @@ public class CompanyController {
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
-	
+
 	@PostMapping("/joinCompany")
 	public ResponseEntity<String> joinCompany(CompanyDto companyDto,
 			@RequestParam(name = "file", required = false) MultipartFile file) {
@@ -66,17 +66,15 @@ public class CompanyController {
 
 	@GetMapping("/searchEstate")
 	public ResponseEntity<String> searchEstate(@RequestParam(required = false) String bsnmCmpnm,
-			@RequestParam(required = false) String brkrNm, 
-			@RequestParam(required = false) String jurirno,
-			@RequestParam(defaultValue = "1") int pageNo, 
-			@RequestParam(defaultValue = "10") int numOfRows) {
+			@RequestParam(required = false) String brkrNm, @RequestParam(required = false) String jurirno,
+			@RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "10") int numOfRows) {
 
 		// 전달된 검색값 출력
-		System.out.println("Received Parameters:");
-		System.out.println("bsnmCmpnm: " + bsnmCmpnm);
-		System.out.println("brkrNm: " + brkrNm);
-		System.out.println("jurirno: " + jurirno);
-		
+		// System.out.println("Received Parameters:");
+		// System.out.println("bsnmCmpnm: " + bsnmCmpnm);
+		// System.out.println("brkrNm: " + brkrNm);
+		// System.out.println("jurirno: " + jurirno);
+
 		// 브이월드 Settings
 		estateNumberService.vworldSettings();
 		try {
@@ -164,28 +162,27 @@ public class CompanyController {
 		return new ResponseEntity<Page<HouseAnswerDto>>(HttpStatus.BAD_REQUEST);
 	}
 
-	 @GetMapping("/onestopAnswered/{companyId}")
-	    public ResponseEntity<?> getOnestopAnswered(
-	            @PathVariable UUID companyId,
-	            @RequestParam(value = "page", defaultValue = "1") int page, 
-	            @RequestParam(value = "size", defaultValue = "10") int size) {
-	        try {
-	            Pageable pageable = PageRequest.of(page - 1, size);
-	            Page<OnestopAnswerDto> onestopAnswers = companyService.getOnestopAnswersByCompanyId(companyId, pageable);
-	            // 응답 데이터를 Map으로 정리
-	            Map<String, Object> response = new HashMap<>();
-	            response.put("currentPage", onestopAnswers.getNumber() + 1);
-	            response.put("totalPages", onestopAnswers.getTotalPages());
-	            response.put("totalItems", onestopAnswers.getTotalElements());
-	            response.put("content", onestopAnswers.getContent()); 
-	            System.out.println(response);
+	@GetMapping("/onestopAnswered/{companyId}")
+	public ResponseEntity<?> getOnestopAnswered(@PathVariable UUID companyId,
+			@RequestParam(value = "page", defaultValue = "1") int page,
+			@RequestParam(value = "size", defaultValue = "10") int size) {
+		try {
+			Pageable pageable = PageRequest.of(page - 1, size);
+			Page<OnestopAnswerDto> onestopAnswers = companyService.getOnestopAnswersByCompanyId(companyId, pageable);
+			// 응답 데이터를 Map으로 정리
+			Map<String, Object> response = new HashMap<>();
+			response.put("currentPage", onestopAnswers.getNumber() + 1);
+			response.put("totalPages", onestopAnswers.getTotalPages());
+			response.put("totalItems", onestopAnswers.getTotalElements());
+			response.put("content", onestopAnswers.getContent());
+			//System.out.println(response);
 
-	            return ResponseEntity.ok(response);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 중개업자의 데이터를 찾을 수 없습니다.");
-	        }
-	    }
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 중개업자의 데이터를 찾을 수 없습니다.");
+		}
+	}
 
 	@GetMapping("/company/companyInfo")
 	public ResponseEntity<CompanyDto> getCompanyInfo(Authentication authentication) {
@@ -238,7 +235,7 @@ public class CompanyController {
 	public ResponseEntity<Map<String, Object>> updateCompanyInfo(Authentication authentication, CompanyDto companyDto,
 			@RequestParam(name = "file", required = false) MultipartFile profile,
 			@RequestParam(name = "certificationFile", required = false) MultipartFile certFile) {
-		System.out.println("---------기업정보수정");
+		// System.out.println("---------기업정보수정");
 		try {
 			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
 			Map<String, Object> result = companyService.updateCompanyInfo(companyId, companyDto, profile, certFile);

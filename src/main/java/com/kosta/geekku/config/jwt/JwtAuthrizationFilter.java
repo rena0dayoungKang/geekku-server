@@ -59,7 +59,7 @@ public class JwtAuthrizationFilter extends BasicAuthenticationFilter {
 		ObjectMapper objectMapper = new ObjectMapper();
 		Map<String, String> token = objectMapper.readValue(authentication, Map.class);
 
-		System.out.println("token to Map : " + token);
+		//System.out.println("token to Map : " + token);
 
 		// 3. access Token : header로 부터 access Token을 가져와 check
 		String accessToken = token.get("access_token");
@@ -81,8 +81,8 @@ public class JwtAuthrizationFilter extends BasicAuthenticationFilter {
 			String role = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(accessToken)
 					.getClaim("role").asString();
 
-			System.out.println("username:" + username);
-			System.out.println("role:" + role);
+			System.out.println("[username] : " + username);
+			System.out.println("[role] : " + role);
 
 			// 1-2) username check
 			if (username == null || username.equals("")) throw new Exception();		
@@ -115,8 +115,8 @@ public class JwtAuthrizationFilter extends BasicAuthenticationFilter {
 						.getClaim("sub").asString();
 				String role = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(refreshToken)
 						.getClaim("role").asString();
-				System.out.println("username" + username);
-				System.out.println("role" + role);
+				System.out.println("[username] : " + username);
+				System.out.println("[role] : " + role);
 				// 2-2) username check
 				if (username == null || username.equals("")) throw new Exception("사용자가 없음"); // 사용자가 DB에 없을때
 				PrincipalDetails principalDetails = getPrincipayDetails(username, role);
@@ -132,7 +132,7 @@ public class JwtAuthrizationFilter extends BasicAuthenticationFilter {
 				map.put("refresh_token", JwtProperties.TOKEN_PREFIX + reRefreshToken);
 				String reToken = objectMapper.writeValueAsString(map); // map -> jsonString
 				response.addHeader(JwtProperties.HEADER_STRING, reToken);
-				System.out.println(reToken);
+				System.out.println("JwtAuthrizationFilter에서의 reToken : " + reToken);
 				response.setContentType("application/json; charset=utf-8");
 				//response.getWriter().print("token");// 토큰을 다시 줄거야 하는 나만의방법이야
 				

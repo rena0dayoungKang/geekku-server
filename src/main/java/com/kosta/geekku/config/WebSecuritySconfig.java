@@ -77,8 +77,6 @@ public class WebSecuritySconfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/user/**").access("hasRole('ROLE_USER')") //hasRole("ROLE_USER")
 				.antMatchers("/company/**").access("hasRole('ROLE_COMPANY')") //.hasRole("ROLE_COMPANY")
 				.antMatchers("/mypage/**").authenticated()
-//			.antMatchers("/estate/**").hasRole("COMPANY")
-//			.antMatchers("/interior/**").hasRole("COMPANY")
 				.anyRequest().permitAll();
 	}
 	

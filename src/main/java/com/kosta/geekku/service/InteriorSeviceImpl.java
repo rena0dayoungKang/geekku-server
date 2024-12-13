@@ -347,7 +347,7 @@ public class InteriorSeviceImpl implements InteriorService {
 						}
 					}
 				}
-				System.out.println("============"+sizeRangeList);
+				//System.out.println("============"+sizeRangeList);
 				// List<Integer> -> Integer[]
 				Integer[] sizeArray = sizeRangeList.toArray(new Integer[0]);
 
@@ -419,7 +419,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		InteriorBookmark interiorBookmark = interiorBookmarkRepository.findByInterior_InteriorNumAndUserId(interiorNum,
 				UUID.fromString(userId));
 		Interior interior = interiorRepository.findById(interiorNum).orElseThrow(() -> new Exception("인테리어 번호 오류"));
-		System.out.println(interior);
+		//System.out.println(interior);
 //		Integer bookmarkNum = interiorDslRepository.findInteriorBookmark(UUID.fromString(userId), interiorNum);
 //		System.out.println(bookmarkNum);
 		if (interiorBookmark == null) {
@@ -526,7 +526,7 @@ public class InteriorSeviceImpl implements InteriorService {
 				reImage.setSize(file.getSize());
 				reImage.setInteriorReview(review);
 
-				System.out.println(reImage);
+				//System.out.println(reImage);
 				interiorReviewImageRepository.save(reImage);
 
 				File upFile = new File(uploadPath, reImage.getInteriorReviewImageNum() + "");
@@ -560,7 +560,7 @@ public class InteriorSeviceImpl implements InteriorService {
 		// 알림 기능 추가
 		requestDto.setCompanyId(oInterior.get().getCompany().getCompanyId());
 		requestDto.setUserId(UUID.fromString(userId));
-		System.out.println(requestDto);
+		//System.out.println(requestDto);
 		fcmMessageService.sendInteriorRequest(requestDto);
 
 		return request.getRequestNum();
@@ -701,7 +701,7 @@ public class InteriorSeviceImpl implements InteriorService {
 
 			if (imageBytes != null) {
 				// byte[] 처리 (예: 데이터베이스에 저장)
-				System.out.println("Image size: " + imageBytes.length);
+				//System.out.println("Image size: " + imageBytes.length);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

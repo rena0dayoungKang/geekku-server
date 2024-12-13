@@ -80,7 +80,7 @@ public class AuthService {
 		Optional<Auth> authOpt = authRepository.findByEmailAndCertificationNum(email, certificationNum);
 		
 		if (!authOpt.isPresent()) {
-			System.out.println("인증번호 없음");
+			//System.out.println("인증번호 없음");
 			return false;
 		}
 		
@@ -88,19 +88,19 @@ public class AuthService {
 
 		List<User> users = userRepository.findAllByEmail(email);
 		if (!users.isEmpty()) {
-	        System.out.println("인증번호 일치 - 인증성공 (개인사용자)");
+	        //System.out.println("인증번호 일치 - 인증성공 (개인사용자)");
 	        authRepository.deleteById(auth.getAuthNum()); // 인증 정보 삭제
 	        return true;
 		}
 		
 		List<Company> companies = companyRepository.findAllByEmail(email);
 	    if (!companies.isEmpty()) {
-	        System.out.println("인증번호 일치 - 인증성공 (기업사용자)");
+	        //System.out.println("인증번호 일치 - 인증성공 (기업사용자)");
 	        authRepository.deleteById(auth.getAuthNum()); // 인증 정보 삭제
 	        return true;
 	    }
 	    
-	    System.out.println("인증 실패");
+	    //System.out.println("인증 실패");
 	    return false;
 	}
 

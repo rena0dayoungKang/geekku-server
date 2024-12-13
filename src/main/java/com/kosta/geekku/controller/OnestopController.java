@@ -116,7 +116,7 @@ public class OnestopController {
 			Integer onestopAnswerNum = onestopService.onestopAnswerWrite(onestopAnswerDto, companyId);
 			onestopAnswerDto.setAnswerOnestopNum(onestopAnswerNum);
 			// fcmMessageService.sendOnestopAnswer(onestopAnswerDto);
-			System.out.println(onestopAnswerDto);
+			//System.out.println(onestopAnswerDto);
 			return new ResponseEntity<String>(String.valueOf(onestopAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -135,7 +135,7 @@ public class OnestopController {
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("onestopAnswerList", onestopAnswerList);
 			listInfo.put("pageInfo", pageInfo);
-			System.out.println(onestopAnswerList);
+			//System.out.println(onestopAnswerList);
 
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {
@@ -150,7 +150,7 @@ public class OnestopController {
 			Integer onestopAnswerNum = (Integer) params.get("onestopAnswerNum");
 			Integer onestopNum = (Integer) params.get("onestopNum");
 			onestopService.onestopAnswerDelete(onestopAnswerNum, onestopNum);
-			System.out.println(onestopAnswerNum);
+			//System.out.println(onestopAnswerNum);
 			return new ResponseEntity<String>("true", HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

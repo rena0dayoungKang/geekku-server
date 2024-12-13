@@ -38,7 +38,7 @@ public class FcmMessageService {
 		User user = userRepository.findById(houseAnswerDto.getUserId()).orElseThrow(() -> new Exception("User 오류"));
 		String fcmToken = user.getFcmToken();
 		if (fcmToken == null || fcmToken.trim().length() == 0) {
-			System.out.println("FCM Token 오류");
+			//System.out.println("FCM Token 오류");
 			return false;
 		}
 		// 2. AlarmTable에 저장
@@ -72,7 +72,7 @@ public class FcmMessageService {
 		User user = userRepository.findById(interiorAnswerDto.getUserId()).orElseThrow(() -> new Exception("User 오류"));
 		String fcmToken = user.getFcmToken();
 		if (fcmToken == null || fcmToken.trim().length() == 0) {
-			System.out.println("FCM Token 오류");
+			//System.out.println("FCM Token 오류");
 			return false;
 		}
 		// 2. AlarmTable에 저장
@@ -107,7 +107,7 @@ public class FcmMessageService {
 		User user = userRepository.findById(onestopAnswerDto.getUserId()).orElseThrow(() -> new Exception("User 오류"));
 		String fcmToken = user.getFcmToken();
 		if (fcmToken == null || fcmToken.trim().length() == 0) {
-			System.out.println("FCM Token 오류");
+			//System.out.println("FCM Token 오류");
 			return false;
 		}
 		// 2. AlarmTable에 저장
@@ -141,7 +141,7 @@ public class FcmMessageService {
 				.orElseThrow(() -> new Exception("Company 오류"));
 		String fcmToken = company.getFcmToken();
 		if (fcmToken == null || fcmToken.trim().length() == 0) {
-			System.out.println("FCM Token 오류");
+			//System.out.println("FCM Token 오류");
 			return false;
 		}
 
@@ -205,7 +205,7 @@ public class FcmMessageService {
 		Optional<AlarmUser> oalarm = alarmRepository.findById(alarmNum);
 //		System.out.println(oalarm.get());
 		if (oalarm.isEmpty()) {
-			System.out.println("알람번호 오류");
+			//System.out.println("알람번호 오류");
 			return false;
 		}
 		AlarmUser alarm = oalarm.get();

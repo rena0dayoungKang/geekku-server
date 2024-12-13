@@ -104,7 +104,7 @@ public class HouseController {
 	public ResponseEntity<String> houseAnswerWrite(Authentication authentication, HouseAnswerDto houseAnswerDto) {
 		try {
 			UUID companyId = ((PrincipalDetails)authentication.getPrincipal()).getCompany().getCompanyId();
-			System.out.println(companyId);
+			//System.out.println(companyId);
 			Integer houseAnswerNum = houseService.houseAnswerWrite(houseAnswerDto, companyId);
 			houseAnswerDto.setAnswerHouseNum(houseAnswerNum);
 			//알림 보내기
@@ -146,7 +146,7 @@ public class HouseController {
 		    // 파일이 존재하지 않는 경우 처리
 			File file = new File(uploadPath, filename);
             if (!file.exists()) {
-                System.out.println("파일 존재하지 않음");
+                //System.out.println("파일 존재하지 않음");
                 return;
             }
             InputStream ins = new FileInputStream(file);
