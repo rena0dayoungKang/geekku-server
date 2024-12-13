@@ -120,22 +120,17 @@ public class HouseController {
 	@PostMapping("/editorImageUpload")
 	public ResponseEntity<String> editorImageUpload(@RequestParam("image") MultipartFile image) {
 		try {
-			// 폴더 없을 경우 생성
-			File uploadDir = new File(uploadPath + "estateImage/");
-			if (!uploadDir.exists()) {
-				uploadDir.mkdirs();
-			}
-			
 			String fileName = image.getOriginalFilename();
+
 			// 새 파일명 생성
 			int lastIndex = fileName.lastIndexOf(".");
 			String ext = fileName.substring(lastIndex, fileName.length());
 			String newFileName = LocalDate.now() + "_" + System.currentTimeMillis() + ext;
-			
+
 			// 파일 저장
-			File file = new File(uploadDir, newFileName);
+			File file = new File(uploadPath, newFileName);
 			image.transferTo(file);
-			
+
 			String url = "http://geekku.shop:8080/editorImage/" + newFileName;
 			return new ResponseEntity<String>(url, HttpStatus.OK);
 		} catch (Exception e) {
