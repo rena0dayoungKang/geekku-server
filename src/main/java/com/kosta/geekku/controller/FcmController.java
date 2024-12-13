@@ -27,7 +27,7 @@ public class FcmController {
 	public ResponseEntity<String> fcmToken(@RequestBody Map<String, String> param) {
 		String type = param.get("type");
 		try {
-			System.out.println("==================>");
+			// System.out.println("==================>");
 			if (type.equals("user")) {
 				fcmMessageService.registUserFcmToken(param.get("userId"), param.get("fcmToken"));
 			} else {
@@ -45,17 +45,17 @@ public class FcmController {
 
 			userAlarms(@RequestBody Map<String, String> param) {
 		try {
-			System.out.println(param);
+			// System.out.println(param);
 			String type = param.get("type");
 //			String role = param.get("role");
 			if ("user".equals(type)) {
 				return new ResponseEntity<>(fcmMessageService.getUserAlarmList(UUID.fromString(param.get("userId"))),
 						HttpStatus.OK);
 			} else {
-				List<MessageDto> messageDtoList = fcmMessageService.getCompanyAlarmList(UUID.fromString(param.get("userId")));
-				System.out.println(messageDtoList);
-				return new ResponseEntity<>(messageDtoList,
-						HttpStatus.OK);
+				List<MessageDto> messageDtoList = fcmMessageService
+						.getCompanyAlarmList(UUID.fromString(param.get("userId")));
+				// System.out.println(messageDtoList);
+				return new ResponseEntity<>(messageDtoList, HttpStatus.OK);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

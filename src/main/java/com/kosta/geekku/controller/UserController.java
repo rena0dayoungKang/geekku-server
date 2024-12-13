@@ -53,25 +53,6 @@ public class UserController {
 			return new ResponseEntity<UserDto>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-//	@PostMapping("/glogout")
-//	public ResponseEntity<String> logout(Authentication authentication) {
-//		System.out.println(authentication);
-//		System.out.println("logout");
-//		try {
-//			User user = ((PrincipalDetails) authentication.getPrincipal()).getUser(); 
-//			if(user!=null) {
-//				userService.logout(user.getUserId());
-//			} else {
-//				Company company = ((PrincipalDetails) authentication.getPrincipal()).getCompany();
-//				userService.logout(company.getCompanyId());
-//			}
-//			return new ResponseEntity<String>("true", HttpStatus.OK);
-//		} catch(Exception e) {
-//			e.printStackTrace();
-//			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
-//		}
-//	}
 
 	@PostMapping("/joinPerson")
 	public ResponseEntity<String> joinPeron(@ModelAttribute UserDto userDto) {
@@ -102,7 +83,7 @@ public class UserController {
 	@PostMapping("/user/updateUserInfo")
 	public ResponseEntity<Map<String, Object>> updateUserInfo(Authentication authentication, UserDto userDto,
 			@RequestParam(name = "file", required = false) MultipartFile profile) {
-		System.out.println("-----------개인정보수정");
+		//System.out.println("-----------개인정보수정");
 		try {
 			UUID userId = ((PrincipalDetails) authentication.getPrincipal()).getUser().getUserId(); // 토큰에서 UUID를 추출
 			Map<String, Object> res = userService.updateUserInfo(userId, userDto, profile);
@@ -165,7 +146,7 @@ public class UserController {
 	public ResponseEntity<Boolean> checkNickname(@RequestParam String nickname) {
 		try {
 			boolean checkNickname = userService.checkDoubleNickname(nickname);
-			System.out.println(checkNickname);
+			//System.out.println(checkNickname);
 			return new ResponseEntity<Boolean>(checkNickname, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -177,7 +158,7 @@ public class UserController {
 	public ResponseEntity<Boolean> checkDoubleId(@RequestParam String username) {
 		try {
 			boolean checkDoubleId = userService.checkDoubleId(username);
-			System.out.println(checkDoubleId);
+			//System.out.println(checkDoubleId);
 			return new ResponseEntity<Boolean>(checkDoubleId, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

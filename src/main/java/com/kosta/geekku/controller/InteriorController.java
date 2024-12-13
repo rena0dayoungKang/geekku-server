@@ -66,12 +66,12 @@ public class InteriorController {
 			@RequestParam(value = "page", defaultValue = "1") Integer page,
 			@RequestParam(value = "limit", defaultValue = "9") Integer limit) {
 		try {
-			System.out.println(possibleLocation);
-			System.out.println(page);
+			//System.out.println(possibleLocation);
+			//System.out.println(page);
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
 			List<InteriorDto> interiorList = interiorService.interiorList(possibleLocation, pageInfo, limit);
-			System.out.println(interiorList);
+			//System.out.println(interiorList);
 
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("interiorList", interiorList);
@@ -93,11 +93,11 @@ public class InteriorController {
 			@RequestParam(value = "page", defaultValue = "1") Integer page,
 			@RequestParam(value = "limit", defaultValue = "9") Integer limit) {
 		try {
-			System.out.println(date);
-			System.out.println("types:" + types);
-			System.out.println("styles:" + styles);
-			System.out.println("sizes:" + sizes);
-			System.out.println("location:" + location);
+			//System.out.println(date);
+			//System.out.println("types:" + types);
+			//System.out.println("styles:" + styles);
+			//System.out.println("sizes:" + sizes);
+			//System.out.println("location:" + location);
 
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
@@ -144,7 +144,7 @@ public class InteriorController {
 	@PostMapping("/company/interiorModify")
 	public ResponseEntity<String> interiorModify(Authentication authentication, InteriorDto interiorDto,
 			@RequestParam(name = "file", required = false) MultipartFile coverImage) {
-		System.out.println(interiorDto);
+		//System.out.println(interiorDto);
 		try {
 			if (coverImage != null && !coverImage.isEmpty()) {
 				// MultipartFile을 byte[]로 변환
@@ -243,7 +243,7 @@ public class InteriorController {
 			// 파일이 존재하지 않는 경우 처리
 			File file = new File(uploadPath, num);
 			if (!file.exists()) {
-				System.out.println("파일 존재하지 않음");
+				//System.out.println("파일 존재하지 않음");
 				return;
 			}
 			InputStream ins = new FileInputStream(file);
@@ -297,8 +297,8 @@ public class InteriorController {
 	@PostMapping("/requestDetail")
 	public ResponseEntity<Map<String, Object>> requestDetail(@RequestBody Map<String, String> param) {
 		try {
-			System.out.println("test");
-			System.out.println(param);
+			//System.out.println("test");
+			//System.out.println(param);
 			Map<String, Object> res = new HashMap<>();
 			InteriorRequestDto requestDto = interiorService.requestDetail(Integer.parseInt(param.get("num")));
 			res.put("requestInfo", requestDto);
@@ -312,22 +312,22 @@ public class InteriorController {
 	@PostMapping("/interiorDetail")
 	public ResponseEntity<Map<String, Object>> interiorDetail(@RequestBody Map<String, String> param) {
 		try {
-			System.out.println("param=====" + param);
+			//System.out.println("param=====" + param);
 			Map<String, Object> detailInfo = interiorService.interiorDetail(Integer.parseInt(param.get("num")));
 
-			System.out.println("detailInfo=====" + detailInfo);
+			//System.out.println("detailInfo=====" + detailInfo);
 
-			System.out.println("-----------test id==" + param.get("id"));
-			System.out.println("-----------" + param.get("num"));
+			//System.out.println("-----------test id==" + param.get("id"));
+			//System.out.println("-----------" + param.get("num"));
 			if (param.get("id") != null && !param.get("id").isEmpty()) {
 
 				boolean bookmark = interiorService.checkBookmark(param.get("id"),
 						Integer.parseInt(param.get("num"))) != null;
 				detailInfo.put("bookmark", bookmark);
-				System.out.println("========================bookmarkTest===================");
-				System.out.println(bookmark);
+				//System.out.println("========================bookmarkTest===================");
+				//System.out.println(bookmark);
 			} else {
-				System.out.println("else test");
+				//System.out.println("else test");
 			}
 			return new ResponseEntity<Map<String, Object>>(detailInfo, HttpStatus.OK);
 		} catch (Exception e) {

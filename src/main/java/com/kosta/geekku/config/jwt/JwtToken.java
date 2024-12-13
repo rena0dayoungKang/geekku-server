@@ -15,7 +15,6 @@ public class JwtToken {
 	@PostConstruct
 	public void init() {
 		System.out.println("jwToken bean initailized");
-		//System.out.println("secret key : " + JwtProperties.SECRET);
 	}
 	
 	public String makeAccessToken(String username, String role) {

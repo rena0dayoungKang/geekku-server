@@ -42,14 +42,14 @@ public class InteriorUserController {
 	public ResponseEntity<Map<String, Object>> interiorDetail(Authentication authentication) {
 		try {
 			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId(); // 토큰에서
-			System.out.println("controller" + companyId);
+			//System.out.println("controller" + companyId);
 			// UUID를
 			// 추출
 
 			InteriorDto interiorDto = interiorService.interiorCompanyDetail(companyId);
 			Map<String, Object> res = new HashMap<>();
 			res.put("interior", interiorDto);
-			System.out.println("res: " + res);
+			//System.out.println("res: " + res);
 
 			return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
 		} catch (Exception e) {

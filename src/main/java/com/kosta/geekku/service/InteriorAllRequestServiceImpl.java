@@ -77,7 +77,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 		if (word == null || word.trim().equals("")) { // �쟾泥� 紐⑸줉
 			interiorAllDtoList = interiorAllRequestDslRepository.findInteriorAllListByPaging(pageRequest).stream()
 					.map(b -> b.toDto()).collect(Collectors.toList());
-			System.out.println(interiorAllDtoList);
+			//System.out.println(interiorAllDtoList);
 			allCnt = interiorAllRequestDslRepository.findInteriorAllCount();
 		} else { // 검색
 			interiorAllDtoList = interiorAllRequestDslRepository.searchInteriorAllListByPaging(pageRequest, type, word)
@@ -141,7 +141,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	@Override
 	public void interiorAnswerDelete(Integer answerAllNum, Integer requestAllNum) throws Exception {
 		interiorAllAnswerRepository.findById(answerAllNum).orElseThrow(() -> new Exception("�떟蹂��씠 議댁옱�븯吏� �븡�뒿�땲�떎."));
-		System.out.println(answerAllNum);
+		//System.out.println(answerAllNum);
 		interiorAllAnswerRepository.deleteById(answerAllNum);
 
 	}

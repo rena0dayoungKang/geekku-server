@@ -120,13 +120,13 @@ public class OnestopController {
 			onestopAnswerDto.setAnswerOnestopNum(onestopAnswerNum);
 			// fcmMessageService.sendOnestopAnswer(onestopAnswerDto);
 
+			//System.out.println(onestopAnswerDto);
+
 			Onestop onestop = onestopRepository.findByOnestopNum(onestopAnswerDto.getOnestopNum());
 			if (onestop == null) {
 				throw new IllegalArgumentException("유효하지 않은 onestop입니다.");
 			}
 			onestopAnswerDto.setUserId(onestop.getUser().getUserId());
-
-			System.out.println(onestopAnswerDto);
 
 			return new ResponseEntity<String>(String.valueOf(onestopAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
@@ -148,6 +148,9 @@ public class OnestopController {
 			listInfo.put("onestopAnswerList", onestopAnswerList);
 			listInfo.put("pageInfo", pageInfo);
 
+			//System.out.println(onestopAnswerList);
+
+
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -161,7 +164,7 @@ public class OnestopController {
 			Integer onestopAnswerNum = (Integer) params.get("onestopAnswerNum");
 			Integer onestopNum = (Integer) params.get("onestopNum");
 			onestopService.onestopAnswerDelete(onestopAnswerNum, onestopNum);
-			System.out.println(onestopAnswerNum);
+			//System.out.println(onestopAnswerNum);
 			return new ResponseEntity<String>("true", HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

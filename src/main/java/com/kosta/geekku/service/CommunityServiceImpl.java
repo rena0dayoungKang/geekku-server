@@ -115,12 +115,13 @@ public class CommunityServiceImpl implements CommunityService {
 				.style(style) // 스타일
 				.viewCount(0).build();
 		community = communityRepository.save(community);
-		System.out.println("Community saved with ID: " + community.getCommunityNum());
+		//System.out.println("Community saved with ID: " + community.getCommunityNum());
 		if (coverImage == null || coverImage.isEmpty()) {
 			throw new IllegalArgumentException("파일이 비어 있거나 업로드되지 않았습니다.");
 		}
 		try {
-			File uploadDir = new File(uploadPath);
+			String communityUploadPath = uploadPath + "communityImage/";
+			File uploadDir = new File(communityUploadPath);
 			if (!uploadDir.exists()) {
 				uploadDir.mkdirs();
 			}
@@ -133,10 +134,10 @@ public class CommunityServiceImpl implements CommunityService {
 			coverImage.transferTo(dest);
 			community.setCoverImage(fileName); // 파일 경로를 엔티티에 업데이트
 			communityRepository.save(community); // 업데이트된 커뮤니티 저장
-			System.out.println("파일 경로가 데이터베이스에 저장되었습니다: " + fileName);
+			//System.out.println("파일 경로가 데이터베이스에 저장되었습니다: " + fileName);
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.err.println("파일 저장 중 오류 발생: " + e.getMessage());
+			//System.err.println("파일 저장 중 오류 발생: " + e.getMessage());
 			throw new RuntimeException("파일 저장에 실패했습니다. 경로를 확인하세요.");
 		}
 		return community.getCommunityNum();
@@ -194,7 +195,7 @@ public class CommunityServiceImpl implements CommunityService {
 	public Boolean getCommunityBookmark(String userId, Integer communityNum) throws Exception {
 		// userId 값 검증
 				if (userId == null || userId.isEmpty()) {
-					System.out.println("Invalid userId: " + userId);
+					//System.out.println("Invalid userId: " + userId);
 					return false; // 사용자 ID가 없으면 false 반환
 				}
 				try {
@@ -205,7 +206,7 @@ public class CommunityServiceImpl implements CommunityService {
 					return existingBookmark != null; // 북마크가 존재하면 true 반환
 				} catch (IllegalArgumentException e) {
 					// userId가 UUID 형식이 아닌 경우 처리
-					System.out.println("Invalid UUID format: " + userId);
+					//System.out.println("Invalid UUID format: " + userId);
 					return false;
 				}
 			}
