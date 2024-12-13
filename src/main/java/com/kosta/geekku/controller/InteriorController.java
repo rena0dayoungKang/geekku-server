@@ -181,8 +181,8 @@ public class InteriorController {
 	@GetMapping("/sampleImage/{imageName}")
 	public void getSampleImage(@PathVariable String imageName, HttpServletResponse response) {
 		try {
-			String uploadPath = "C:/geekku/image_upload/sampleImage/";
-			File file = new File(uploadPath, imageName);
+			String path = uploadPath + "sampleImage/";
+			File file = new File(path, imageName);
 
 			if (!file.exists()) {
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
