@@ -54,10 +54,27 @@ public class OnestopAnswer {
 	private Timestamp createdAt;
 
 	public OnestopAnswerDto toDto() {
-		OnestopAnswerDto onestopAnswerDto = OnestopAnswerDto.builder().answerOnestopNum(answerOnestopNum).title(title)
-				.content(content).createdAt(createdAt).onestopNum(onestop.getOnestopNum())
-				.companyId(company.getCompanyId()).companyName(company.getCompanyName())
-				.companyAddress(company.getCompanyAddress()).companyPhone(company.getPhone()).build();
+		OnestopAnswerDto onestopAnswerDto = OnestopAnswerDto.builder()
+				.answerOnestopNum(answerOnestopNum)
+				.title(title)
+				.content(content)
+				.createdAt(createdAt)
+				.onestopNum(onestop.getOnestopNum())
+				.companyId(company.getCompanyId())
+				.companyName(company.getCompanyName())
+				.companyAddress(company.getCompanyAddress())
+				.companyPhone(company.getPhone())
+				.userId(onestop.getUser().getUserId())
+				.name(onestop.getUser().getName())
+				.username(onestop.getUser().getUsername())
+				.name(onestop.getUser().getName())
+				.nickname(onestop.getUser().getNickname())
+				.userProfileImage(onestop.getUser().getProfileImage())
+				.address1(onestop.getAddress1())
+				.address2(onestop.getAddress2())
+				.type(onestop.getType())
+				.viewCount(onestop.getViewCount())
+				.build();
 
 		if (company.getProfileImage() != null) {
 			try {

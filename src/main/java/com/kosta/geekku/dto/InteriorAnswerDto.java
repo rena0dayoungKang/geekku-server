@@ -33,9 +33,11 @@ public class InteriorAnswerDto {
 	private String address1;
 	private String address2;
 	private String type;
-	private String workType;
+	private boolean workType;
 	private String username;
+	private String name;
 	private String nickname;
+	private byte[] userProfileImage;
 
 	public InteriorAllAnswer toEntity() {
 		return InteriorAllAnswer.builder().answerAllNum(answerAllNum).content(content).title(title).createdAt(createdAt)

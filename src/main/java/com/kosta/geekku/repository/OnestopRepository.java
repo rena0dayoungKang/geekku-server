@@ -11,4 +11,6 @@ import com.kosta.geekku.entity.User;
 
 public interface OnestopRepository extends JpaRepository<Onestop, Integer> {
 	Page<Onestop> findAllByUser(Optional<User> user, Pageable pageable) throws Exception;
+
+	Onestop findByOnestopNum(Integer onestopNum);
 }
