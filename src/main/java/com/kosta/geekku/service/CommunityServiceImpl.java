@@ -177,7 +177,7 @@ public class CommunityServiceImpl implements CommunityService {
 					uploadDir.mkdirs();
 				}
 				String fileName = coverImage.getOriginalFilename();
-				String filePath = uploadPath + "/communityImage/" + fileName;
+				String filePath = uploadPath + "communityImage/" + fileName;
 				coverImage.transferTo(new File(filePath));
 				community.setCoverImage(fileName); // 파일 이름 업데이트
 			} catch (IOException e) {
