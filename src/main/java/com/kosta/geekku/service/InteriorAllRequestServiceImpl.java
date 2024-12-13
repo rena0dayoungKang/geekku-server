@@ -42,6 +42,7 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 	private final UserRepository userRepository;
 	private final CompanyRepository companyRepository;
 	private final FcmMessageService fcmMessageService;
+
 	@Transactional
 	@Override
 	public Integer interiorAllWrite(InteriorAllDto interiorAllDto, UUID userId) throws Exception {
@@ -188,10 +189,12 @@ public class InteriorAllRequestServiceImpl implements InteriorAllRequestService 
 						.viewCount(answer.getInteriorAllRequest().getViewCount())
 						.userId(answer.getInteriorAllRequest().getUser().getUserId())
 						.username(answer.getInteriorAllRequest().getUser().getUsername())
+						.name(answer.getInteriorAllRequest().getUser().getName())
 						.nickname(answer.getInteriorAllRequest().getUser().getNickname())
 						.address1(answer.getInteriorAllRequest().getAddress1())
 						.address2(answer.getInteriorAllRequest().getAddress2())
 						.requestAllNum(answer.getInteriorAllRequest().getRequestAllNum())
+						.userProfileImage(answer.getInteriorAllRequest().getUser().getProfileImage())
 						.type(answer.getInteriorAllRequest().getType()).build());
 	}
 

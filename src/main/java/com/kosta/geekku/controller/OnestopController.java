@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.OnestopAnswerDto;
 import com.kosta.geekku.dto.OnestopDto;
+import com.kosta.geekku.entity.Onestop;
+import com.kosta.geekku.repository.OnestopRepository;
 //import com.kosta.geekku.service.FcmMessageService;
 import com.kosta.geekku.service.OnestopService;
 import com.kosta.geekku.util.PageInfo;
@@ -31,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class OnestopController {
 
 	private final OnestopService onestopService;
+	private final OnestopRepository onestopRepository;
 	// private final FcmMessageService fcmMessageService;
 
 	@PostMapping("/user/onestopWrite")
@@ -69,7 +72,7 @@ public class OnestopController {
 			List<OnestopDto> onestopList = onestopService.onestopList(pageInfo, type, keyword);
 
 			// 리스트를 내림차순으로 정렬
-			//onestopList.sort(Comparator.comparing(OnestopDto::getCreatedAt).reversed());
+			// onestopList.sort(Comparator.comparing(OnestopDto::getCreatedAt).reversed());
 
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("onestopList", onestopList);
@@ -116,11 +119,19 @@ public class OnestopController {
 			Integer onestopAnswerNum = onestopService.onestopAnswerWrite(onestopAnswerDto, companyId);
 			onestopAnswerDto.setAnswerOnestopNum(onestopAnswerNum);
 			// fcmMessageService.sendOnestopAnswer(onestopAnswerDto);
+
+			Onestop onestop = onestopRepository.findByOnestopNum(onestopAnswerDto.getOnestopNum());
+			if (onestop == null) {
+				throw new IllegalArgumentException("유효하지 않은 onestop입니다.");
+			}
+			onestopAnswerDto.setUserId(onestop.getUser().getUserId());
+
 			System.out.println(onestopAnswerDto);
+
 			return new ResponseEntity<String>(String.valueOf(onestopAnswerNum), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<String>("諛⑷씀�떟蹂� �벑濡� �삤瑜�", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("한번에꾸하기답변 등록 오류", HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -132,10 +143,10 @@ public class OnestopController {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
 			List<OnestopAnswerDto> onestopAnswerList = onestopService.onestopAnswerList(pageInfo, onestopNum);
+			System.out.println(onestopAnswerList);
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("onestopAnswerList", onestopAnswerList);
 			listInfo.put("pageInfo", pageInfo);
-			System.out.println(onestopAnswerList);
 
 			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
 		} catch (Exception e) {
@@ -165,10 +176,12 @@ public class OnestopController {
 		try {
 			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
 			Page<OnestopAnswerDto> onestopAnswerList = onestopService.onestopAnswerListForMypage(page, companyId);
+
 			return new ResponseEntity<Page<OnestopAnswerDto>>(onestopAnswerList, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Page<OnestopAnswerDto>>(HttpStatus.BAD_REQUEST);
+
 		}
 	}
 }
