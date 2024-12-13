@@ -166,10 +166,11 @@ public class CommunityServiceImpl implements CommunityService {
 		if (coverImage != null && !coverImage.isEmpty()) {
 			// 기존 파일 삭제
 			if (community.getCoverImage() != null) {
-				File existingFile = new File(uploadPath, community.getCoverImage());
+				File existingFile = new File(uploadPath + "communityImage/" , community.getCoverImage());
 				if (existingFile.exists()) {
 					existingFile.delete();
 				}
+			
 			}
 			try {
 				File uploadDir = new File(uploadPath);
@@ -177,7 +178,7 @@ public class CommunityServiceImpl implements CommunityService {
 					uploadDir.mkdirs();
 				}
 				String fileName = coverImage.getOriginalFilename();
-				String filePath = uploadPath + "/communityImage/" + fileName;
+				String filePath = uploadPath + "communityImage/" + fileName;				
 				coverImage.transferTo(new File(filePath));
 				community.setCoverImage(fileName); // 파일 이름 업데이트
 			} catch (IOException e) {
