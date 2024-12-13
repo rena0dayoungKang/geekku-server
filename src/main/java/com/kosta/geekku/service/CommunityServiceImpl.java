@@ -170,6 +170,7 @@ public class CommunityServiceImpl implements CommunityService {
 				if (existingFile.exists()) {
 					existingFile.delete();
 				}
+			
 			}
 			try {
 				String fileName = coverImage.getOriginalFilename();
