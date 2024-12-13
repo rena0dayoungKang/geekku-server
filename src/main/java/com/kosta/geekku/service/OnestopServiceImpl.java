@@ -97,7 +97,7 @@ public class OnestopServiceImpl implements OnestopService {
 		Onestop onestop = onestopRepository.findById(onestopAnswerDto.getOnestopNum())
 				.orElseThrow(() -> new Exception("한번에꾸하기 글 번호 오류"));
 		Company company = companyRepository.findById(companyId).orElseThrow(() -> new Exception("기업회원 찾기 오류"));
-
+		
 		OnestopAnswer onestopAnswer = onestopAnswerDto.toEntity();
 		onestopAnswer.setOnestop(onestop);
 		onestopAnswer.setCompany(company);

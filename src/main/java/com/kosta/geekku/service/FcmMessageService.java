@@ -103,6 +103,7 @@ public class FcmMessageService {
 	/** onestop 답변이 달렸을 때, 개인에게 알림 가는 함수 */
 	/** TODO */
 	public Boolean sendOnestopAnswer(OnestopAnswerDto onestopAnswerDto) throws Exception {
+		System.out.println(onestopAnswerDto);//ㄴㄴㄴ
 		// 1. 수신자 fcmToken 가져오기
 		User user = userRepository.findById(onestopAnswerDto.getUserId()).orElseThrow(() -> new Exception("User 오류"));
 		String fcmToken = user.getFcmToken();
@@ -113,11 +114,15 @@ public class FcmMessageService {
 		// 2. AlarmTable에 저장
 		AlarmUser alarm = AlarmUser.builder().user(user.getUserId()) // UUID 타입 전달
 				.company(Company.builder().companyId(onestopAnswerDto.getCompanyId()).build())
-				.message(onestopAnswerDto.getTitle()).status(false).type("interior")
-				.detailPath(onestopAnswerDto.getAnswerOnestopNum()).build();
+				.message(onestopAnswerDto.getContent()).status(false).type("onestop")
+				.detailPath(onestopAnswerDto.getOnestopNum()).title(onestopAnswerDto.getTitle()).build();
 
 		alarmRepository.save(alarm);
 		// 3. Alarm 전송
+		Company company = companyRepository.findById(onestopAnswerDto.getCompanyId()).get(); // 테스트 해봐야함
+		if (company.getFcmToken().equals(fcmToken))
+			return true;
+		
 		Message message = Message.builder().setToken(fcmToken).putData("num", alarm.getUserAlarmNum() + "")
 				.putData("message", alarm.getMessage()).putData("type", alarm.getType())
 				.putData("detailPath", alarm.getDetailPath() + "").putData("sender", onestopAnswerDto.getCompanyName())
