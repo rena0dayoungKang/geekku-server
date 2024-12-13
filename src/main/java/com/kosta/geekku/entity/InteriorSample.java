@@ -68,13 +68,4 @@ public class InteriorSample {
 
 		return sampleDto;
 	}
-
-	@Override
-	public String toString() {
-		return "InteriorSample [sampleNum=" + sampleNum + ", interior=" + interior + ", company=" + company + ", title="
-				+ title + ", type=" + type + ", style=" + style + ", size=" + size + ", location=" + location
-				+ ", content=" + content + ", createdAt=" + createdAt + "]";
-	}
-	
-
 }
