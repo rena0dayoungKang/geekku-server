@@ -21,7 +21,8 @@ import com.kosta.geekku.config.jwt.JwtToken;
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-	private static final String URI = "http://localhost:3000/login";
+//	private static final String URI = "http://localhost:3000/login";
+	private static final String URI = "https://www.geekku.store/login";
 	private JwtToken jwtToken = new JwtToken();
 
 	@Override

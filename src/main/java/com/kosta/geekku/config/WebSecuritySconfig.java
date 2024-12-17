@@ -81,6 +81,7 @@ public class WebSecuritySconfig extends WebSecurityConfigurerAdapter {
 	}
 	
 	private AuthenticationFailureHandler oAuth2AuthenticationFailureHandler() {
-		return new SimpleUrlAuthenticationFailureHandler("http://localhost:3000/");
+//		return new SimpleUrlAuthenticationFailureHandler("http://localhost:3000/");
+		return new SimpleUrlAuthenticationFailureHandler("https://geekku.store/");
 	}
 }

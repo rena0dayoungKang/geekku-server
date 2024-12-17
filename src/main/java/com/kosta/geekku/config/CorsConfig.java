@@ -18,6 +18,8 @@ public class CorsConfig {
 		
 		config.setAllowCredentials(true);
 		config.addAllowedOrigin("http://localhost:3000");
+		config.addAllowedOrigin("https://www.geekku.store");
+		config.addAllowedOrigin("https://geekku.store");
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
 		config.addExposedHeader(JwtProperties.HEADER_STRING);

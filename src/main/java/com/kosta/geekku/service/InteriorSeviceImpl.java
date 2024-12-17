@@ -47,6 +47,8 @@ import com.kosta.geekku.repository.InteriorSampleDslRepository;
 import com.kosta.geekku.repository.InteriorSampleRepository;
 import com.kosta.geekku.repository.UserRepository;
 import com.kosta.geekku.util.PageInfo;
+import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.webp.WebpWriter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -477,18 +479,45 @@ public class InteriorSeviceImpl implements InteriorService {
 		sample.setInterior(interior);
 
 		if (coverImage != null && !coverImage.isEmpty()) {
-			String fileName = coverImage.getOriginalFilename();
-			String filePath = uploadPath + "sampleImage/";
+//			String fileName = coverImage.getOriginalFilename();
+//			String filePath = uploadPath + "sampleImage/";
+//
+//			// 파일 저장 경로 확인 및 디렉토리 생성
+//			File uploadDir = new File(filePath);
+//			if (!uploadDir.exists()) {
+//				uploadDir.mkdirs();
+//			}
+//
+//			File file = new File(filePath + fileName);
+//			coverImage.transferTo(file);
+//			sample.setCoverImage(file.getName());
+			  // 원본 파일 이름 및 경로
+		    String originalFileName = coverImage.getOriginalFilename(); // e.g., "image.png"
+		    String fileNameWithoutExt = originalFileName.substring(0, originalFileName.lastIndexOf(".")); // e.g., "image"
+		    String filePath = uploadPath + "sampleImage/";
 
-			// 파일 저장 경로 확인 및 디렉토리 생성
-			File uploadDir = new File(filePath);
-			if (!uploadDir.exists()) {
-				uploadDir.mkdirs();
-			}
+		    // 디렉토리 확인 및 생성
+		    File uploadDir = new File(filePath);
+		    if (!uploadDir.exists()) {
+		        uploadDir.mkdirs();
+		    }
 
-			File file = new File(filePath + fileName);
-			coverImage.transferTo(file);
-			sample.setCoverImage(file.getName());
+		    // WebP 파일 경로 (원본 파일 이름과 동일, 확장자만 변경)
+		    File webpFile = new File(filePath + fileNameWithoutExt + ".webp");
+
+		    try {
+		        // WebP 변환 및 저장
+		        ImmutableImage.loader()
+		                .fromStream(coverImage.getInputStream()) // 업로드된 파일의 입력 스트림
+		                .output(WebpWriter.DEFAULT, webpFile); // WebP 형식으로 변환 후 저장
+
+		        // DB에 저장할 파일명 설정
+		        sample.setCoverImage(webpFile.getName());
+		    } catch (Exception e) {
+		        // 변환 실패 시 로그 출력 및 처리
+		        System.err.println("Failed to convert image to WebP: " + e.getMessage());
+		        throw e;
+		    }
 		}
 
 		interiorSampleRepository.save(sample);
@@ -804,14 +833,34 @@ public class InteriorSeviceImpl implements InteriorService {
 		
 		// 수정된 coverImage파일 추가
 		if (coverImage != null && !coverImage.isEmpty()) {
-			String fileName = coverImage.getOriginalFilename();
-			String filePath = uploadPath + "sampleImage/";
+//			String fileName = coverImage.getOriginalFilename();
+//			String filePath = uploadPath + "sampleImage/";
+//
+//			File file = new File(filePath + fileName);
+//			coverImage.transferTo(file);
+//			sample.setCoverImage(file.getName());
+			
+		    String originalFileName = coverImage.getOriginalFilename();
+		    String fileNameWithoutExt = originalFileName.substring(0, originalFileName.lastIndexOf(".")); // e.g., "image"
+		    String filePath = uploadPath + "sampleImage/";
 
-			File file = new File(filePath + fileName);
-			coverImage.transferTo(file);
-			sample.setCoverImage(file.getName());
+		    // WebP 파일 경로 (원본 파일 이름과 동일, 확장자만 변경)
+		    File webpFile = new File(filePath + fileNameWithoutExt + ".webp");
+
+		    try {
+		        // WebP 변환 및 저장
+		        ImmutableImage.loader()
+		                .fromStream(coverImage.getInputStream()) // 업로드된 파일의 입력 스트림
+		                .output(WebpWriter.DEFAULT, webpFile); // WebP 형식으로 변환 후 저장
+
+		        sample.setCoverImage(webpFile.getName());
+		    } catch (Exception e) {
+		        // 변환 실패 시 로그 출력 및 처리
+		        System.err.println("Failed to convert image to WebP: " + e.getMessage());
+		        throw e;
+		    }
 		}
-
+		
 		interiorSampleRepository.save(sample);
 		
 		return sample.getSampleNum();

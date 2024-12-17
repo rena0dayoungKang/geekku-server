@@ -131,7 +131,7 @@ public class HouseController {
 			File file = new File(uploadPath, newFileName);
 			image.transferTo(file);
 
-			String url = "http://geekku.shop:8080/editorImage/" + newFileName;
+			String url = "https://geekku.shop/editorImage/" + newFileName;
 			return new ResponseEntity<String>(url, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

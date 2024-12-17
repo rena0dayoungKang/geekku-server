@@ -124,7 +124,9 @@ public class AuthService {
 			authRepository.save(auth);
 		}
 
-		String resetUrl = "http://localhost:3000/resetPassword?username=" + username + "&email=" + email
+//		String resetUrl = "http://localhost:3000/resetPassword?username=" + username + "&email=" + email
+//				+ "&certificationCode=" + certificationNum;
+		String resetUrl = "https://geekku.store/resetPassword?username=" + username + "&email=" + email
 				+ "&certificationCode=" + certificationNum;
 
 		SimpleMailMessage message = new SimpleMailMessage();
