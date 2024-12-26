@@ -26,7 +26,7 @@ public class QEstateBookmark extends EntityPathBase<EstateBookmark> {
 
     public final QEstate estate;
 
-    public final QUser user;
+    public final ComparablePath<java.util.UUID> userId = createComparable("userId", java.util.UUID.class);
 
     public QEstateBookmark(String variable) {
         this(EstateBookmark.class, forVariable(variable), INITS);
@@ -47,7 +47,6 @@ public class QEstateBookmark extends EntityPathBase<EstateBookmark> {
     public QEstateBookmark(Class<? extends EstateBookmark> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.estate = inits.isInitialized("estate") ? new QEstate(forProperty("estate"), inits.get("estate")) : null;
-        this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
     }
 
 }

@@ -26,11 +26,11 @@ public class QInteriorSample extends EntityPathBase<InteriorSample> {
 
     public final StringPath content = createString("content");
 
-    public final NumberPath<Integer> coverImage = createNumber("coverImage", Integer.class);
+    public final StringPath coverImage = createString("coverImage");
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 
-    public final StringPath intro = createString("intro");
+    public final QInterior interior;
 
     public final StringPath location = createString("location");
 
@@ -39,6 +39,8 @@ public class QInteriorSample extends EntityPathBase<InteriorSample> {
     public final NumberPath<Integer> size = createNumber("size", Integer.class);
 
     public final StringPath style = createString("style");
+
+    public final StringPath title = createString("title");
 
     public final StringPath type = createString("type");
 
@@ -61,6 +63,7 @@ public class QInteriorSample extends EntityPathBase<InteriorSample> {
     public QInteriorSample(Class<? extends InteriorSample> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.company = inits.isInitialized("company") ? new QCompany(forProperty("company")) : null;
+        this.interior = inits.isInitialized("interior") ? new QInterior(forProperty("interior"), inits.get("interior")) : null;
     }
 
 }

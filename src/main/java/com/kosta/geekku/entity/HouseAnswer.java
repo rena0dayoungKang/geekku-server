@@ -1,6 +1,8 @@
 package com.kosta.geekku.entity;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +14,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.kosta.geekku.dto.HouseAnswerDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,7 +48,42 @@ public class HouseAnswer {
 	@Column(columnDefinition = "LONGTEXT")
 	@Lob
 	private String content;
+	@Column(length = 40)
+	private String title;
 	@CreationTimestamp
 	private Timestamp createdAt;
-
+	
+	public HouseAnswerDto toDto() {
+		HouseAnswerDto houseAnswerDto = HouseAnswerDto.builder()
+							.answerHouseNum(answerHouseNum)
+							.title(title)
+							.content(content)
+							.createdAt(createdAt)
+							.houseNum(house.getHouseNum())
+							.companyId(company.getCompanyId())
+							.companyName(company.getCompanyName())
+							.companyPhone(company.getPhone())
+							.companyAddress(company.getCompanyAddress())
+							.userId(house.getUser().getUserId())
+							.name(house.getUser().getName())
+							.userName(house.getUser().getUsername())
+							.name(house.getUser().getName())
+							.nickname(house.getUser().getNickname())
+							.userProfileImage(house.getUser().getProfileImage())
+							.address1(house.getAddress1())
+							.address2(house.getAddress2())
+							.type(house.getType())
+							.viewCount(house.getViewCount())
+							.build();
+		
+		if (company.getProfileImage() != null) {
+			try {
+				houseAnswerDto.setCompanyProfileImage(new String(Base64.encodeBase64(company.getProfileImage()), "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return houseAnswerDto;
+	}
 }

@@ -21,23 +21,25 @@ public class QUser extends EntityPathBase<User> {
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 
-    public final StringPath email1 = createString("email1");
+    public final StringPath email = createString("email");
 
-    public final StringPath email2 = createString("email2");
+    public final StringPath fcmToken = createString("fcmToken");
 
     public final StringPath name = createString("name");
 
     public final StringPath nickname = createString("nickname");
 
+    public final StringPath password = createString("password");
+
     public final StringPath phone = createString("phone");
 
-    public final StringPath profileImage = createString("profileImage");
+    public final ArrayPath<byte[], Byte> profileImage = createArray("profileImage", byte[].class);
 
     public final StringPath provider = createString("provider");
 
     public final StringPath providerId = createString("providerId");
 
-    public final StringPath roles = createString("roles");
+    public final EnumPath<Role> role = createEnum("role", Role.class);
 
     public final ArrayPath<byte[], Byte> socialProfileImage = createArray("socialProfileImage", byte[].class);
 

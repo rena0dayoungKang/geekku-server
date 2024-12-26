@@ -42,11 +42,17 @@ public class QEstate extends EntityPathBase<Estate> {
 
     public final NumberPath<Integer> depositPrice = createNumber("depositPrice", Integer.class);
 
+    public final ListPath<EstateBookmark, QEstateBookmark> estateBookmarkList = this.<EstateBookmark, QEstateBookmark>createList("estateBookmarkList", EstateBookmark.class, QEstateBookmark.class, PathInits.DIRECT2);
+
     public final NumberPath<Integer> estateNum = createNumber("estateNum", Integer.class);
 
     public final NumberPath<Integer> floor = createNumber("floor", Integer.class);
 
+    public final ListPath<EstateImage, QEstateImage> imageList = this.<EstateImage, QEstateImage>createList("imageList", EstateImage.class, QEstateImage.class, PathInits.DIRECT2);
+
     public final NumberPath<Integer> jeonsePrice = createNumber("jeonsePrice", Integer.class);
+
+    public final StringPath jibunAddress = createString("jibunAddress");
 
     public final NumberPath<Integer> managePrice = createNumber("managePrice", Integer.class);
 

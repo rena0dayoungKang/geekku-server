@@ -10,7 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.kosta.geekku.dto.InteriorRequestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,22 +34,43 @@ public class InteriorRequest {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
 	private User user;
-	// private UUID userId; //join column User - userId
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "companyId")
-	private Company company;
-	// private UUID companyId; //join column Company -companyId
+	@JoinColumn(name = "interiorNum")
+	private Interior interior;
 
-	private Integer period; // 희망시공일정 1.(2주~1달) 2. 3. 4. 5. (상담이후결정)
+	private String period; // 희망시공일정 1.(2주~1달) 2. 3. 4. 5. (상담이후결정)
 	private String type;
-	private Integer statue; // 인테리어 공간상황
-	private Integer size;
-	private String name;
+	private String status; // 인테리어 공간상황
+	private String size;
+	private String name;		//integer 형식으로 저장 후, 프론트에서 integer에 해당하는 값 문자열출력
 	private String phone;
-	private Integer allowTime;
+	private String allowTime;
 	private String content;
 	@CreationTimestamp
 	private Timestamp createdAt;
 
+	public InteriorRequestDto toDto() {
+		InteriorRequestDto requestDto = InteriorRequestDto.builder()
+				.requestNum(requestNum)
+				.userId(user.getUserId())
+				.name(user.getName())
+				.nickname(user.getNickname())
+				.profileImage(user.getProfileImage())
+				.companyId(interior.getCompany().getCompanyId())
+				.companyName(interior.getCompany().getCompanyName())
+				.interiorNum(interior.getInteriorNum())
+				.period(period)
+				.phone(phone)
+				.type(type)
+				.status(status)
+				.size(size)
+				.allowTime(allowTime)
+				.content(content)
+				.createdAt(createdAt)
+				.build();
+		
+		return requestDto;
+	}
+	
 }

@@ -24,9 +24,9 @@ public class QInteriorBookmark extends EntityPathBase<InteriorBookmark> {
 
     public final NumberPath<Integer> bookmarkInteriorNum = createNumber("bookmarkInteriorNum", Integer.class);
 
-    public final QCompany company;
+    public final QInterior interior;
 
-    public final QUser user;
+    public final ComparablePath<java.util.UUID> userId = createComparable("userId", java.util.UUID.class);
 
     public QInteriorBookmark(String variable) {
         this(InteriorBookmark.class, forVariable(variable), INITS);
@@ -46,8 +46,7 @@ public class QInteriorBookmark extends EntityPathBase<InteriorBookmark> {
 
     public QInteriorBookmark(Class<? extends InteriorBookmark> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.company = inits.isInitialized("company") ? new QCompany(forProperty("company")) : null;
-        this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
+        this.interior = inits.isInitialized("interior") ? new QInterior(forProperty("interior"), inits.get("interior")) : null;
     }
 
 }

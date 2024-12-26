@@ -2,7 +2,10 @@ package com.kosta.geekku.entity;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,9 +15,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.kosta.geekku.dto.CommunityDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +33,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Community {
 	// 집들이
 	@Id
@@ -47,7 +55,8 @@ public class Community {
 	private Date periodEndDate;
 	private Integer money;
 	private String style;
-	private Integer coverImage;
+	@Column(name = "cover_image")
+	private String coverImage;
 	private String title;
 	@Column(columnDefinition = "LONGTEXT")
 	@Lob
@@ -56,5 +65,38 @@ public class Community {
 	private Timestamp createdAt;
 	@ColumnDefault("0")
 	private Integer viewCount;
+	
+	@OneToMany(mappedBy = "community", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private List<CommunityComment> commentList = new ArrayList<>();
+	
+    @OneToMany(mappedBy = "community", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<CommunityBookmark> communityBookmarkList;
+	
+	public CommunityDto toDto() {
+		boolean isOwner = this.user != null && this.user.getUserId().equals(user.getUserId());
+	    return CommunityDto.builder()
+	        .communityNum(communityNum) // 커뮤니티 번호
+	        .title(title)              // 게시글 제목
+	        .content(content)          // 게시글 내용
+	        .type(type)                // 주거 형태
+	        .size(size)                // 평수
+	        .address1(address1)        // 주소 1 (시/도)
+	        .address2(address2)        // 주소 2 (구/동)
+	        .familyType(familyType)    // 가족 형태
+	        .interiorType(interiorType) // 인테리어 타입
+	        .periodStartDate(periodStartDate) // 시공 시작일
+	        .periodEndDate(periodEndDate)     // 시공 종료일
+	        .money(money)              // 예산
+	        .style(style)              // 스타일
+	        .coverImage(coverImage)    // 커버 이미지 ID
+	        .createdAt(createdAt)      // 생성 시간
+	        .viewCount(viewCount)      // 조회수
+	        .name(user.getName()) // 작성자 이름 
+	        .isOwner(isOwner)
+	        .userId(user.getUserId().toString())
+	        .nickname(user.getNickname() != null ? user.getNickname() : "")
+	        .profileImage(user.getProfileImage())
+	        .build();
+	}
 
 }

@@ -24,17 +24,17 @@ public class QInterior extends EntityPathBase<Interior> {
 
     public final QCompany company;
 
-    public final NumberPath<Integer> companyNum = createNumber("companyNum", Integer.class);
-
     public final StringPath content = createString("content");
 
-    public final NumberPath<Integer> coverImage = createNumber("coverImage", Integer.class);
+    public final ArrayPath<byte[], Byte> coverImage = createArray("coverImage", byte[].class);
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 
+    public final NumberPath<Integer> interiorNum = createNumber("interiorNum", Integer.class);
+
     public final StringPath intro = createString("intro");
 
-    public final NumberPath<Integer> period = createNumber("period", Integer.class);
+    public final NumberPath<Float> period = createNumber("period", Float.class);
 
     public final StringPath possibleLocation = createString("possibleLocation");
 
@@ -42,7 +42,7 @@ public class QInterior extends EntityPathBase<Interior> {
 
     public final NumberPath<Integer> recentCount = createNumber("recentCount", Integer.class);
 
-    public final NumberPath<Integer> repairDate = createNumber("repairDate", Integer.class);
+    public final NumberPath<Float> repairDate = createNumber("repairDate", Float.class);
 
     public QInterior(String variable) {
         this(Interior.class, forVariable(variable), INITS);

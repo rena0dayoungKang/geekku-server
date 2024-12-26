@@ -22,25 +22,25 @@ public class QInteriorRequest extends EntityPathBase<InteriorRequest> {
 
     public static final QInteriorRequest interiorRequest = new QInteriorRequest("interiorRequest");
 
-    public final NumberPath<Integer> allowTime = createNumber("allowTime", Integer.class);
-
-    public final QCompany company;
+    public final StringPath allowTime = createString("allowTime");
 
     public final StringPath content = createString("content");
 
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 
+    public final QInterior interior;
+
     public final StringPath name = createString("name");
 
-    public final NumberPath<Integer> period = createNumber("period", Integer.class);
+    public final StringPath period = createString("period");
 
     public final StringPath phone = createString("phone");
 
     public final NumberPath<Integer> requestNum = createNumber("requestNum", Integer.class);
 
-    public final NumberPath<Integer> size = createNumber("size", Integer.class);
+    public final StringPath size = createString("size");
 
-    public final NumberPath<Integer> statue = createNumber("statue", Integer.class);
+    public final StringPath status = createString("status");
 
     public final StringPath type = createString("type");
 
@@ -64,7 +64,7 @@ public class QInteriorRequest extends EntityPathBase<InteriorRequest> {
 
     public QInteriorRequest(Class<? extends InteriorRequest> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.company = inits.isInitialized("company") ? new QCompany(forProperty("company")) : null;
+        this.interior = inits.isInitialized("interior") ? new QInterior(forProperty("interior"), inits.get("interior")) : null;
         this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
     }
 
