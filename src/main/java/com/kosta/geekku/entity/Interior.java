@@ -75,14 +75,18 @@ public class Interior {
 				.regStatus(company.isRegStatus())
 				.build();
 		
+//		if(coverImage != null) {
+//			try {
+//			    String encodedImage = Base64.getEncoder().encodeToString(coverImage); // Base64 인코딩
+//			    interiorDto.setCoverImageStr(encodedImage);
+//			} catch(Exception e) {
+//				e.printStackTrace();
+//				throw new RuntimeException("이미지 인코딩 중 오류 발생", e);
+//			}
+//		}
+//		
 		if(coverImage != null) {
-			try {
-			    String encodedImage = Base64.getEncoder().encodeToString(coverImage); // Base64 인코딩
-			    interiorDto.setCoverImageStr(encodedImage);
-			} catch(Exception e) {
-				e.printStackTrace();
-				throw new RuntimeException("이미지 인코딩 중 오류 발생", e);
-			}
+			interiorDto.setCoverImageStr("http://localhost:8080/interior/image/" + interiorNum);
 		}
 		
 		return interiorDto;

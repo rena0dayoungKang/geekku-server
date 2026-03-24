@@ -27,6 +27,14 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+//최적화 추가(이미지 로딩 속도)
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import com.kosta.geekku.config.auth.PrincipalDetails;
 import com.kosta.geekku.dto.InteriorDto;
 import com.kosta.geekku.dto.InteriorRequestDto;
@@ -45,19 +53,63 @@ public class InteriorController {
 	@Value("${upload.path}")
 	private String uploadPath;
 
-	@GetMapping("/interiorMain")
-	public ResponseEntity<Map<String, Object>> interioMain() {
-		try {
-			List<SampleDto> sampleList = interiorService.sampleListForMain();
-			List<InteriorDto> interiorList = interiorService.interiorListForMain();
-			Map<String, Object> listInfo = new HashMap<>();
-			listInfo.put("sampleList", sampleList);
-			listInfo.put("interiorList", interiorList);
-			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
-		}
+	//필요없는 데이터를 전송막기위해 아래처럼 두 API로 분리
+//	@GetMapping("/interiorMain")
+//	public ResponseEntity<Map<String, Object>> interioMain() {
+//		try {
+//			List<SampleDto> sampleList = interiorService.sampleListForMain();
+//			List<InteriorDto> interiorList = interiorService.interiorListForMain();
+//			Map<String, Object> listInfo = new HashMap<>();
+//			listInfo.put("sampleList", sampleList);
+//			listInfo.put("interiorList", interiorList);
+//			return new ResponseEntity<Map<String, Object>>(listInfo, HttpStatus.OK);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+//		}
+//	}
+
+	// 1. 인테리어 컴포넌트를 위한 API
+	@GetMapping("/interior/mainList")
+	public ResponseEntity<List<InteriorDto>> getInteriorMainList() {
+	    try {
+	        return new ResponseEntity<>(interiorService.interiorListForMain(), HttpStatus.OK);
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	    }
+	}
+	// 2. 샘플 컴포넌트를 위한 API
+	@GetMapping("/sample/mainList")
+	public ResponseEntity<List<SampleDto>> getSampleMainList() {
+	    try {
+	        return new ResponseEntity<>(interiorService.sampleListForMain(), HttpStatus.OK);
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	    }
+	}
+	// 최적화 추가(이미지 로딩 속도)
+	@GetMapping("/interior/image/{interiorNum}")
+	public ResponseEntity<byte[]> getInteriorImage(@PathVariable Integer interiorNum) {
+	    try {
+	        // 1. 방금 만든 Service 메서드를 호출해서 사진 데이터(byte[])만 쏙 받아옵니다.
+	        byte[] imageBytes = interiorService.getInteriorImageBytes(interiorNum);
+	        
+	        // 2. 사진 데이터가 존재하면 프론트로 쏩니다!
+	        if (imageBytes != null) {
+	            HttpHeaders headers = new HttpHeaders();
+	            headers.setContentType(MediaType.IMAGE_PNG); // PNG 또는 JPEG로 설정
+	            return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+	        }
+	        
+	        // 사진이 없으면 404 Not Found 반환
+	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
 
 	@GetMapping("/interiorList")
@@ -66,12 +118,12 @@ public class InteriorController {
 			@RequestParam(value = "page", defaultValue = "1") Integer page,
 			@RequestParam(value = "limit", defaultValue = "9") Integer limit) {
 		try {
-			//System.out.println(possibleLocation);
-			//System.out.println(page);
+			// System.out.println(possibleLocation);
+			// System.out.println(page);
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
 			List<InteriorDto> interiorList = interiorService.interiorList(possibleLocation, pageInfo, limit);
-			//System.out.println(interiorList);
+			// System.out.println(interiorList);
 
 			Map<String, Object> listInfo = new HashMap<>();
 			listInfo.put("interiorList", interiorList);
@@ -93,11 +145,11 @@ public class InteriorController {
 			@RequestParam(value = "page", defaultValue = "1") Integer page,
 			@RequestParam(value = "limit", defaultValue = "9") Integer limit) {
 		try {
-			//System.out.println(date);
-			//System.out.println("types:" + types);
-			//System.out.println("styles:" + styles);
-			//System.out.println("sizes:" + sizes);
-			//System.out.println("location:" + location);
+			// System.out.println(date);
+			// System.out.println("types:" + types);
+			// System.out.println("styles:" + styles);
+			// System.out.println("sizes:" + sizes);
+			// System.out.println("location:" + location);
 
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setCurPage(page);
@@ -144,7 +196,7 @@ public class InteriorController {
 	@PostMapping("/company/interiorModify")
 	public ResponseEntity<String> interiorModify(Authentication authentication, InteriorDto interiorDto,
 			@RequestParam(name = "file", required = false) MultipartFile coverImage) {
-		//System.out.println(interiorDto);
+		// System.out.println(interiorDto);
 		try {
 			if (coverImage != null && !coverImage.isEmpty()) {
 				// MultipartFile을 byte[]로 변환
@@ -197,7 +249,7 @@ public class InteriorController {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@DeleteMapping("/company/interiorSampleDelete/{sampleNum}")
 	public ResponseEntity<String> interiorSampleDelete(Authentication authentication, @PathVariable Integer sampleNum) {
 		try {
@@ -209,10 +261,10 @@ public class InteriorController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/company/interiorSampleUpdate/{num}")
-	public ResponseEntity<String> interiorSampleUpdate(Authentication authentication, SampleDto sampleDto, @PathVariable Integer num,
-			@RequestPart(name = "coverImg", required = false) MultipartFile coverImage,
+	public ResponseEntity<String> interiorSampleUpdate(Authentication authentication, SampleDto sampleDto,
+			@PathVariable Integer num, @RequestPart(name = "coverImg", required = false) MultipartFile coverImage,
 			@RequestPart(name = "deleteImg", required = false) MultipartFile deleteImage) {
 		try {
 			UUID companyId = ((PrincipalDetails) authentication.getPrincipal()).getCompany().getCompanyId();
@@ -223,7 +275,7 @@ public class InteriorController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping("/user/interiorReviewWrite")
 	public ResponseEntity<String> interiorReviewRegister(Authentication authentication, ReviewDto reviewDto,
 			@RequestParam(name = "file", required = false) MultipartFile[] files) {
@@ -243,7 +295,7 @@ public class InteriorController {
 			// 파일이 존재하지 않는 경우 처리
 			File file = new File(uploadPath, num);
 			if (!file.exists()) {
-				//System.out.println("파일 존재하지 않음");
+				// System.out.println("파일 존재하지 않음");
 				return;
 			}
 			InputStream ins = new FileInputStream(file);
@@ -297,8 +349,8 @@ public class InteriorController {
 	@PostMapping("/requestDetail")
 	public ResponseEntity<Map<String, Object>> requestDetail(@RequestBody Map<String, String> param) {
 		try {
-			//System.out.println("test");
-			//System.out.println(param);
+			// System.out.println("test");
+			// System.out.println(param);
 			Map<String, Object> res = new HashMap<>();
 			InteriorRequestDto requestDto = interiorService.requestDetail(Integer.parseInt(param.get("num")));
 			res.put("requestInfo", requestDto);
@@ -312,22 +364,22 @@ public class InteriorController {
 	@PostMapping("/interiorDetail")
 	public ResponseEntity<Map<String, Object>> interiorDetail(@RequestBody Map<String, String> param) {
 		try {
-			//System.out.println("param=====" + param);
+			// System.out.println("param=====" + param);
 			Map<String, Object> detailInfo = interiorService.interiorDetail(Integer.parseInt(param.get("num")));
 
-			//System.out.println("detailInfo=====" + detailInfo);
+			// System.out.println("detailInfo=====" + detailInfo);
 
-			//System.out.println("-----------test id==" + param.get("id"));
-			//System.out.println("-----------" + param.get("num"));
+			// System.out.println("-----------test id==" + param.get("id"));
+			// System.out.println("-----------" + param.get("num"));
 			if (param.get("id") != null && !param.get("id").isEmpty()) {
 
 				boolean bookmark = interiorService.checkBookmark(param.get("id"),
 						Integer.parseInt(param.get("num"))) != null;
 				detailInfo.put("bookmark", bookmark);
-				//System.out.println("========================bookmarkTest===================");
-				//System.out.println(bookmark);
+				// System.out.println("========================bookmarkTest===================");
+				// System.out.println(bookmark);
 			} else {
-				//System.out.println("else test");
+				// System.out.println("else test");
 			}
 			return new ResponseEntity<Map<String, Object>>(detailInfo, HttpStatus.OK);
 		} catch (Exception e) {

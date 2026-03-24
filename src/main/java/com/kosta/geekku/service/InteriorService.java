@@ -14,6 +14,9 @@ import com.kosta.geekku.dto.SampleDto;
 import com.kosta.geekku.util.PageInfo;
 
 public interface InteriorService {
+	//최적화(사진 로딩 속도)
+	byte[] getInteriorImageBytes(Integer interiorNum) throws Exception;
+			
 	List<InteriorDto> interiorListForMain() throws Exception;
 
 	List<SampleDto> sampleListForMain() throws Exception;
